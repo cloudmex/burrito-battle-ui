@@ -1,0 +1,16 @@
+{
+  "name": "burrito-battle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "near-api-js": "^0.44.2",
+    "phaser": "^3.55.2"
+  }
+}
