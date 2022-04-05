@@ -28,7 +28,7 @@ class MinarBurrito extends Phaser.Scene{
         this.camera = this.cameras.main;
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         
-        var minar = {
+        /*var minar = {
             attack:"5",
             burrito_type:"Volador",
             defense: "5",
@@ -41,15 +41,15 @@ class MinarBurrito extends Phaser.Scene{
             owner_id: "jesus13th.testnet",
             speed: "5",
             win: "0"
-        }
-
+        }*/
+        var minar = await Near.GetState();
         if(minar){
             this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this);
         } else {
             this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }
 
-        var timeline = this.tweens.createTimeline();
+        /*var timeline = this.tweens.createTimeline();
 
         timeline.add({
             targets: this.card.GetComponents(),
@@ -68,7 +68,7 @@ class MinarBurrito extends Phaser.Scene{
             y: -1000,
             duration: 1000
         })
-        timeline.play();
+        timeline.play();*/
     }
     BackToMainMenu = () =>{
         localStorage.removeItem("lastScene");
