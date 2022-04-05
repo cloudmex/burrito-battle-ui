@@ -28,7 +28,6 @@ class MainMenu extends Phaser.Scene{
         this.scene.start('Connection');
     }
     MinarBurrito = () => {
-        console.log("Establo");
         this.scene.start("MinarBurrito")
     }
     Pradera = () => {

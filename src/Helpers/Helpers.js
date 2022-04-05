@@ -32,19 +32,23 @@ class Button{
 }
 class Card{
     constructor(x, y, burrito, scene){
-        scene.add.image(x, y, `card_${burrito.burrito_type}`);
-        scene.add.image(x, y, burrito.media).setScale(.33);
+        this.cardResult = scene.add.container(x, y)
+        this.cardResult.add(scene.add.image(0, 0, `card_${burrito.burrito_type}`));
+        this.cardResult.add(scene.add.image(0, 0, burrito.media).setScale(.33));
 
-        scene.add.text(x - 280, y - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" });//level
-        scene.add.text(x - 180, y - 380, burrito.name, { fontSize: 70, fontFamily: "BangersRegular" });//name
+        this.cardResult.add(scene.add.text(-280, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
+        this.cardResult.add(scene.add.text(-180, - 380, burrito.name, { fontSize: 70, fontFamily: "BangersRegular" }));//name
 
-        scene.add.text(x + 280, y - 210, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" });//wins
-        scene.add.text(x + 280, y - 80, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular" });//health
+        this.cardResult.add(scene.add.text(280, - 210, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" }));//wins
+        this.cardResult.add(scene.add.text(280, - 80, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular" }));//health
 
-        scene.add.text(x  - 185, y + 315, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" });//attack
-        scene.add.text(x , y + 270, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" });//defense
-        scene.add.text(x  + 185, y + 315, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" });//speed
+        this.cardResult.add(scene.add.text(-185, 315, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
+        this.cardResult.add(scene.add.text(0, 270, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" }));//defense
+        this.cardResult.add(scene.add.text(185, 315, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" }));//speed
 
+    }
+    GetComponents(){
+        return this.cardResult
     }
 }
 
