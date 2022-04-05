@@ -1,7 +1,7 @@
-//import * as nearAPI from "../node_modules/near-api-js/";
+//import * as nearAPI from "../node_modules/near-api-js/dist/near-api-js";
 //import "near-api-js"; 
 //const nearAPI = require("near-api-js");
-import "../lib/near-api-js.js"
+import * as nearAPI from "../lib/near-api-js.js"
 const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
 
 //import { NearApi } from 'near-api-js'
@@ -46,7 +46,7 @@ function Login() {
     wallet.requestSignIn(
         contract_id_burritos,
         "Burrito Battle",
-        "http://localhost:8000/",
+        window.location.origin,
     );
 }
 function LogOut() {
