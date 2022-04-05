@@ -1,6 +1,7 @@
 {
   "name": "burrito-battle",
   "version": "1.0.0",
+  "homepage": "",
   "description": "",
   "main": "index.js",
   "scripts": {

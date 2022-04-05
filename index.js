@@ -4,6 +4,7 @@ import * as MainMenu from "./Scenes/MainMenuScene";
 import * as MinarBurrito from "./Scenes/MinarBurrito";
 import * as Pradera from "./Scenes/PraderaScene";
 //import * as Battle from "./Scenes/BattleScene";
+
 const connection = Connection.Connection;
 const mainMenu = MainMenu.MainMenu;
 const minarBurrito = MinarBurrito.MinarBurrito;
