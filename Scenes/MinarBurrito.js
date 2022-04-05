@@ -1,5 +1,5 @@
-import * as Helpers from "../src/Helpers/Helpers";
-import * as Near  from "../src/near";
+import * as Helpers from "../src/Helpers/Helpers.js";
+import * as Near  from "../src/near.js";
 
 class MinarBurrito extends Phaser.Scene{
     constructor(){

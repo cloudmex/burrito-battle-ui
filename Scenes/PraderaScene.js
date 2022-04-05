@@ -1,5 +1,5 @@
-import * as Near  from "../src/near";
-import * as Helpers from "../src/Helpers/Helpers";
+import * as Near  from "../src/near.js";
+import * as Helpers from "../src/Helpers/Helpers.js";
 class Pradera extends Phaser.Scene{
     gloves;
     speed = 260;

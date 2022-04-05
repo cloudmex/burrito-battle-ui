@@ -1,5 +1,5 @@
-import * as Helpers from "../src/Helpers/Helpers";
-import * as Near  from "../src/near";
+import * as Helpers from "../src/Helpers/Helpers.js";
+import * as Near  from "../src/near.js";
 
 class MainMenu extends Phaser.Scene{
     constructor(){
