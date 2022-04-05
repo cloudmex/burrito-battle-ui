@@ -1,5 +1,4 @@
 // npx es-dev-server --node-resolve --watch
-console.log("prueba xd");
 import * as Connection  from "./Scenes/ConnectScene";
 import * as MainMenu from "./Scenes/MainMenuScene";
 import * as MinarBurrito from "./Scenes/MinarBurrito";
