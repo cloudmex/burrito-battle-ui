@@ -1,6 +1,6 @@
-import * as nearAPI from "../node_modules/near-api-js/dist/near-api-js.js";
+import { connect, keyStores, WalletConnection, Contract, utils, providers } from "near-api-js";
 
-const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
+//const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
 
 const config = {
       networkId: 'testnet',
