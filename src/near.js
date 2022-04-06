@@ -1,10 +1,5 @@
-//import * as nearAPI from "../node_modules/near-api-js/dist/near-api-js";
-//import "near-api-js"; 
-//const nearAPI = require("near-api-js");
 import * as nearAPI from "../lib/near-api-js.js"
 const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
-
-//import { NearApi } from 'near-api-js'
 
 const config = {
       networkId: 'testnet',
@@ -28,7 +23,7 @@ const provider = new providers.JsonRpcProvider(
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [ 'get_burrito' ],
-    changeMethods: [ 'mint_token', "create_battle_player_cpu", "get_battle_active_cpu" ],
+    changeMethods: [ 'nft_mint', "create_battle_player_cpu", "get_battle_active_cpu" ],
     sender: wallet.account()
   });
   const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
@@ -65,12 +60,12 @@ async function GetBurrito(){
     var result = await contract_burritos.get_burrito({burrito_id: "0"});
     alert(JSON.stringify(result));
 }
-async function MintToken(){
+async function NFTMint(){
     var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: "jesus13th.testnet"})).replace(/\,/g,''));
     var requiredSTRW = 600_000;
 
     if(currentSTRW >= requiredSTRW){
-        await contract_burritos.mint_token(
+        await contract_burritos.nft_mint(
             {
                 token_owner_id: GetAccountId() ,
                 token_metadata: { 
@@ -128,4 +123,4 @@ async function GetState() {
         history.pushState('Home', 'Title', '/');
     });
 }
-export { Login, LogOut, IsConnected, GetAccountId, MintToken, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu };
+export { Login, LogOut, IsConnected, GetAccountId, NFTMint, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu };

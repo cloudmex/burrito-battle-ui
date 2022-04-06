@@ -22,13 +22,15 @@ class MinarBurrito extends Phaser.Scene{
         this.load.image("card_Fuego", "../src/images/Cards/Carta fuego_blanca.png");
         this.load.image("card_Planta", "../src/images/Cards/Carta planta_blanca.png");
         this.load.image("card_Eléctrico", "../src/images/Cards/Carta relampago_blanca.png");
+
+        this.load.image('spark', '../src/particles/blue.png');
     }
     async create(){
         this.add.image(0,0, "mintBurritoBackground").setOrigin(0)
         this.camera = this.cameras.main;
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         
-        /*var minar = {
+        var minar = {
             attack:"5",
             burrito_type:"Volador",
             defense: "5",
@@ -41,34 +43,39 @@ class MinarBurrito extends Phaser.Scene{
             owner_id: "jesus13th.testnet",
             speed: "5",
             win: "0"
-        }*/
-        var minar = await Near.GetState();
+        }
+        
+        //this.button.Get().setActive(true);
+        //var minar = await Near.GetState();
         if(minar){
-            this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this);
+            this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this).GetComponents();
+
+            var timeline = this.tweens.createTimeline();
+            timeline.add({
+                targets: this.card,
+                y: this.sys.game.scale.gameSize.height / 2,
+                duration: 1000,
+                rotation: (360 * 10) * (Math.PI/180),
+                onComplete: ()=>{ 
+                    this.SpawnParticles(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2);
+                    timeline.pause()
+                 }
+            })
+            timeline.add({
+                targets: this.card,
+                y: -1000,
+                rotation: (-360 * 10) * (Math.PI/180),
+                duration: 1000,
+                delay: 500,
+                onComplete: () => {this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"})}// this.ShowMintButton()
+            });
+            this.input.on("pointerdown", function(){
+                timeline.resume();
+            })
+            timeline.play();
         } else {
             this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }
-
-        /*var timeline = this.tweens.createTimeline();
-
-        timeline.add({
-            targets: this.card.GetComponents(),
-            y: 600,
-            ease: 'Sine.easeInOut',
-            yoyo: true,
-            duration: 3000
-        })
-        timeline.add({
-            targets: this.card.GetComponents(),
-            y:0,
-            duration: 3000
-        })
-        timeline.add({
-            targets: this.card.GetComponents(),
-            y: -1000,
-            duration: 1000
-        })
-        timeline.play();*/
     }
     BackToMainMenu = () =>{
         localStorage.removeItem("lastScene");
@@ -76,8 +83,17 @@ class MinarBurrito extends Phaser.Scene{
     }
     GetBurrito = () => {
         localStorage.setItem("lastScene", "MinarBurrito");
-        Near.MintToken();
+        Near.NFTMint();
 
+    }
+    SpawnParticles = (x, y)=>{
+        var particles = this.add.particles('spark');
+
+        var emitter = particles.createEmitter();
+
+        emitter.setPosition(x, y);
+        emitter.setSpeed(200);
+        emitter.setBlendMode(Phaser.BlendModes.ADD);
     }
 }
 export { MinarBurrito };
