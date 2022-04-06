@@ -23,7 +23,7 @@ class MinarBurrito extends Phaser.Scene{
         this.load.image("card_Planta", "../src/images/Cards/Carta planta_blanca.png");
         this.load.image("card_Eléctrico", "../src/images/Cards/Carta relampago_blanca.png");
 
-        this.load.image('spark', '../src/particles/blue.png');
+        this.load.image("spark", "../src/particles/blue.png");
     }
     async create(){
         this.add.image(0,0, "mintBurritoBackground").setOrigin(0)
