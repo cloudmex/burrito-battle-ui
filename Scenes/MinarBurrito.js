@@ -29,27 +29,13 @@ class MinarBurrito extends Phaser.Scene{
         this.add.image(0,0, "mintBurritoBackground").setOrigin(0)
         this.camera = this.cameras.main;
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        this.particles = this.add.particles('spark');
         
-        var minar = {
-            attack:"5",
-            burrito_type:"Volador",
-            defense: "5",
-            description: "Este es un burrito de tipo Volador",
-            global_win: "0",
-            hp: "5",
-            level: "1",
-            media: "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6",
-            name: "Burrito Volador #20",
-            owner_id: "jesus13th.testnet",
-            speed: "5",
-            win: "0"
-        }
+        var minar = await Near.GetState();
         
-        //this.button.Get().setActive(true);
-        //var minar = await Near.GetState();
         if(minar){
             this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this).GetComponents();
-
+            this.card.setDepth(2);
             var timeline = this.tweens.createTimeline();
             timeline.add({
                 targets: this.card,
@@ -66,11 +52,11 @@ class MinarBurrito extends Phaser.Scene{
                 y: -1000,
                 rotation: (-360 * 10) * (Math.PI/180),
                 duration: 1000,
-                delay: 500,
                 onComplete: () => {this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"})}// this.ShowMintButton()
             });
-            this.input.on("pointerdown", function(){
+            this.input.on("pointerdown", () =>{
                 timeline.resume();
+                this.particles.destroy();
             })
             timeline.play();
         } else {
@@ -84,16 +70,20 @@ class MinarBurrito extends Phaser.Scene{
     GetBurrito = () => {
         localStorage.setItem("lastScene", "MinarBurrito");
         Near.NFTMint();
-
     }
-    SpawnParticles = (x, y)=>{
-        var particles = this.add.particles('spark');
+    SpawnParticles = (x, y) => {
+        
 
-        var emitter = particles.createEmitter();
-
-        emitter.setPosition(x, y);
-        emitter.setSpeed(200);
-        emitter.setBlendMode(Phaser.BlendModes.ADD);
+        this.particles.createEmitter({
+            x: x,
+            y: y,
+            speed: 800,
+            gravityY: 250,
+            lifespan: 800, 
+            blendMode: Phaser.BlendModes.SCREEN,
+            emitZone: { type: "random", source: new Phaser.Geom.Rectangle(-150, -150, 300, 300), quantity: 50 },
+        });
+        this.particles.setDepth(1)
     }
 }
 export { MinarBurrito };

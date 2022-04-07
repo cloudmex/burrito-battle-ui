@@ -23,7 +23,7 @@ const provider = new providers.JsonRpcProvider(
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [ 'get_burrito' ],
-    changeMethods: [ 'nft_mint', "create_battle_player_cpu", "get_battle_active_cpu" ],
+    changeMethods: [ 'nft_mint', "create_battle_player_cpu", "get_battle_active_cpu", "surrender_cpu" ],
     sender: wallet.account()
   });
   const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
@@ -98,6 +98,14 @@ async function GetBattleActiveCpu () {
     var result = await contract_burritos.get_battle_active_cpu({ });
     console.log(result);
 }
+async function SurrenderCpu(){
+    var result = await contract_burritos.surrender_cpu({});
+    console.log(result)
+}
+async function Test() {
+    var result = await provider.txStatus("2RyKXEUPzWDg21pQ2F5j3sCHFViPekrTkBuCGtpyWmfn", GetAccountId());
+    console.log(result);
+}
 async function GetState() {
     return new Promise(async resolve => {
         var URLactual = window.location.toString();
@@ -123,4 +131,4 @@ async function GetState() {
         history.pushState('Home', 'Title', '/');
     });
 }
-export { Login, LogOut, IsConnected, GetAccountId, NFTMint, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu };
+export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu };
