@@ -1,6 +1,7 @@
 class Button{
     constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle) {
         this.button = scene.add.sprite(x, y, img)
+        .setScrollFactor(0)
         .setScale(scale)
         .setInteractive()
         .on("pointerdown", ()=>{ this.PointerDown(downCallback);})
@@ -9,6 +10,7 @@ class Button{
         .on("pointerout", this.PointerOut);
         
         scene.add.text(x, y, label)
+        .setScrollFactor(0)
         .setOrigin(0.5)
         .setStyle(fontStyle)
         .setPadding({ left: 0, right: 0, top: 0, bottom: 32 });
@@ -32,7 +34,7 @@ class Button{
 }
 class Card{
     constructor(x, y, burrito, scene){
-        this.cardResult = scene.add.container(x, y)
+        this.cardResult = scene.add.container(x, y).setScrollFactor(0)
         this.cardResult.add(scene.add.image(0, 0, `card_${burrito.burrito_type}`));
         this.cardResult.add(scene.add.image(0, 0, burrito.media).setScale(.33));
 

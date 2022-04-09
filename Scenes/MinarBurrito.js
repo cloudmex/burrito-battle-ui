@@ -9,6 +9,9 @@ class MinarBurrito extends Phaser.Scene{
         //this.load.image("mintBurritoBackground", "../src/images/SlotMachine.png");
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
         this.load.image("buttonContainer2", "../src/images/button.png");
+        this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
+        this.load.spritesheet("Silo_start", "../src/images/Minar Burrito/Silo animación.webp", {frameWidth: 1920, frameHeight: 4000});
+        this.load.image("clouds", "../src/images/Minar Burrito/Loop nubes.webp");
 
         this.load.image("card_aguaBlanca", "../src/images/Cards/Carta agua_blanca.png");
 
@@ -26,14 +29,84 @@ class MinarBurrito extends Phaser.Scene{
         this.load.image("spark", "../src/particles/blue.png");
     }
     async create(){
-        this.add.image(0,0, "mintBurritoBackground").setOrigin(0)
         this.camera = this.cameras.main;
+        this.camera.scrollY = 2920; 
+        this.background = this.add.image(this.sys.game.scale.gameSize.width / 2, 0, "mintBurritoBackground").setOrigin(0.5, 0)
+        this.clouds = this.add.tileSprite(0,0, this.sys.game.scale.gameSize.width, 2100, "clouds").setOrigin(0);
+        this.silo = this.add.sprite(this.sys.game.scale.gameSize.width/2, this.sys.game.scale.gameSize.height/2 + 1500, "silo");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        this.particles = this.add.particles('spark');
         
+        this.MintBurrito();
+    }
+    update(){
+        var cursors = this.input.keyboard.createCursorKeys();
+        this.clouds.tilePositionX += 1
+        this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
+
+        /*if (cursors.up.isDown)
+            this.cameras.main.scrollY -= 24;
+        else if (cursors.down.isDown)
+            this.cameras.main.scrollY += 24;*/
+    }
+    BackToMainMenu = () =>{
+        localStorage.removeItem("lastScene");
+        this.scene.start("MainMenu");
+    }
+    GetBurrito = () => {
+        localStorage.setItem("lastScene", "MinarBurrito");
+        Near.NFTMint();
+    }
+    
+    async MintBurrito(){
+        //var minar = {attack:"5",burrito_type:"Fuego",defense:6,description:"Este es un burrito de tipo Fuego",global_win:"0",hp:"5",level:"1",media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D",name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:"6",win:"0"}
         var minar = await Near.GetState();
         
         if(minar){
+            this.anims.create({
+                key: "loop1",
+                frameRate: 24,
+                frames: this.anims.generateFrameNumbers("Silo_start", { frames: [
+                    0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, //spin
+                    0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0,
+                    5, 6,
+                    7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 
+                    11, 12,
+                    13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 
+                    18, 19, 20, 21, 22 ,23
+                ] }),
+                repeat: 0
+            });
+            this.silo.play("loop1");
+            var timeline = this.tweens.createTimeline();
+            timeline.add({
+                targets: this.cameras.main,
+                scrollY: 1400,
+                duration: 6000,
+                delay: 1000
+            });
+            timeline.add({
+                targets: this.cameras.main,
+                scrollY: 2200,
+                duration: 3000,
+                delay: 1000,
+            });
+            
+            timeline.add({
+                targets: this.cameras.main,
+                scrollY: 2920,
+                duration: 3000,
+                delay: 1000,
+                onComplete: ()=>{this.time.delayedCall(1000, () =>{ this.GetCard(minar) }, [], this)}
+            });
+
+        timeline.play();
+            
+        } else {
+            this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"});
+        }
+    }
+    GetCard(minar){
+        this.particles = this.add.particles('spark');
             this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this).GetComponents();
             this.card.setDepth(2);
             var timeline = this.tweens.createTimeline();
@@ -59,21 +132,8 @@ class MinarBurrito extends Phaser.Scene{
                 this.particles.destroy();
             })
             timeline.play();
-        } else {
-            this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"});
-        }
-    }
-    BackToMainMenu = () =>{
-        localStorage.removeItem("lastScene");
-        this.scene.start("MainMenu");
-    }
-    GetBurrito = () => {
-        localStorage.setItem("lastScene", "MinarBurrito");
-        Near.NFTMint();
     }
     SpawnParticles = (x, y) => {
-        
-
         this.particles.createEmitter({
             x: x,
             y: y,
@@ -84,6 +144,7 @@ class MinarBurrito extends Phaser.Scene{
             emitZone: { type: "random", source: new Phaser.Geom.Rectangle(-150, -150, 300, 300), quantity: 50 },
         });
         this.particles.setDepth(1)
+        this.particles.setScrollFactor(0)
     }
 }
 export { MinarBurrito };

@@ -20,11 +20,11 @@ const config = {
         autoCenter: Phaser.Scale.CENTER_BOTH,
         min:{
             width: 1600/8,
-            height: 900/8
+            height: 960/8
         }, 
         max: {
             width: 1600,
-            height: 900
+            height: 960
         },
         zoom: 1
     },
@@ -43,7 +43,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ pradera, connection, mainMenu, minarBurrito  ]
+    scene: [ connection, mainMenu,minarBurrito ,pradera ]
 };
 
 const game = new Phaser.Game(config);

@@ -60,6 +60,10 @@ async function GetBurrito(){
     var result = await contract_burritos.get_burrito({burrito_id: "0"});
     alert(JSON.stringify(result));
 }
+async function GetSTRWToken(){
+    var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: "jesus13th.testnet"})).replace(/\,/g,''));
+    console.log(currentSTRW)
+}
 async function NFTMint(){
     var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: "jesus13th.testnet"})).replace(/\,/g,''));
     var requiredSTRW = 600_000;
@@ -103,7 +107,7 @@ async function SurrenderCpu(){
     console.log(result)
 }
 async function Test() {
-    var result = await provider.txStatus("2RyKXEUPzWDg21pQ2F5j3sCHFViPekrTkBuCGtpyWmfn", GetAccountId());
+    var result = await provider.txStatus("5y5r5G6CUXuMs5SfeXzSYGM1t6YExFmXqtc2QghsGCSu", GetAccountId());
     console.log(result);
 }
 async function GetState() {
@@ -131,4 +135,4 @@ async function GetState() {
         history.pushState('Home', 'Title', '/');
     });
 }
-export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu };
+export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu, GetSTRWToken };
