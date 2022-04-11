@@ -19,6 +19,8 @@ class Pradera extends Phaser.Scene{
         this.load.image("burrito", "../src/images/Burrito Agua.png");
         this.load.image("gloves", "../src/images/fightTest.png");
         this.load.image("buttonContainer3", "../src/images/button.png");
+
+        this.load.spritesheet("burrito_gris", "../src/images/Pradera/Gris_sprites.png", {frameWidth: 213, frameHeight: 222})
     }
     create(){
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
@@ -36,81 +38,82 @@ class Pradera extends Phaser.Scene{
         this.physics.world.setBounds(0,0,this.background.displayWidth, this.background.displayHeight, true, true, true, true);
         this.camera = this.cameras.main;
 
-        this.burrito = this.physics.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "burrito");
-        this.burrito.setScale(0.05);
+        this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
+        this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
+        this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
+        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2).setOrigin(0.5).setScale(0.5);
+        this.burrito.play("walkRight");
         this.burrito.setCollideWorldBounds(true);
         this.burrito.onWorldBounds = true;
 
-        /*this.gloves = this.physics.add.group().createMultiple(
-            {
-                key: "gloves",
-                repeat: 1,
-                setScale: { x: 0.1, y: 0.1},
-                setXY:
-                {
-                    x: Phaser.Math.RND.between(0, 800),
-                    y: Phaser.Math.RND.between(0, 600)
-                }
-                //setXY: {x: this.sys.game.scale.gameSize.width * Math.random(), y: this.sys.game.scale.gameSize.height * Math.random(), stepX:  }//{x: this.sys.game.scale.gameSize.width / 2 + 800, y: this.sys.game.scale.gameSize.height / 2 }
-            }
-        )
-        this.physics.add.collider(this.gloves);
-
-        this.collide = this.physics.add.overlap(this.burrito, this.gloves, this.battle, null, this);
-        */
         this.Cursors = this.input.keyboard.createCursorKeys();
         this.velocity = {x: 0, y: 0};
         
-        //this.text = this.add.text(this.sys.game.scale.gameSize.width / 2, 100, `velocity (${this.velocity.x}, ${this.velocity.y})`, {fontSize: 30, backgroundColor: 0xffffff});
-        
-        //this.physics.moveToObject(this.burrito, this.glove, 200)
-        
         this.input.on("pointerdown", function(pointer){
-            this.target.x = Number(this.input.mousePointer.worldX.toFixed(1));
-            this.target.y = Number(this.input.mousePointer.worldY.toFixed(1));
-            this.physics.moveToObject(this.burrito, this.target, 400);
+            if(!this.burrito.anims.isPlaying){
+                this.target.x = Number(this.input.mousePointer.worldX.toFixed(1));
+                this.target.y = Number(this.input.mousePointer.worldY.toFixed(1));
+                this.physics.moveToObject(this.burrito, this.target, 150);
+            }
         }, this)
     }
     target = new Phaser.Math.Vector2();
-    /*async battle(burrito, glove){
-        if(!this.flag){
-            glove.disableBody(true, true);
-            Near.CreateBattlePlayerCpu();
-            console.log("pelea");
-            this.flag = true;
-        }
-    }*/
+   
     update(){
         this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
         this.camera.startFollow(this.burrito);
-        
-        this.input.on("pointerdown", this.mouseMovement);
 
         this.keyboardMovement();
-        //this.burrito.setVelocity(this.velocity.x * this.speed, this.velocity.y * this.speed);
+        
         this.burrito.flipY = this.angle > 90 && this.angle < 270;
         this.burrito.setAngle(this.angle);
-
-        //this.text.setText(`velocity (${this.velocity.x}, ${this.velocity.y})\nangle: ${this.clampAngle(this.angle)}\nposition: (${this.burrito.x}, ${this.burrito.y})`);
         
         var distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
         
-        if(this.burrito.body.speed > 0)
-            if(distance <4)
+        if(this.burrito.body.speed > 0){
+            this.PlayAnimation();
+            if(distance < 4)
                 this.burrito.body.reset(this.target.x, this.target.y)
+        } else{
+            this.StopAnimation();
+        }
+    }
+    
+    PlayAnimation() {
+        if(!this.burrito.anims.isPlaying) {
+            var direction = {x: this.target.x -  this.burrito.x, y: this.target.y - this.burrito.y};
+            var angle = this.clampAngle(Math.atan2(direction.y, direction.x) * (180 / Math.PI));
+
+            if(angle >= 315 && angle < 360 || (angle >= 0 && angle < 45)){
+                this.burrito.flipX = false;
+                this.burrito.play("walkRight");
+            }
+            else if(angle >= 45 && angle < 135){
+                this.burrito.play("walkUp");
+            }
+            else if(angle >= 135 && angle < 225){
+                this.burrito.flipX = true;
+                this.burrito.play("walkRight");
+            }
+            else if(angle >= 225 && angle < 315){
+                this.burrito.play("walkDown");
+            }
+        }
+    }
+    StopAnimation(){
+        if(this.burrito.anims.isPlaying) {
+            this.burrito.stop();
+        }
     }
     BackToMainMenu = () => {
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
     }
-    mouseMovement =() => {
-        this.position = { x: this.game.input.mousePointer.x, y: this.game.input.mousePointer.y };
-    }
     keyboardMovement(){
         if(this.Cursors.up.isDown || this.Cursors.down.isDown){
             if(this.Cursors.up.isDown){
                 this.velocity.y = -1;
-            } else if(this.Cursors.down.isDown){
+            } else if(this.Cursors.down.isDown){ 
                 this.velocity.y = 1;
             }
             this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180 / Math.PI);

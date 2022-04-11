@@ -20,6 +20,9 @@ class MinarBurrito extends Phaser.Scene{
         this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", "../src/images/Burritos/Burrito Fuego.png");
         this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", "../src/images/Burritos/Burrito Agua.png");
 
+        this.load.spritesheet("elements","../src/images/Minar Burrito/Elements/Elementos.png", {frameWidth: 290, frameHeight: 290});
+        this.load.spritesheet("orbs", "../src/images/Minar Burrito/Orbs/orbs.png", {frameWidth: 218, frameHeight: 218 })
+
         this.load.image("card_Agua", "../src/images/Cards/Carta agua_blanca.png");
         this.load.image("card_Volador", "../src/images/Cards/Carta aire_blanca.png");
         this.load.image("card_Fuego", "../src/images/Cards/Carta fuego_blanca.png");
@@ -43,10 +46,10 @@ class MinarBurrito extends Phaser.Scene{
         this.clouds.tilePositionX += 1
         this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
 
-        /*if (cursors.up.isDown)
+        if (cursors.up.isDown)
             this.cameras.main.scrollY -= 24;
         else if (cursors.down.isDown)
-            this.cameras.main.scrollY += 24;*/
+            this.cameras.main.scrollY += 24;
     }
     BackToMainMenu = () =>{
         localStorage.removeItem("lastScene");
@@ -56,9 +59,22 @@ class MinarBurrito extends Phaser.Scene{
         localStorage.setItem("lastScene", "MinarBurrito");
         Near.NFTMint();
     }
-    
+    GetElementFromType(type){
+        switch(type){
+            case "Agua": return 0;
+            case "Volador": return 1;
+            case "Fuego": return 2;
+            case "Planta": return 3;
+            case "Eléctrico": return 4;
+        }
+    }
+    GetStadistic(burrito){
+        var values = [parseInt(burrito.attack), parseInt(burrito.defense), parseInt(burrito.speed)];
+        var max = Math.max.apply(Math, values);
+        return {index: values.indexOf(max), value: max };
+    }
     async MintBurrito(){
-        //var minar = {attack:"5",burrito_type:"Fuego",defense:6,description:"Este es un burrito de tipo Fuego",global_win:"0",hp:"5",level:"1",media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D",name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:"6",win:"0"}
+        //var minar = {attack:5,burrito_type:"Fuego",defense:6 ,description:"Este es un burrito de tipo Fuego", global_win:"0", hp:"5", level:"1", media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:3,win:"0"}
         var minar = await Near.GetState();
         
         if(minar){
@@ -66,7 +82,7 @@ class MinarBurrito extends Phaser.Scene{
                 key: "loop1",
                 frameRate: 24,
                 frames: this.anims.generateFrameNumbers("Silo_start", { frames: [
-                    0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, //spin
+                    0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,
                     0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0,
                     5, 6,
                     7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 
@@ -82,13 +98,20 @@ class MinarBurrito extends Phaser.Scene{
                 targets: this.cameras.main,
                 scrollY: 1400,
                 duration: 6000,
-                delay: 1000
+                delay: 1000,
+                onComplete: ()=>{ this.time.delayedCall(1000, () =>{ 
+                    this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 1500, "elements", this.GetElementFromType(minar.burrito_type)).setScale(0.5);
+                 }, [], this) }
             });
             timeline.add({
                 targets: this.cameras.main,
                 scrollY: 2200,
                 duration: 3000,
                 delay: 1000,
+                onComplete: ()=>{ this.time.delayedCall(700, () =>{ 
+                    var max = this.GetStadistic(minar);
+                    this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2250, "orbs", max.index).setScale(0.5);
+                }, [], this)}
             });
             
             timeline.add({
@@ -96,7 +119,10 @@ class MinarBurrito extends Phaser.Scene{
                 scrollY: 2920,
                 duration: 3000,
                 delay: 1000,
-                onComplete: ()=>{this.time.delayedCall(1000, () =>{ this.GetCard(minar) }, [], this)}
+                onComplete: () => { 
+                    this.time.delayedCall(300, () =>{ this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2990, minar.media).setScale(0.125); }, [], this)
+                    this.time.delayedCall(2000, () =>{ this.GetCard(minar) }, [], this)
+                }
             });
 
         timeline.play();

@@ -34,16 +34,16 @@ const config = {
             gravity:{
                 y: 0
             },
-            debug: true,
-            debugShowBody: true,
-            debugShowStaticBody: true,
+            debug: false,
+            debugShowBody: false,
+            debugShowStaticBody: false,
         }
     },
     autorRound: false,
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu,minarBurrito ,pradera ]
+    scene: [connection, mainMenu, minarBurrito, pradera ]
 };
 
 const game = new Phaser.Game(config);

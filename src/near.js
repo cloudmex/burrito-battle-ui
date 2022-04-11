@@ -61,11 +61,11 @@ async function GetBurrito(){
     alert(JSON.stringify(result));
 }
 async function GetSTRWToken(){
-    var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: "jesus13th.testnet"})).replace(/\,/g,''));
+    var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
     console.log(currentSTRW)
 }
 async function NFTMint(){
-    var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: "jesus13th.testnet"})).replace(/\,/g,''));
+    var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
     var requiredSTRW = 600_000;
 
     if(currentSTRW >= requiredSTRW){
@@ -83,7 +83,12 @@ async function NFTMint(){
             utils.format.parseNearAmount("5")
             );
     } else{
-        alert("no tienes suficientes $STRW");
+        Swal.fire({
+            icon: 'info',
+            title: 'Atención',
+            text: 'No cuentas con suficientes STRW Tokens!'
+          })
+        //alert("no tienes suficientes $STRW");
     }
 }
 async function CreateBattlePlayerCpu () {
@@ -129,6 +134,10 @@ async function GetState() {
                 
                 resolve(burrito);
             } else if(URLactual.indexOf("rejected") !== -1){
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Operación cancelada',
+                  })
                 resolve(null);
             }
         }
