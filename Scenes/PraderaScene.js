@@ -3,10 +3,11 @@ import * as Helpers from "../src/Helpers/Helpers.js";
 
 class Pradera extends Phaser.Scene{
     gloves;
-    speed = 260;
+    speed = 200;
     angle = 0;
     flag = false;
-
+    isKeyboard = true;
+    
     constructor(){
         super("Pradera");
     }
@@ -41,7 +42,7 @@ class Pradera extends Phaser.Scene{
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
-        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2).setOrigin(0.5).setScale(0.5);
+        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2).setOrigin(0.5).setScale(0.35);
         this.burrito.play("walkRight");
         this.burrito.setCollideWorldBounds(true);
         this.burrito.onWorldBounds = true;
@@ -51,6 +52,7 @@ class Pradera extends Phaser.Scene{
         
         this.input.on("pointerdown", function(pointer){
             if(!this.burrito.anims.isPlaying){
+                this.isKeyboard = false;
                 this.target.x = Number(this.input.mousePointer.worldX.toFixed(1));
                 this.target.y = Number(this.input.mousePointer.worldY.toFixed(1));
                 this.physics.moveToObject(this.burrito, this.target, 150);
@@ -65,18 +67,19 @@ class Pradera extends Phaser.Scene{
 
         this.keyboardMovement();
         
-        this.burrito.flipY = this.angle > 90 && this.angle < 270;
-        this.burrito.setAngle(this.angle);
+        //this.burrito.flipY = this.angle > 90 && this.angle < 270;
+        //this.burrito.setAngle(this.angle);
         
         var distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
         
         if(this.burrito.body.speed > 0){
             this.PlayAnimation();
-            if(distance < 4)
+            if(distance < 4 && !this.isKeyboard)
                 this.burrito.body.reset(this.target.x, this.target.y)
         } else{
             this.StopAnimation();
         }
+        console.log(this.isKeyboard);
     }
     
     PlayAnimation() {
@@ -109,12 +112,18 @@ class Pradera extends Phaser.Scene{
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
     }
+    MouseMovement(){
+
+    }
     keyboardMovement(){
         if(this.Cursors.up.isDown || this.Cursors.down.isDown){
+            this.isKeyboard = true;
             if(this.Cursors.up.isDown){
                 this.velocity.y = -1;
+                !this.burrito.anims.isPlaying && this.burrito.play("walkDown");
             } else if(this.Cursors.down.isDown){ 
                 this.velocity.y = 1;
+                !this.burrito.anims.isPlaying && this.burrito.play("walkUp");
             }
             this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180 / Math.PI);
         } else {
@@ -122,14 +131,22 @@ class Pradera extends Phaser.Scene{
         }
 
         if(this.Cursors.right.isDown || this.Cursors.left.isDown){
+            this.isKeyboard = true;
             if(this.Cursors.right.isDown){
                 this.velocity.x = 1;
+                this.burrito.flipX = false;
+                !this.burrito.anims.isPlaying && this.burrito.play("walkRight");
             } else if(this.Cursors.left.isDown){
                 this.velocity.x = -1;
+                this.burrito.flipX = true;
+                !this.burrito.anims.isPlaying && this.burrito.play("walkRight");
             }
             this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180 / Math.PI);
         } else {
             this.velocity.x = 0;
+        }
+        if(this.isKeyboard){
+            this.burrito.setVelocity(this.velocity.x * this.speed, this.velocity.y * this.speed);
         }
     }
     clampAngle(angle){

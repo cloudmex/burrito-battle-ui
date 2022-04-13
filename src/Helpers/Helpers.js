@@ -35,22 +35,31 @@ class Button{
 class Card{
     constructor(x, y, burrito, scene){
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
-        this.cardResult.add(scene.add.image(0, 0, `card_${burrito.burrito_type}`));
-        this.cardResult.add(scene.add.image(0, 0, burrito.media).setScale(.33));
+        this.cardResult.add(scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type)));
+        this.cardResult.add(scene.add.image(0, 0, burrito.media).setScale(.4));
 
-        this.cardResult.add(scene.add.text(-280, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
+        this.cardResult.add(scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
         this.cardResult.add(scene.add.text(-180, - 380, burrito.name, { fontSize: 70, fontFamily: "BangersRegular" }));//name
 
-        this.cardResult.add(scene.add.text(280, - 210, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" }));//wins
-        this.cardResult.add(scene.add.text(280, - 80, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular" }));//health
+        this.cardResult.add(scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" }));//wins
+        this.cardResult.add(scene.add.text(310, - 40, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular" }));//health
 
-        this.cardResult.add(scene.add.text(-185, 315, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
-        this.cardResult.add(scene.add.text(0, 270, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" }));//defense
-        this.cardResult.add(scene.add.text(185, 315, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" }));//speed
+        this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
+        this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" }));//defense
+        this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" }));//speed
 
     }
-    GetComponents(){
-        return this.cardResult
+    GetIndexByType(type){
+            switch(type){
+                case "Agua": return 0;
+                case "Volador": return 1;
+                case "Fuego": return 2;
+                case "Planta": return 3;
+                case "Eléctrico": return 4;
+            }
+    }
+    GetComponents () { 
+        return this.cardResult;
     }
 }
 

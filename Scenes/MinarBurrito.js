@@ -6,14 +6,11 @@ class MinarBurrito extends Phaser.Scene{
         super("MinarBurrito");
     }
     preload(){
-        //this.load.image("mintBurritoBackground", "../src/images/SlotMachine.png");
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
         this.load.image("buttonContainer2", "../src/images/button.png");
         this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
         this.load.spritesheet("Silo_start", "../src/images/Minar Burrito/Silo animación.webp", {frameWidth: 1920, frameHeight: 4000});
         this.load.image("clouds", "../src/images/Minar Burrito/Loop nubes.webp");
-
-        this.load.image("card_aguaBlanca", "../src/images/Cards/Carta agua_blanca.png");
 
         this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");
         this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", "../src/images/Burritos/Burrito Planta.png");
@@ -23,11 +20,7 @@ class MinarBurrito extends Phaser.Scene{
         this.load.spritesheet("elements","../src/images/Minar Burrito/Elements/Elementos.png", {frameWidth: 290, frameHeight: 290});
         this.load.spritesheet("orbs", "../src/images/Minar Burrito/Orbs/orbs.png", {frameWidth: 218, frameHeight: 218 })
 
-        this.load.image("card_Agua", "../src/images/Cards/Carta agua_blanca.png");
-        this.load.image("card_Volador", "../src/images/Cards/Carta aire_blanca.png");
-        this.load.image("card_Fuego", "../src/images/Cards/Carta fuego_blanca.png");
-        this.load.image("card_Planta", "../src/images/Cards/Carta planta_blanca.png");
-        this.load.image("card_Eléctrico", "../src/images/Cards/Carta relampago_blanca.png");
+        this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
         this.load.image("spark", "../src/particles/blue.png");
     }
@@ -126,7 +119,6 @@ class MinarBurrito extends Phaser.Scene{
             });
 
         timeline.play();
-            
         } else {
             this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }
