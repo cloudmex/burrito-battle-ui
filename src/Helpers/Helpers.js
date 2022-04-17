@@ -9,11 +9,12 @@ class Button{
         .on('pointerover', this.PointerOver)
         .on("pointerout", this.PointerOut);
         
-        scene.add.text(x, y, label)
-        .setScrollFactor(0)
-        .setOrigin(0.5)
-        .setStyle(fontStyle)
-        .setPadding({ left: 0, right: 0, top: 0, bottom: 32 });
+        if(label !== null){scene.add.text(x, y, label)
+            .setScrollFactor(0)
+            .setOrigin(0.5)
+            .setStyle(fontStyle)
+            .setPadding({ left: 0, right: 0, top: 0, bottom: 32 });
+        }
     }
     PointerDown(downCallback){
         if(downCallback !== null){
@@ -33,9 +34,13 @@ class Button{
     }
 }
 class Card{
+    Card;
     constructor(x, y, burrito, scene){
+        this.Card = {x: x, y: y, burrito: burrito, scene: scene };
+
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
-        this.cardResult.add(scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type)));
+        this.card = scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type));
+        this.cardResult.add(this.card);
         this.cardResult.add(scene.add.image(0, 0, burrito.media).setScale(.4));
 
         this.cardResult.add(scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
@@ -47,7 +52,13 @@ class Card{
         this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
         this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" }));//defense
         this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" }));//speed
-
+    }
+    Update(burrito){
+        
+    }
+    on(event){
+        this.card.setInteractive().on("pointerdown", event);
+        return this;
     }
     GetIndexByType(type){
             switch(type){
@@ -56,7 +67,12 @@ class Card{
                 case "Fuego": return 2;
                 case "Planta": return 3;
                 case "Eléctrico": return 4;
+                default: return 0;
             }
+    }
+    setScale(value){
+        this.cardResult.setScale(value);
+        return this;
     }
     GetComponents () { 
         return this.cardResult;

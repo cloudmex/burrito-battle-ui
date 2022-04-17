@@ -4,11 +4,13 @@ import * as MainMenu from "./Scenes/MainMenuScene.js";
 import * as MinarBurrito from "./Scenes/MinarBurrito.js";
 import * as Pradera from "./Scenes/PraderaScene.js";
 //import * as Battle from "./Scenes/BattleScene";
+import * as Establo from "./Scenes/Establo.js";
 
 const connection = Connection.Connection;
 const mainMenu = MainMenu.MainMenu;
 const minarBurrito = MinarBurrito.MinarBurrito;
 const pradera = Pradera.Pradera;
+const establo = Establo.Establo;
 //const battle = Battle.Battle;
 
 const config = {
@@ -43,7 +45,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ pradera, connection, mainMenu, minarBurrito]
+    scene: [ establo, connection, mainMenu, minarBurrito, pradera,  ]
 };
 
 const game = new Phaser.Game(config);

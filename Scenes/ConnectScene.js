@@ -33,6 +33,7 @@ class Connection extends Phaser.Scene{
             { fontSize: 56, fontFamily: "BangersRegular" }
             );
     }
+    
     Login(){
         Near.Login();
     }

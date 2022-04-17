@@ -22,7 +22,7 @@ const provider = new providers.JsonRpcProvider(
 );
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
-    viewMethods: [ 'get_burrito' ],
+    viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens" ],
     changeMethods: [ 'nft_mint', "create_battle_player_cpu", "get_battle_active_cpu", "surrender_cpu" ],
     sender: wallet.account()
   });
@@ -87,10 +87,30 @@ async function NFTMint(){
             icon: 'info',
             title: 'Atención',
             text: 'No cuentas con suficientes STRW Tokens!'
-          })
-        //alert("no tienes suficientes $STRW");
+          });
     }
 }
+async function NFTTokens() {
+    var result = await contract_burritos.nft_tokens({from_index: 0, limit: 50});
+}
+async function NFTTokensForOwner(from, limit){
+    var tokens = await contract_burritos.nft_tokens_for_owner (
+        {
+            account_id: GetAccountId(),
+            from_index: from.toString(),
+            limit: parseInt(limit)
+        }
+    )
+    var result = [];
+    tokens.forEach(token => {
+        var json = JSON.parse(token.metadata.extra.replace(/'/g, '"'));
+        json["media"] = token.metadata.media;
+        json["name"] = token.metadata.title;
+        result.push(json);
+    });
+    
+    return result;
+} 
 async function CreateBattlePlayerCpu () {
     console.log("metodo");
     await contract_burritos.create_battle_player_cpu(
@@ -144,4 +164,4 @@ async function GetState() {
         history.pushState('Home', 'Title', '/');
     });
 }
-export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu, GetSTRWToken };
+export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, NFTTokensForOwner, NFTTokens, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu, GetSTRWToken };
