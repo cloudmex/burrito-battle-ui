@@ -26,49 +26,37 @@ class Establo extends Phaser.Scene{
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 845, this.sys.game.scale.gameSize.height / 2 + 100, 1, "left_arrow", null, this, this.Previous, null, {fontSize: 30, fontFamily: "BangersRegular"});
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 55,  this.sys.game.scale.gameSize.height / 2 + 100, 1, "right_arrow", null, this, this.Next, null, {fontSize: 30, fontFamily: "BangersRegular"});
 
-        var tokens = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6 + 6 * this.counter)
         this.cards = [];
         this.bigCard = null;
 
-        tokens.forEach((burrito, index) => {
-            var card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this).setScale(0.3).on(()=>{this.ShowCard(burrito)});
-            this.cards.push(card);
-        });
+        this.SpawnCard();
     }
     ShowCard = (burrito) => {
-        if(this.bigCard !== null){
+        if(this.bigCard !== null)
             this.bigCard.GetComponents().destroy();
-        }
+        
         this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2, burrito, this).setScale(0.8);
     }
-    BackToMainMenu = () => {
-        localStorage.removeItem("lastScene");
-        this.scene.start("MainMenu");
-    }
+    BackToMainMenu = () => this.scene.start("MainMenu");
+    
     Next = async () => {
         this.counter++;
-
-        this.cards.forEach(card => {
-            card.GetComponents().destroy();
-        });
-
-        var burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
-        burritos.forEach((burrito, index) => {
-            var card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this).setScale(0.3).on(()=>{this.ShowCard(burrito)});
-            this.cards.push(card);
-        });
+        this.cards.forEach(card => card.GetComponents().destroy());
+        this.SpawnCard();
     }
     Previous = async () =>{
-        this.counter--;
-
-        this.cards.forEach(card => {
-            card.GetComponents().destroy();
-        });
-
+        if(this.counter >= 1){
+            this.counter--;
+            this.cards.forEach(card => 
+                card.GetComponents().destroy()
+            );    
+            this.SpawnCard();
+        }
+    }
+    async SpawnCard(){
         var burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
-            var card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this).setScale(0.3).on(()=>{this.ShowCard(burrito)});
-            this.cards.push(card);
+            this.cards.push(new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{this.ShowCard(burrito)}));
         });
     }
 }

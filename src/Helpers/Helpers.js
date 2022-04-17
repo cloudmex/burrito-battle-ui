@@ -35,7 +35,7 @@ class Button{
 }
 class Card{
     Card;
-    constructor(x, y, burrito, scene){
+    constructor(x, y, burrito, scene, interactuable = false){
         this.Card = {x: x, y: y, burrito: burrito, scene: scene };
 
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
@@ -52,11 +52,20 @@ class Card{
         this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
         this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" }));//defense
         this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" }));//speed
+
+        if(interactuable){
+            this.card
+            .on('pointerover', this.PointerOver)
+            .on("pointerout", this.PointerOut);
+        }
     }
-    Update(burrito){
-        
-    }
-    on(event){
+    PointerOver = () => {
+         this.card.setTint (0xaaaaaa);
+     }
+     PointerOut = () => {
+         this.card.setTint (0xffffff);
+     }
+    On(event){
         this.card.setInteractive().on("pointerdown", event);
         return this;
     }
