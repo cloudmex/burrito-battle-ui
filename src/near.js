@@ -22,7 +22,7 @@ const provider = new providers.JsonRpcProvider(
 );
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
-    viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens" ],
+    viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner" ],
     changeMethods: [ 'nft_mint', "create_battle_player_cpu", "get_battle_active_cpu", "surrender_cpu" ],
     sender: wallet.account()
   });
@@ -92,6 +92,10 @@ async function NFTMint(){
 }
 async function NFTTokens() {
     var result = await contract_burritos.nft_tokens({from_index: 0, limit: 50});
+}
+async function NFTSupplyForOwner() {
+    var result = await contract_burritos.nft_supply_for_owner({account_id: GetAccountId()})
+    return result;
 }
 async function NFTTokensForOwner(from, limit){
     var tokens = await contract_burritos.nft_tokens_for_owner (
@@ -164,4 +168,4 @@ async function GetState() {
         history.pushState('Home', 'Title', '/');
     });
 }
-export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, NFTTokensForOwner, NFTTokens, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu, GetSTRWToken };
+export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, NFTTokensForOwner, NFTTokens, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu, GetSTRWToken, NFTSupplyForOwner };

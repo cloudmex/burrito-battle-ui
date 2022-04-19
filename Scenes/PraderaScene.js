@@ -22,14 +22,17 @@ class Pradera extends Phaser.Scene{
         this.load.image("buttonContainer3", "../src/images/button.png");
 
         this.load.spritesheet("burrito_gris", "../src/images/Pradera/Gris_sprites.png", {frameWidth: 213, frameHeight: 222})
+        this.load.json('shape', '../src/images/Pradera/Island.json');
     }
     create(){
+        var shape = this.cache.json.get('shape');
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
 
         this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
 
         this.island = this.add.image(0,0, "island").setOrigin(0).setScale(1);
+        //this.arcade.add.sprite(0,0, "", "", {shape: shape.Island})
 
         this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
@@ -67,9 +70,6 @@ class Pradera extends Phaser.Scene{
 
         this.keyboardMovement();
         
-        //this.burrito.flipY = this.angle > 90 && this.angle < 270;
-        //this.burrito.setAngle(this.angle);
-        
         var distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
         
         if(this.burrito.body.speed > 0){
@@ -79,7 +79,6 @@ class Pradera extends Phaser.Scene{
         } else{
             this.StopAnimation();
         }
-        console.log(this.isKeyboard);
     }
     
     PlayAnimation() {

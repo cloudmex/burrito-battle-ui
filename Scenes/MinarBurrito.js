@@ -23,6 +23,8 @@ class MinarBurrito extends Phaser.Scene{
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
         this.load.image("spark", "../src/particles/blue.png");
+
+        this.load.json("shape", "../src/images/Pradera/Island.json");
     }
     async create(){
         this.camera = this.cameras.main;
@@ -32,6 +34,8 @@ class MinarBurrito extends Phaser.Scene{
         this.silo = this.add.sprite(this.sys.game.scale.gameSize.width/2, this.sys.game.scale.gameSize.height/2 + 1500, "silo");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         
+        var shape = this.cache.json.get("shape");
+
         this.MintBurrito();
     }
     update(){
@@ -44,9 +48,25 @@ class MinarBurrito extends Phaser.Scene{
         else if (cursors.down.isDown)
             this.cameras.main.scrollY += 24;
     }
+    GoToEstablo = () =>{
+        this.scene.start("Establo");
+    }
     BackToMainMenu = () =>{
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
+    }
+    ConfirmMint = () => {
+        Swal.fire({
+            icon: 'info',
+            title: 'Información de la transaccion',
+            html: 'El minar un burrito te sirve para poder luchar contra otros burritos y explorar el mapa<br><b>El costo del burrito es de 5 Nears y 600000 $STRW</b>',
+            showCancelButton: true,
+            confirmButtonText: 'Minar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+                this.GetBurrito();
+            }
+          })
     }
     GetBurrito = () => {
         localStorage.setItem("lastScene", "MinarBurrito");
@@ -120,7 +140,7 @@ class MinarBurrito extends Phaser.Scene{
 
         timeline.play();
         } else {
-            this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"});
+            this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.ConfirmMint, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }
     }
     GetCard(minar){
@@ -131,9 +151,10 @@ class MinarBurrito extends Phaser.Scene{
             timeline.add({
                 targets: this.card,
                 y: this.sys.game.scale.gameSize.height / 2,
-                duration: 1000,
-                rotation: (360 * 10) * (Math.PI/180),
-                onComplete: ()=>{ 
+                duration: 1500,
+                rotation: 360 * 10 * Math.PI / 180, 
+                onComplete: ()=>{
+                    new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer2", "Ir a establo", this, this.GoToEstablo, null, {fontSize: 30, fontFamily: "BangersRegular"});
                     this.SpawnParticles(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2);
                     timeline.pause()
                  }
@@ -141,8 +162,8 @@ class MinarBurrito extends Phaser.Scene{
             timeline.add({
                 targets: this.card,
                 y: -1000,
+                duration: 1500,
                 rotation: (-360 * 10) * (Math.PI/180),
-                duration: 1000,
                 onComplete: () => {this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"})}// this.ShowMintButton()
             });
             this.input.on("pointerdown", () =>{
