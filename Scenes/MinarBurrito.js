@@ -55,11 +55,13 @@ class MinarBurrito extends Phaser.Scene{
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
     }
-    ConfirmMint = () => {
+    ConfirmMint = async () => {
+        var currentSTRW = await Near.GetSTRWToken();
+        //console.log(typeof(currentSTRW))
         Swal.fire({
             icon: 'info',
             title: 'Información de la transaccion',
-            html: 'El minar un burrito te sirve para poder luchar contra otros burritos y explorar el mapa<br><b>El costo del burrito es de 5 Nears y 600000 $STRW</b>',
+            html: `El minar un burrito te permite luchar contra otros burritos y explorar el mapa<br><b>El costo del burrito es de 5 Nears y 600000 $STRW</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
             showCancelButton: true,
             confirmButtonText: 'Minar',
           }).then((result) => {
@@ -150,11 +152,13 @@ class MinarBurrito extends Phaser.Scene{
             var timeline = this.tweens.createTimeline();
             timeline.add({
                 targets: this.card,
-                y: this.sys.game.scale.gameSize.height / 2,
+                y: this.sys.game.scale.gameSize.height / 2 - 100,
                 duration: 1500,
                 rotation: 360 * 10 * Math.PI / 180, 
                 onComplete: ()=>{
-                    new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer2", "Ir a establo", this, this.GoToEstablo, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                    this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"})
+                    this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Ir al Establo", this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
+                    //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer2", "Ir a establo", this, this.GoToEstablo, null, {fontSize: 30, fontFamily: "BangersRegular"});
                     this.SpawnParticles(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2);
                     timeline.pause()
                  }
@@ -163,8 +167,11 @@ class MinarBurrito extends Phaser.Scene{
                 targets: this.card,
                 y: -1000,
                 duration: 1500,
-                rotation: (-360 * 10) * (Math.PI/180),
-                onComplete: () => {this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"})}// this.ShowMintButton()
+                //rotation: (-360 * 10) * (Math.PI/180),
+                onComplete: () => {
+                    //this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 200, this.sys.game.scale.gameSize.height - 100, 0.75, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"})
+                    //this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 200, this.sys.game.scale.gameSize.height - 100, 0.75, "buttonContainer2", "Ir al Establo", this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
+                }
             });
             this.input.on("pointerdown", () =>{
                 timeline.resume();

@@ -1,6 +1,6 @@
 import * as nearAPI from "../lib/near-api-js.js"
-const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
 
+const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
 const config = {
       networkId: 'testnet',
       keyStore: new keyStores.BrowserLocalStorageKeyStore(),
@@ -12,7 +12,6 @@ const config = {
 }
 const near = await connect(config);
 const wallet = new WalletConnection(near, 'ncd-ii');
-
 const contract_id_burritos = "dev-1648843231450-76383111338516";
 const contract_id_strw_tokens = "dev-1648843322449-70578827831792";
 const contract_id_items = "dev-1647986467816-61735125036881";
@@ -23,49 +22,46 @@ const provider = new providers.JsonRpcProvider(
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner" ],
-    changeMethods: [ 'nft_mint', "create_battle_player_cpu", "get_battle_active_cpu", "surrender_cpu" ],
+    changeMethods: [ 'nft_mint', "create_battle_player_cpu",  "get_battle_active_cpu", "surrender_cpu" ],
     sender: wallet.account()
-  });
-  const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
+});
+const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
     viewMethods: [ 'ft_balance_of' ],
     changeMethods: [  ],
     sender: wallet.account()
-  });
-  const contract_items = new Contract(wallet.account(), contract_id_items, {
+});
+const contract_items = new Contract(wallet.account(), contract_id_items, {
     viewMethods: [  ],
     changeMethods: [  ],
     sender: wallet.account()
-  });
+});
 
-function Login() {
+export function Login() {
     wallet.requestSignIn(
         contract_id_burritos,
         "Burrito Battle",
         window.location.origin,
     );
 }
-function LogOut() {
+export function LogOut() {
     wallet.signOut();
 }
-function IsConnected() {
+export function IsConnected() {
     return wallet.isSignedIn();
 }
-function GetAccountId(){
+export function GetAccountId(){
     return wallet.getAccountId()
 }
-function GetAccount(){
-    return wallet.account();
-}
-async function GetBurrito(){
+/*export async function GetBurrito(){
     var result = await contract_burritos.get_burrito({burrito_id: "0"});
     alert(JSON.stringify(result));
-}
-async function GetSTRWToken(){
+}*/
+export async function GetSTRWToken(){
     var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
-    console.log(currentSTRW)
+    return currentSTRW
 }
-async function NFTMint(){
-    var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
+export async function NFTMint(){
+    var currentSTRW = await GetSTRWToken();
     var requiredSTRW = 600_000;
 
     if(currentSTRW >= requiredSTRW){
@@ -90,14 +86,15 @@ async function NFTMint(){
           });
     }
 }
-async function NFTTokens() {
-    var result = await contract_burritos.nft_tokens({from_index: 0, limit: 50});
+export async function NFTTokens(burrito_id) {
+    var result = await contract_burritos.nft_tokens();
+    return result[burrito_id];
 }
-async function NFTSupplyForOwner() {
+export async function NFTSupplyForOwner() {
     var result = await contract_burritos.nft_supply_for_owner({account_id: GetAccountId()})
     return result;
 }
-async function NFTTokensForOwner(from, limit){
+export async function NFTTokensForOwner(from, limit){
     var tokens = await contract_burritos.nft_tokens_for_owner (
         {
             account_id: GetAccountId(),
@@ -107,39 +104,38 @@ async function NFTTokensForOwner(from, limit){
     )
     var result = [];
     tokens.forEach(token => {
+        //console.log(token);
         var json = JSON.parse(token.metadata.extra.replace(/'/g, '"'));
         json["media"] = token.metadata.media;
         json["name"] = token.metadata.title;
+        json["token_id"] = token.token_id;
         result.push(json);
     });
     
     return result;
 } 
-async function CreateBattlePlayerCpu () {
-    console.log("metodo");
-    await contract_burritos.create_battle_player_cpu(
+export async function CreateBattlePlayerCpu () {
+    var result = await contract_burritos.create_battle_player_cpu(
         {
-            burrito_id:"3",
+            burrito_id:localStorage.getItem("burrito_selected"),//cambiar este valor por el local storage
             accesorio1_id:"0", 
             accesorio2_id:"0",
             accesorio3_id: "0"
         },
         300000000000000
     )
+    return result;
 }
-async function GetBattleActiveCpu () {
+export async function GetBattleActiveCpu () {
     var result = await contract_burritos.get_battle_active_cpu({ });
-    console.log(result);
+    return result;
 }
-async function SurrenderCpu(){
+export async function SurrenderCpu () {
     var result = await contract_burritos.surrender_cpu({});
-    console.log(result)
+    return result;
 }
-async function Test() {
-    var result = await provider.txStatus("5y5r5G6CUXuMs5SfeXzSYGM1t6YExFmXqtc2QghsGCSu", GetAccountId());
-    console.log(result);
-}
-async function GetState() {
+//near call $ID battle_player_cpu '{"type_move":"'1'"}' --accountId yairnava.testnet --gas=300000000000000 / Combatir Ronda Player vs CPU [type_move => (1 = Ataque Debil, 2 = Ataque Fuerte, 3 = No Defenderse, 4 = Defenderse)]
+export async function GetState() {
     return new Promise(async resolve => {
         var URLactual = window.location.toString();
         var burrito = null;
@@ -168,4 +164,3 @@ async function GetState() {
         history.pushState('Home', 'Title', '/');
     });
 }
-export { Test, Login, LogOut, IsConnected, GetAccountId, NFTMint, NFTTokensForOwner, NFTTokens, GetBurrito, GetState, CreateBattlePlayerCpu, GetBattleActiveCpu, SurrenderCpu, GetSTRWToken, NFTSupplyForOwner };

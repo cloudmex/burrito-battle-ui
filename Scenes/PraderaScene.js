@@ -7,6 +7,7 @@ class Pradera extends Phaser.Scene{
     angle = 0;
     flag = false;
     isKeyboard = true;
+    target = new Phaser.Math.Vector2();
     
     constructor(){
         super("Pradera");
@@ -32,7 +33,8 @@ class Pradera extends Phaser.Scene{
         this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
 
         this.island = this.add.image(0,0, "island").setOrigin(0).setScale(1);
-        //this.arcade.add.sprite(0,0, "", "", {shape: shape.Island})
+        
+        //this.matter.add.fromPhysicsEditor(0, 0, shape.Island, { isStatic: true})
 
         this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
@@ -45,7 +47,8 @@ class Pradera extends Phaser.Scene{
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
-        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2).setOrigin(0.5).setScale(0.35);
+        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2).setOrigin(1).setScale(0.35);
+        this.burrito.body.setSize(this.burrito.width * (1/0.35) * 2, this.burrito.height * (1/0.35) * 2)
         this.burrito.play("walkRight");
         this.burrito.setCollideWorldBounds(true);
         this.burrito.onWorldBounds = true;
@@ -61,9 +64,37 @@ class Pradera extends Phaser.Scene{
                 this.physics.moveToObject(this.burrito, this.target, 150);
             }
         }, this)
+
+        this.zoneBattles = this.physics.add.group();
+
+        for (var i = 0; i < 20; i++) {
+            var x = Phaser.Math.RND.between(0, this.game.config.width);
+            var y = Phaser.Math.RND.between(0, this.game.config.height);
+    
+            this.zoneBattles.create(x, y);
+        }
+
+        this.physics.add.overlap(this.burrito, this.zoneBattles, this.Battle, null, this);
     }
-    target = new Phaser.Math.Vector2();
-   
+    Battle(burrito, triggerZone){
+        triggerZone.disableBody(true, true);
+        triggerZone.destroy();
+        Swal.fire({
+            icon: 'info',
+            title: 'Burrito salvaje ha aparecido',
+            html: `Un burrito salvaje ha aparecido, ¿deseas enfrentarte a el?<br>Se desconoce el nivel y las estadisticas del burrito, una vez entrando en combate si huyes, se te restara una vida`,
+            showCancelButton: true,
+            confirmButtonText: 'Pelear',
+            cancelButtonText: "Huir"
+          }).then((result) => {
+            if (result.isConfirmed) {
+                this.GoToBattle();
+            }
+          })
+    }
+    GoToBattle(){
+        this.scene.start("Battle");
+    }
     update(){
         this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
         this.camera.startFollow(this.burrito);

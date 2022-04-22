@@ -1,6 +1,9 @@
 class Button{
+    text;
     constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle) {
-        this.button = scene.add.sprite(x, y, img)
+        this.buttonResult = scene.add.container(x, y).setScrollFactor(0);
+
+        this.button = scene.add.sprite(0,0, img)
         .setScrollFactor(0)
         .setScale(scale)
         .setInteractive()
@@ -9,12 +12,19 @@ class Button{
         .on('pointerover', this.PointerOver)
         .on("pointerout", this.PointerOut);
         
-        if(label !== null){scene.add.text(x, y, label)
+        this.buttonResult.add(this.button)
+
+        if(label !== null){
+            this.text = scene.add.text(0, 0, label)
             .setScrollFactor(0)
             .setOrigin(0.5)
             .setStyle(fontStyle)
             .setPadding({ left: 0, right: 0, top: 0, bottom: 32 });
+            this.buttonResult.add(this.text);
         }
+    }
+    GetComponents(){
+        return this.buttonResult;
     }
     PointerDown(downCallback){
         if(downCallback !== null){
@@ -32,6 +42,7 @@ class Button{
     PointerOut = () => {
         this.button.setTint (0xffffff);
     }
+    
 }
 class Card{
     Card;
