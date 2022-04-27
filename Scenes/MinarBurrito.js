@@ -23,8 +23,6 @@ class MinarBurrito extends Phaser.Scene{
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
         this.load.image("spark", "../src/particles/blue.png");
-
-        this.load.json("shape", "../src/images/Pradera/Island.json");
     }
     async create(){
         this.camera = this.cameras.main;
@@ -34,8 +32,6 @@ class MinarBurrito extends Phaser.Scene{
         this.silo = this.add.sprite(this.sys.game.scale.gameSize.width/2, this.sys.game.scale.gameSize.height/2 + 1500, "silo");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         
-        var shape = this.cache.json.get("shape");
-
         this.MintBurrito();
     }
     update(){
@@ -49,6 +45,7 @@ class MinarBurrito extends Phaser.Scene{
             this.cameras.main.scrollY += 24;
     }
     GoToEstablo = () =>{
+        localStorage.removeItem("lastScene");
         this.scene.start("Establo");
     }
     BackToMainMenu = () =>{

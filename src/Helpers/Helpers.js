@@ -1,4 +1,4 @@
-class Button{
+export class Button{
     text;
     constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle) {
         this.buttonResult = scene.add.container(x, y).setScrollFactor(0);
@@ -44,7 +44,7 @@ class Button{
     }
     
 }
-class Card{
+export class Card{
     Card;
     constructor(x, y, burrito, scene, interactuable = false){
         this.Card = {x: x, y: y, burrito: burrito, scene: scene };
@@ -98,5 +98,115 @@ class Card{
         return this.cardResult;
     }
 }
+export class Slider{
+    constructor(x, y, scene){
+        this.sliderResult = scene.add.container(x, y).setScrollFactor(0);
 
-export{ Button, Card };
+        this.sliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
+        this.sliderResult.add(this.fill = scene.add.sprite(0, 0, "slider_fill").setOrigin(0.5));
+    }
+    SetValue(value){
+        this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
+        return this;
+    }
+    SetFlipX(value){
+        this.sliderResult.setScale(value ? -1 : 1, 1);
+        return this;
+    }
+}
+export class Actions{
+    scene;
+    constructor(x, y, scene, battle, actions){
+        this.scene = scene;
+        this.actions = actions;
+        this.battle = battle;
+        this.actionsResult = scene.add.container(x, y);
+        this.actionsResult.add(this.action1 = scene.add.sprite(0, 0, "actions", this.IsMyTurn() ? 2 : 0).setAlpha(0));//weak
+
+        this.actionContainer = scene.add.container(0, 0);
+        this.actionsResult.add(this.actionContainer);
+        this.actionContainer.add(this.action2 = scene.add.sprite(0, 0, "actions", this.IsMyTurn() ? 3 : 1).setAlpha(0));//strong
+        this.actionContainer.add(this.text = scene.add.text(10, 0, this.IsMyTurn() ? battle.strong_attack_player : battle.shields_player, {fontSize: 60, fontFamily: "BangersRegular"}).setAlpha(0));
+
+        this.action1.setInteractive().on("pointerdown", ()=> { 
+            this.Action1();
+            this.actions.Action1(); 
+        });
+        this.action2.setInteractive().on("pointerdown", ()=> {
+            if((this.IsMyTurn() ? battle.strong_attack_player : battle.shields_player) > 0){ 
+                this.Action2();
+                this.actions.Action2();
+            } else {Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'No puedes realizar esta accion',
+                showConfirmButton: false,
+                timer: 1000
+              })
+            }
+        });
+        this.ShowActions();
+    }
+    ShowActions(){
+        var distance = 250;
+        
+        this.scene.tweens.timeline({
+            ease: 'Power2',
+            duration: 1500,
+            delay:1000,
+            tweens:[
+            {
+                alpha: 1, 
+                targets: this.action1,
+                x: 0,
+                y: -distance,
+                offset: 0
+            },
+            { 
+                targets: this.actionContainer,
+                x: distance * 0.9396 /* cos(angle = 20) */,
+                y: -distance * 0.342 /* sin(angle = 20) */,
+                offset:0
+            },
+            {
+                targets: [this.text,this.action2],
+                alpha: 1, 
+                offset:0
+            },
+        ]});
+    }
+    IsMyTurn() {
+        return this.battle.turn == "Player";
+    }
+    SetFlipX(value){
+        this.actionsResult.setScale(value ? -1 : 1, 1);
+        this.action1.setScale(value ? -1 : 1, 1);
+        this.action2.setScale(value ? -1 : 1, 1);
+        this.text.setScale(value ? -1 : 1, 1);
+
+        return this;
+    }
+    Action1 = () => {
+        console.log("action 1");
+        this.SendAction();
+    }
+    Action2 = () => {
+        console.log("action 2");
+        this.SendAction();
+    }
+    SendAction(){
+        this.scene.tweens.timeline({
+            ease: 'Power2',
+            duration: 1500,
+            tweens:[
+            {
+                alpha: 0, 
+                targets: [this.action1, this.actionContainer, this.text],
+                x: 0,
+                y: 0,
+                offset:0,
+                onComplete: ()=>{ this.actionsResult.destroy()}
+            }
+        ]}); 
+    }
+}

@@ -22,7 +22,7 @@ const provider = new providers.JsonRpcProvider(
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner" ],
-    changeMethods: [ 'nft_mint', "create_battle_player_cpu",  "get_battle_active_cpu", "surrender_cpu" ],
+    changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint', "create_battle_player_cpu", "battle_player_cpu", "get_battle_active_cpu", "surrender_cpu" ],
     sender: wallet.account()
 });
 const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
@@ -52,10 +52,6 @@ export function IsConnected() {
 export function GetAccountId(){
     return wallet.getAccountId()
 }
-/*export async function GetBurrito(){
-    var result = await contract_burritos.get_burrito({burrito_id: "0"});
-    alert(JSON.stringify(result));
-}*/
 export async function GetSTRWToken(){
     var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
     return currentSTRW
@@ -104,7 +100,6 @@ export async function NFTTokensForOwner(from, limit){
     )
     var result = [];
     tokens.forEach(token => {
-        //console.log(token);
         var json = JSON.parse(token.metadata.extra.replace(/'/g, '"'));
         json["media"] = token.metadata.media;
         json["name"] = token.metadata.title;
@@ -113,13 +108,21 @@ export async function NFTTokensForOwner(from, limit){
     });
     
     return result;
-} 
+}
+export async function GetNFTToken(index){
+    var burritoJson = await NFTTokens(index)
+    var burritoPlayer = JSON.parse(burritoJson.metadata.extra.replace(/'/g, '"'));
+    burritoPlayer["media"] = burritoJson.metadata.media;
+    burritoPlayer["name"] = burritoJson.metadata.title;
+    burritoPlayer["token_id"] = burritoJson.token_id;
+    return burritoPlayer;
+}
 export async function CreateBattlePlayerCpu () {
     var result = await contract_burritos.create_battle_player_cpu(
         {
-            burrito_id:localStorage.getItem("burrito_selected"),//cambiar este valor por el local storage
-            accesorio1_id:"0", 
-            accesorio2_id:"0",
+            burrito_id: localStorage.getItem("burrito_selected"),
+            accesorio1_id: "0", 
+            accesorio2_id: "0",
             accesorio3_id: "0"
         },
         300000000000000
@@ -134,7 +137,35 @@ export async function SurrenderCpu () {
     var result = await contract_burritos.surrender_cpu({});
     return result;
 }
-//near call $ID battle_player_cpu '{"type_move":"'1'"}' --accountId yairnava.testnet --gas=300000000000000 / Combatir Ronda Player vs CPU [type_move => (1 = Ataque Debil, 2 = Ataque Fuerte, 3 = No Defenderse, 4 = Defenderse)]
+export async function GetInfoByURL(){
+    return new Promise(async resolve => {
+    var URLactual = window.location.toString();
+        if(URLactual.indexOf("?") == -1){
+            resolve(null);
+        } else {
+            if(URLactual.indexOf("transactionHashes") !== -1){
+                var start = URLactual.indexOf("=");
+                var end = URLactual.indexOf("&");
+                var transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
+                
+                const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
+                console.log(resultJson);
+            }
+            else if(URLactual.indexOf("rejected") !== -1) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Operación cancelada',
+                })
+                resolve(null);
+            }
+        }
+    history.pushState('Home', 'Title', '/');
+    });
+}
+export async function BattlePlayerCPU(typeMove){
+    var result = await contract_burritos.battle_player_cpu({ type_move: typeMove}, 300000000000000, 0 );
+    return result;
+}
 export async function GetState() {
     return new Promise(async resolve => {
         var URLactual = window.location.toString();
@@ -163,4 +194,22 @@ export async function GetState() {
         }
         history.pushState('Home', 'Title', '/');
     });
+}
+export async function EvolveBurrito(index){
+    await contract_burritos.evolve_burrito(
+        {
+            burrito_id: index
+        },
+        300000000000000, 
+        utils.format.parseNearAmount("2") 
+    );
+}
+export async function ResetBurrito(index){
+    await contract_burritos.reset_burrito(
+        {
+            burrito_id: index
+        },
+        300000000000000, 
+        utils.format.parseNearAmount("1") 
+    );
 }

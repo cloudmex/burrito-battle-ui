@@ -21,6 +21,8 @@ class Establo extends Phaser.Scene{
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png")
     }
     async create(){
+        var result = await Near.GetInfoByURL();
+        console.log(result);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
         this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 - 350, "Establo", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5);
@@ -41,21 +43,25 @@ class Establo extends Phaser.Scene{
         }
     }
     ShowCard = (burrito) => {
-        console.log(burrito)
         if(this.bigCard !== null){
             this.bigCard.GetComponents().destroy();
             this.buttonBigCard.GetComponents().destroy();
+            this.buttonEvolve.GetComponents().destroy();
         }
 
         this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this).setScale(0.8);
-        this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 500,  this.sys.game.scale.gameSize.height - 130, 0.75, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        if(burrito.hp <= 0){
+            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ResetBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        } else {
+            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        }
+        this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Subir de nivel", this, ()=>{ this.EvolveBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
     }
     SelectBurrito = (burrito) =>{
         if(burrito.hp <= 0){
             Swal.fire({
                 icon: 'info',
                 title: 'No se puede seleccionar este burrito porque no tiene vidas',
-                //html: ``,
                 confirmButtonText: 'Aceptar',
               })
         } else{
@@ -69,15 +75,56 @@ class Establo extends Phaser.Scene{
               })
         }
     }
-    BackToMainMenu = () => this.scene.start("MainMenu");
+    ResetBurrito = async (burrito) =>{
+        var currentSTRW = await Near.GetSTRWToken();
+        Swal.fire({
+            icon: 'info',
+            title: '¿Quieres restaurar las vidas de este burrito?',
+            html: `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.<br>El costo es de <b>1 Near</b> y <b>300000000000000 $STRW.</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
+            confirmButtonText: 'Restaurar',
+            showCancelButton: true
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+                localStorage.setItem("lastScene", "Establo");
+                await Near.ResetBurrito(burrito.token_id);
+                console.log("se restauro la salud del burrito v:");
+            }
+        });
+    }
+    EvolveBurrito = async (burrito)=> {
+        if(burrito.win < 10){
+            Swal.fire({
+                icon: 'info',
+                title: 'Para subir de nivel un burrito debes tener al menos 10 victorias en combate',
+                showCancelButton: false,
+                showConfirmButton: true
+            });
+        } else{
+            var currentSTRW = await Near.GetSTRWToken();
+            Swal.fire({
+                icon: 'info',
+                title: '¿Quieres restaurar las vidas de este burrito?',
+                html: `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.<br>El costo es de <b>1 Near</b> y <b>300000000000000 $STRW.</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
+                confirmButtonText: 'Restaurar',
+                showCancelButton: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await Near.EvolveBurrito(burrito.token_id);
+                    console.log("se evoluciono el burrito v:");
+                }
+            });
+        }
+    }
+    BackToMainMenu = () => {
+        localStorage.removeItem("lastScene");
+        this.scene.start("MainMenu");
+    }
     GoToSilo = () => this.scene.start("MinarBurrito");
     Next = async () => {
         if((this.counter + 1) * 6 < this.totalTokens){
             this.counter++;
             this.cards.forEach(card => card.GetComponents().destroy());
             this.SpawnCard();
-        } else{
-            console.log("ya no puedes avanzar mas xd")
         }
     }
     Previous = async () =>{
