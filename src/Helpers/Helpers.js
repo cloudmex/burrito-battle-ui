@@ -187,11 +187,9 @@ export class Actions{
         return this;
     }
     Action1 = () => {
-        console.log("action 1");
         this.SendAction();
     }
     Action2 = () => {
-        console.log("action 2");
         this.SendAction();
     }
     SendAction(){

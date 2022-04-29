@@ -21,8 +21,8 @@ class Establo extends Phaser.Scene{
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png")
     }
     async create(){
-        var result = await Near.GetInfoByURL();
-        console.log(result);
+        //var result = await Near.GetInfoByURL();
+        //console.log(result);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
         this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 - 350, "Establo", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5);

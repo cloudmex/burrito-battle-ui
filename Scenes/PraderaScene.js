@@ -6,6 +6,7 @@ class Pradera extends Phaser.Scene{
     speed = 200;
     angle = 0;
     flag = false;
+    showAlert = false;
     isKeyboard = true;
     target = new Phaser.Math.Vector2();
     
@@ -47,8 +48,11 @@ class Pradera extends Phaser.Scene{
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
-        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2).setOrigin(1).setScale(0.35);
-        this.burrito.body.setSize(this.burrito.width * (1/0.35) * 2, this.burrito.height * (1/0.35) * 2)
+        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "burrito_gris", 0).setOrigin(0.5).setScale(0.35).setCollideWorldBounds(true);
+        
+        this.physics.world.enable(this.burrito);
+
+        //this.burrito.body.setSize(this.burrito.width * (1/0.35) * 2, this.burrito.height * (1/0.35) * 2)
         this.burrito.play("walkRight");
         this.burrito.setCollideWorldBounds(true);
         this.burrito.onWorldBounds = true;
@@ -56,6 +60,7 @@ class Pradera extends Phaser.Scene{
         this.Cursors = this.input.keyboard.createCursorKeys();
         this.velocity = {x: 0, y: 0};
         
+
         this.input.on("pointerdown", function(pointer){
             if(!this.burrito.anims.isPlaying){
                 this.isKeyboard = false;
@@ -70,11 +75,38 @@ class Pradera extends Phaser.Scene{
         for (var i = 0; i < 20; i++) {
             var x = Phaser.Math.RND.between(0, this.game.config.width);
             var y = Phaser.Math.RND.between(0, this.game.config.height);
-    
-            this.zoneBattles.create(x, y);
+            this.zoneBattles.create(x, y, null, null, false, true);
         }
-
         this.physics.add.overlap(this.burrito, this.zoneBattles, this.Battle, null, this);
+        this.detailText = this.add.text(100,100)
+
+        this.silo = this.add.zone(700, 700, 100, 100).setRectangleDropZone(300, 300);
+        this.physics.world.enable(this.silo);
+        this.siloCollider = this.physics.add.overlap(this.silo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al silo", "Aqui puedes minar un nuevo burrito", "MinarBurrito") }, null, this);
+
+        this.establo = this.add.zone(580, 550, 80, 80).setRectangleDropZone(80, 80);
+        this.physics.world.enable(this.establo);
+        this.establoCollider = this.physics.add.overlap(this.establo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel", "Establo") }, null, this);
+
+        this.coliseo = this.add.zone(1280, 300, 200, 200).setRectangleDropZone(600, 600);
+        this.physics.world.enable(this.coliseo);
+        this.coliseoCollider = this.physics.add.overlap(this.coliseo, this.burrito, this.ShowAlert, null, this);
+    }
+   
+    ShowAlert = (title, description, scene) => {
+        if(!this.showAlert){
+            Swal.fire({
+                icon: 'info',
+                title: title,
+                html: description,
+                showCancelButton: true,
+                confirmButtonText: 'Entrar',
+            }).then((result) => {
+                if(result.isConfirmed)
+                    this.scene.start(scene);
+            })
+            this.showAlert = true;
+        }
     }
     Battle(burrito, triggerZone){
         triggerZone.disableBody(true, true);
@@ -95,7 +127,8 @@ class Pradera extends Phaser.Scene{
     GoToBattle(){
         this.scene.start("Battle");
     }
-    update(){
+    update(){        
+        this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.silo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.establo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.coliseo.getBounds());
         this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
         this.camera.startFollow(this.burrito);
 
