@@ -11,7 +11,7 @@ class MainMenu extends Phaser.Scene{
         this.load.image("buttonContainer1", "../src/images/button.png");
     }
     async create(){
-        if(localStorage.getItem("lastScene")){
+        if(localStorage.getItem("lastScene")) {
             this.scene.start(localStorage.getItem("lastScene"));
         } else {
             if(localStorage.getItem("burrito_selected") < 0 || localStorage.getItem("burrito_selected")  == null){
@@ -30,9 +30,8 @@ class MainMenu extends Phaser.Scene{
                   });
                   
                 } else {
-                    var burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"))
-                    console.log(burritoPlayer)
-                    if(burritoPlayer.hp <= 0){
+                    var burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+                    if(burritoPlayer.hp <= 0) {
                         Swal.fire({
                             icon: 'info',
                             title: 'Tu burrito se ha quedado sin vida',

@@ -58,7 +58,7 @@ class MinarBurrito extends Phaser.Scene{
         Swal.fire({
             icon: 'info',
             title: 'Información de la transaccion',
-            html: `El minar un burrito te permite luchar contra otros burritos y explorar el mapa<br><b>El costo del burrito es de 5 Nears y 600000 $STRW</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
+            html: `El minar un burrito te permite luchar contra otros burritos y explorar el mapa<br><b>El costo del burrito es de 5 Nears y 600,000 $STRW</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
             showCancelButton: true,
             confirmButtonText: 'Minar',
           }).then((result) => {

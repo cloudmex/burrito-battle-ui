@@ -80,7 +80,7 @@ class Establo extends Phaser.Scene{
         Swal.fire({
             icon: 'info',
             title: '¿Quieres restaurar las vidas de este burrito?',
-            html: `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.<br>El costo es de <b>1 Near</b> y <b>300000000000000 $STRW.</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
+            html: `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.<br>El costo es de <b>1 Near</b> y <b>30,000 $STRW.</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
             confirmButtonText: 'Restaurar',
             showCancelButton: true
           }).then(async (result) => {
@@ -99,12 +99,18 @@ class Establo extends Phaser.Scene{
                 showCancelButton: false,
                 showConfirmButton: true
             });
+            /*Swal.fire({
+                background: '#fff url(https://image.shutterstock.com/z/stock-vector--exclamation-mark-exclamation-mark-hazard-warning-symbol-flat-design-style-vector-eps-444778462.jpg)',
+                title: 'Para subir de nivel un burrito debes tener al menos 10 victorias en combate',
+                showCancelButton: false,
+                showConfirmButton: true
+            })*/
         } else{
             var currentSTRW = await Near.GetSTRWToken();
             Swal.fire({
                 icon: 'info',
                 title: '¿Quieres restaurar las vidas de este burrito?',
-                html: `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.<br>El costo es de <b>1 Near</b> y <b>300000000000000 $STRW.</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
+                html: `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.<br>El costo es de <b>1 Near</b> y <b>30,000 $STRW.</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
                 confirmButtonText: 'Restaurar',
                 showCancelButton: true
             }).then(async (result) => {
@@ -139,11 +145,11 @@ class Establo extends Phaser.Scene{
     async SpawnCard(){
         var burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
-            this.cards.push(
-                new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{
-                    this.ShowCard(burrito);
-                })
-            );
+            
+            var card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{ this.ShowCard(burrito); });
+            if(burrito.hp <= 5)
+                //card.setTint(1);
+            this.cards.push(card);
         });
     }
 }

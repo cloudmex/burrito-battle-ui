@@ -52,7 +52,7 @@ export class Card{
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
         this.card = scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type));
         this.cardResult.add(this.card);
-        this.cardResult.add(scene.add.image(0, 0, burrito.media).setScale(.4));
+        this.cardResult.add(this.burrito = scene.add.image(0, 0, burrito.media).setScale(.4));
 
         this.cardResult.add(scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
         this.cardResult.add(scene.add.text(-180, - 380, burrito.name, { fontSize: 70, fontFamily: "BangersRegular" }));//name
@@ -92,6 +92,11 @@ export class Card{
     }
     setScale(value){
         this.cardResult.setScale(value);
+        return this;
+    }
+    setTint(value) {
+        this.card.setTint(0x808080);
+        this.burrito.setTint(0x808080)
         return this;
     }
     GetComponents () { 
