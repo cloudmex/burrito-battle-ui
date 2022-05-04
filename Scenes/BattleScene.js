@@ -5,14 +5,6 @@ export class Battle extends Phaser.Scene{
     constructor(){
         super("Battle");
     }
-    burritoMediaToSkin(media){
-        switch(media){
-            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return "fuego"//"electrico";
-            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return "agua"//"planta";
-            case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return "fuego";
-            case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
-        }
-    }
     async preload(){
         this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -49,12 +41,11 @@ export class Battle extends Phaser.Scene{
         if(info){
             console.log(info);
             console.log(info.receipts_outcome[0].outcome.logs[0]); //logs[0, 1] accion del jugador
-        }        
-        console.log()
+        }
 
         //#region Burrito Player
         this.CreateAnimations("Player");
-        this.burritoPlayer = this.add.sprite(this.game.config.width /2 - 700, this.game.config.height - 300, "burrito_idle_player", 0).setOrigin(0.5); //this.add.image(this.game.config.width /2 - 700, this.game.config.height - 300, burritoPlayer.media).setScale(0.5).setOrigin(0.5);
+        this.burritoPlayer = this.add.sprite(this.game.config.width /2 - 700, this.game.config.height - 300, "burrito_idle_player", 0).setOrigin(0.5);
         this.burritoPlayer.play("idle_Player");
         new Helpers.Slider(this.game.config.width / 2 - 750, 100, this, "slider_background", "slider_fill").SetValue(1).SetFlipX(false);
         this.CreateActionsMenu();
@@ -63,18 +54,23 @@ export class Battle extends Phaser.Scene{
 
         //#region Burrito CPU
         this.CreateAnimations("CPU");
-        this.burritoCPU = this.add.sprite(this.game.config.width / 2 + 700, this.game.config.height - 300, "burrito_idle_CPU", 0).setOrigin(0.5).setFlipX(true);//this.add.sprite(this.game.config.width / 2 + 700, this.game.config.height - 300, this.burritoSkinCPU).setScale(0.5).setOrigin(0.5).setFlipX(true);
+        this.burritoCPU = this.add.sprite(this.game.config.width / 2 + 700, this.game.config.height - 300, "burrito_idle_CPU", 0).setOrigin(0.5).setFlipX(true);
         this.burritoCPU.play("idle_CPU");
         new Helpers.Slider(this.game.config.width / 2 + 750, 100, this, "slider_background", "slider_fill").SetValue(1).SetFlipX(true);
         this.healthCPU = this.add.text(this.game.config.width/ 2 + 650, 150, `${this.currentBattle.health_cpu} Health`, {fontSize: 30, fontFamily: "BangersRegular"});
         //#endregion
-        //this.input.on("pointerdown", ()=>{this.burritoPlayer.play("victoria")})
         
         await this.loadingScreen.OnComplete();
     }
-    
+    burritoMediaToSkin(media){
+        switch(media){
+            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return "fuego"//"electrico";
+            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return "agua"//"planta";
+            case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return "fuego";
+            case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
+        }
+    }
     loadSpriteSheet(player, folder){
-        console.log(`../src/images/Battle/${folder}`)
         this.load.spritesheet(`burrito_idle_${player}`, `../src/images/Battle/${folder}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_${player}`, `../src/images/Battle/${folder}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque2_${player}`, `../src/images/Battle/${folder}/Ataque_pesado.webp`, {frameWidth: 360, frameHeight: 600});
@@ -123,6 +119,7 @@ export class Battle extends Phaser.Scene{
         return result.toString();
     }
     GiveUp = async () => {
+        this.loadingScreen = new Helpers.LoadingScreen(this);
         Swal.fire({
             icon: 'info',
             title: '¿Esta seguro de dejar la pelea?',
@@ -131,17 +128,14 @@ export class Battle extends Phaser.Scene{
             confirmButtonText: 'Huir',
           }).then(async (result) => {
             if (result.isConfirmed) {
-                console.log("me rindo :(");
                 await Near.SurrenderCpu(); 
-                localStorage.removeItem("lastScene")
+                localStorage.removeItem("lastScene");
+                localStorage.removeItem("burritoCPU");
+                await this.loadingScreen.OnComplete();
                 this.scene.start("MainMenu");
             }
         });
     }
-    /*GetBattle = async () =>{
-        localStorage.setItem("lastScene", "Battle");
-        await Near.CreateBattlePlayerCpu();
-    }*/
     Range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx)
     }
