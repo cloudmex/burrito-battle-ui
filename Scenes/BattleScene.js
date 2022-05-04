@@ -119,7 +119,6 @@ export class Battle extends Phaser.Scene{
         return result.toString();
     }
     GiveUp = async () => {
-        this.loadingScreen = new Helpers.LoadingScreen(this);
         Swal.fire({
             icon: 'info',
             title: '¿Esta seguro de dejar la pelea?',
@@ -128,6 +127,7 @@ export class Battle extends Phaser.Scene{
             confirmButtonText: 'Huir',
           }).then(async (result) => {
             if (result.isConfirmed) {
+                this.loadingScreen = new Helpers.LoadingScreen(this);
                 await Near.SurrenderCpu(); 
                 localStorage.removeItem("lastScene");
                 localStorage.removeItem("burritoCPU");
