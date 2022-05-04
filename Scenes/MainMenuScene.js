@@ -6,11 +6,14 @@ class MainMenu extends Phaser.Scene{
         super("MainMenu");
     }
     preload(){
+        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("mainMenubackground", "../src/images/mainMenu_Background.png");
         this.load.image("logo1", "../src/images/Logo.png");
         this.load.image("buttonContainer1", "../src/images/button.png");
     }
     async create(){
+        this.loadingScreen = new Helpers.LoadingScreen(this);
         if(localStorage.getItem("lastScene")) {
             this.scene.start(localStorage.getItem("lastScene"));
         } else {
@@ -30,7 +33,7 @@ class MainMenu extends Phaser.Scene{
                   });
                   
                 } else {
-                    var burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+                    let burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
                     if(burritoPlayer.hp <= 0) {
                         Swal.fire({
                             icon: 'info',
@@ -44,7 +47,7 @@ class MainMenu extends Phaser.Scene{
                     }
                     
                     try{
-                        var currentBattle = await Near.GetBattleActiveCpu();
+                        let currentBattle = await Near.GetBattleActiveCpu();
                         if(currentBattle){
                             Swal.fire({
                                 icon: 'info',
@@ -71,6 +74,7 @@ class MainMenu extends Phaser.Scene{
         new Helpers.Button(450, 600, 0.75, "buttonContainer1", "Minar Burrito", this, this.MinarBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer1", "Pradera", this, this.Pradera, null, {fontSize: 40, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer1", "Establo", this, this.Establo, null, {fontSize: 40, fontFamily: "BangersRegular"});
+        await this.loadingScreen.OnComplete();
     }
     LogOut = () => {
         localStorage.clear();

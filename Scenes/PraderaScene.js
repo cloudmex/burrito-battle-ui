@@ -14,6 +14,10 @@ class Pradera extends Phaser.Scene{
         super("Pradera");
     }
     preload(){
+        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.image("loading_bg", "../src/images/loading_bg.png");
+        this.loadingScreen = new Helpers.LoadingScreen(this);
+
         this.load.image("background", "../src/images/Pradera/Map background.png");
         this.load.image("island", "../src/images/Pradera/Island.png");
         this.load.spritesheet("water", "../src/images/Pradera/Agua_sprites.webp", {frameWidth: 1920, frameHeight: 1080});
@@ -26,8 +30,8 @@ class Pradera extends Phaser.Scene{
         this.load.spritesheet("burrito_gris", "../src/images/Pradera/Gris_sprites.png", {frameWidth: 213, frameHeight: 222})
         this.load.json('shape', '../src/images/Pradera/Island.json');
     }
-    create(){
-        var shape = this.cache.json.get('shape');
+    async create(){
+        let shape = this.cache.json.get('shape');
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
 
         this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
@@ -72,9 +76,9 @@ class Pradera extends Phaser.Scene{
 
         this.zoneBattles = this.physics.add.group();
 
-        for (var i = 0; i < 20; i++) {
-            var x = Phaser.Math.RND.between(0, this.game.config.width);
-            var y = Phaser.Math.RND.between(0, this.game.config.height);
+        for (let i = 0; i < 20; i++) {
+            let x = Phaser.Math.RND.between(0, this.game.config.width);
+            let y = Phaser.Math.RND.between(0, this.game.config.height);
             this.zoneBattles.create(x, y, null, null, false, true);
         }
         this.physics.add.overlap(this.burrito, this.zoneBattles, this.Battle, null, this);
@@ -82,7 +86,7 @@ class Pradera extends Phaser.Scene{
 
         this.silo = this.add.zone(700, 700, 100, 100).setRectangleDropZone(300, 300);
         this.physics.world.enable(this.silo);
-        this.siloCollider = this.physics.add.overlap(this.silo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al silo", "Aqui puedes minar un nuevo burrito", "MinarBurrito") }, null, this);
+        this.siloCollider = this.physics.add.overlap(this.silo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al silo?", "Aqui puedes minar un nuevo burrito", "MinarBurrito") }, null, this);
 
         this.establo = this.add.zone(580, 550, 80, 80).setRectangleDropZone(80, 80);
         this.physics.world.enable(this.establo);
@@ -91,6 +95,8 @@ class Pradera extends Phaser.Scene{
         this.coliseo = this.add.zone(1280, 300, 200, 200).setRectangleDropZone(600, 600);
         this.physics.world.enable(this.coliseo);
         this.coliseoCollider = this.physics.add.overlap(this.coliseo, this.burrito, this.ShowAlert, null, this);
+
+        await this.loadingScreen.OnComplete();
     }
    
     ShowAlert = (title, description, scene) => {
@@ -134,7 +140,7 @@ class Pradera extends Phaser.Scene{
 
         this.keyboardMovement();
         
-        var distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
+        let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
         
         if(this.burrito.body.speed > 0){
             this.PlayAnimation();
@@ -147,8 +153,8 @@ class Pradera extends Phaser.Scene{
     
     PlayAnimation() {
         if(!this.burrito.anims.isPlaying) {
-            var direction = {x: this.target.x -  this.burrito.x, y: this.target.y - this.burrito.y};
-            var angle = this.clampAngle(Math.atan2(direction.y, direction.x) * (180 / Math.PI));
+            let direction = {x: this.target.x -  this.burrito.x, y: this.target.y - this.burrito.y};
+            let angle = this.clampAngle(Math.atan2(direction.y, direction.x) * (180 / Math.PI));
 
             if(angle >= 315 && angle < 360 || (angle >= 0 && angle < 45)){
                 this.burrito.flipX = false;
@@ -213,7 +219,7 @@ class Pradera extends Phaser.Scene{
         }
     }
     clampAngle(angle){
-        var result = angle - Math.ceil(angle / 360) * 360;
+        let result = angle - Math.ceil(angle / 360) * 360;
         if(result < 0)
             result += 360;
         return result;

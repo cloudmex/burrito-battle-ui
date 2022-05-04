@@ -7,22 +7,33 @@ class Establo extends Phaser.Scene{
         super("Establo");
     }
     preload(){
+        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.image("loading_bg", "../src/images/loading_bg.png");
+        this.loadingScreen = new Helpers.LoadingScreen(this);
+        
         this.load.image("establo_background", "../src/images/Establo/Background.webp");
         this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");
         this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", "../src/images/Burritos/Burrito Planta.png");
         this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", "../src/images/Burritos/Burrito Fuego.png");
         this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", "../src/images/Burritos/Burrito Agua.png");
 
+        this.load.image("burrito_muerto", "../src/images/Establo/gravestone.png");
+        this.load.image("selected", "../src/images/Establo/selected.png")
+
         this.load.image("establo_ui", "../src/images/Establo/establo UI.png");
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
         this.load.image("buttonContainer3", "../src/images/button.png");
-        this.load.image("left_arrow", "../src/images/Establo/left_arrow.png")
-        this.load.image("right_arrow", "../src/images/Establo/right_arrow.png")
+        this.load.image("left_arrow", "../src/images/Establo/left_arrow.png");
+        this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
+    }
+    later(delay) {
+        return new Promise(function(resolve) {
+            setTimeout(resolve, delay);
+        });
     }
     async create(){
-        //var result = await Near.GetInfoByURL();
-        //console.log(result);
+
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
         this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 - 350, "Establo", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5);
@@ -33,7 +44,6 @@ class Establo extends Phaser.Scene{
 
         this.cards = [];
         this.bigCard = null;
-
         this.totalTokens = await Near.NFTSupplyForOwner();
 
         if(this.totalTokens == 0){
@@ -41,6 +51,7 @@ class Establo extends Phaser.Scene{
         } else{
             this.SpawnCard();
         }
+        await this.loadingScreen.OnComplete();
     }
     ShowCard = (burrito) => {
         if(this.bigCard !== null){
@@ -76,7 +87,7 @@ class Establo extends Phaser.Scene{
         }
     }
     ResetBurrito = async (burrito) =>{
-        var currentSTRW = await Near.GetSTRWToken();
+        let currentSTRW = await Near.GetSTRWToken();
         Swal.fire({
             icon: 'info',
             title: '¿Quieres restaurar las vidas de este burrito?',
@@ -106,7 +117,7 @@ class Establo extends Phaser.Scene{
                 showConfirmButton: true
             })*/
         } else{
-            var currentSTRW = await Near.GetSTRWToken();
+            let currentSTRW = await Near.GetSTRWToken();
             Swal.fire({
                 icon: 'info',
                 title: '¿Quieres restaurar las vidas de este burrito?',
@@ -138,17 +149,15 @@ class Establo extends Phaser.Scene{
             this.counter--;
             this.cards.forEach(card => 
                 card.GetComponents().destroy()
-            );    
+            );
             this.SpawnCard();
         }
     }
     async SpawnCard(){
-        var burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
+        let burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
-            
-            var card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{ this.ShowCard(burrito); });
-            if(burrito.hp <= 5)
-                //card.setTint(1);
+            burrito.hp = Phaser.Math.Between(0, 4);
+            let card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{ this.ShowCard(burrito); });
             this.cards.push(card);
         });
     }

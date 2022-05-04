@@ -14,7 +14,10 @@ export class Battle extends Phaser.Scene{
         }
     }
     async preload(){
-        //history.pushState('Home', 'Title', '/');
+        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.image("loading_bg", "../src/images/loading_bg.png");
+        this.loadingScreen = new Helpers.LoadingScreen(this);
+        
         this.load.image("background_Battle", "../src/images/Establo/Background.webp")
         this.load.image("burrito", "../src/images/Burrito Agua.png");
         this.load.image("buttonContainer3", "../src/images/button.png");
@@ -23,16 +26,11 @@ export class Battle extends Phaser.Scene{
         this.load.image("slider_background", "../src/images/Battle/slider_background.png");
         this.load.image("slider_fill", "../src/images/Battle/slider_fill.png");
 
-        this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");
-        this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", "../src/images/Burritos/Burrito Planta.png");
-        this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", "../src/images/Burritos/Burrito Fuego.png");
-        this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", "../src/images/Burritos/Burrito Agua.png");
-
         if(localStorage.getItem("burritoCPU") == null)
            localStorage.setItem("burritoCPU", this.RandomBurrito());
         this.burritoSkinCPU = localStorage.getItem("burritoCPU");
 
-        var burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+        let burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
 
         this.loadSpriteSheet("Player", this.burritoMediaToSkin(burritoPlayer.media));
         this.loadSpriteSheet("CPU", this.burritoSkinCPU);
@@ -47,7 +45,7 @@ export class Battle extends Phaser.Scene{
         } catch { 
             this.currentBattle = await Near.CreateBattlePlayerCpu();
         }
-        var info = await Near.GetInfoByURL();
+        let info = await Near.GetInfoByURL();
         if(info){
             console.log(info);
             console.log(info.receipts_outcome[0].outcome.logs[0]); //logs[0, 1] accion del jugador
@@ -71,6 +69,8 @@ export class Battle extends Phaser.Scene{
         this.healthCPU = this.add.text(this.game.config.width/ 2 + 650, 150, `${this.currentBattle.health_cpu} Health`, {fontSize: 30, fontFamily: "BangersRegular"});
         //#endregion
         //this.input.on("pointerdown", ()=>{this.burritoPlayer.play("victoria")})
+        
+        await this.loadingScreen.OnComplete();
     }
     
     loadSpriteSheet(player, folder){
@@ -91,7 +91,7 @@ export class Battle extends Phaser.Scene{
         this.anims.create({ key: `victoria_${player}`, frames: this.anims.generateFrameNumbers(`burrito_victoria_${player}`, { frames: this.Range(0, 23) }), frameRate: 24, repeat: -1 });
     }
     RandomBurrito(){
-        var values = ["agua", "fuego", "cyberpunk"];
+        let values = ["agua", "fuego", "cyberpunk"];
         return values[Math.floor(Math.random() * values.length)];
     }
     CreateActionsMenu = async () => {
@@ -109,17 +109,17 @@ export class Battle extends Phaser.Scene{
         return this.currentBattle.turn == player;
     }
     Action1 = async(player) => {
-        var result = await Near.BattlePlayerCPU(this.ActionIndex(1, player));
+        let result = await Near.BattlePlayerCPU(this.ActionIndex(1, player));
         console.log(`action 1: ${result}`);
         this.CreateActionsMenu();
     }
     Action2 = async(player) =>{
-        var result = await Near.BattlePlayerCPU(this.ActionIndex(2, player))
+        let result = await Near.BattlePlayerCPU(this.ActionIndex(2, player))
         console.log(`action 2: ${result}`);
         this.CreateActionsMenu();
     }
     ActionIndex(index, player){
-        var result = (this.IsMyTurn(player) ? 0 : 2) + index;
+        let result = (this.IsMyTurn(player) ? 0 : 2) + index;
         return result.toString();
     }
     GiveUp = async () => {

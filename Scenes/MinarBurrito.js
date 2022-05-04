@@ -6,6 +6,10 @@ class MinarBurrito extends Phaser.Scene{
         super("MinarBurrito");
     }
     preload(){
+        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.image("loading_bg", "../src/images/loading_bg.png");
+        this.loadingScreen = new Helpers.LoadingScreen(this);
+        
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
         this.load.image("buttonContainer2", "../src/images/button.png");
         this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
@@ -33,9 +37,10 @@ class MinarBurrito extends Phaser.Scene{
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         
         this.MintBurrito();
+        await this.loadingScreen.OnComplete();
     }
     update(){
-        var cursors = this.input.keyboard.createCursorKeys();
+        let cursors = this.input.keyboard.createCursorKeys();
         this.clouds.tilePositionX += 1
         this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
 
@@ -53,7 +58,7 @@ class MinarBurrito extends Phaser.Scene{
         this.scene.start("MainMenu");
     }
     ConfirmMint = async () => {
-        var currentSTRW = await Near.GetSTRWToken();
+        let currentSTRW = await Near.GetSTRWToken();
         //console.log(typeof(currentSTRW))
         Swal.fire({
             icon: 'info',
@@ -81,13 +86,13 @@ class MinarBurrito extends Phaser.Scene{
         }
     }
     GetStadistic(burrito){
-        var values = [parseInt(burrito.attack), parseInt(burrito.defense), parseInt(burrito.speed)];
-        var max = Math.max.apply(Math, values);
+        let values = [parseInt(burrito.attack), parseInt(burrito.defense), parseInt(burrito.speed)];
+        let max = Math.max.apply(Math, values);
         return {index: values.indexOf(max), value: max };
     }
     async MintBurrito(){
-        //var minar = {attack:5,burrito_type:"Fuego",defense:6 ,description:"Este es un burrito de tipo Fuego", global_win:"0", hp:"5", level:"1", media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:3,win:"0"}
-        var minar = await Near.GetState();
+        //let minar = {attack:5,burrito_type:"Fuego",defense:6 ,description:"Este es un burrito de tipo Fuego", global_win:"0", hp:"5", level:"1", media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:3,win:"0"}
+        let minar = await Near.GetState();
         
         if(minar){
             this.anims.create({
@@ -105,7 +110,7 @@ class MinarBurrito extends Phaser.Scene{
                 repeat: 0
             });
             this.silo.play("loop1");
-            var timeline = this.tweens.createTimeline();
+            let timeline = this.tweens.createTimeline();
             timeline.add({
                 targets: this.cameras.main,
                 scrollY: 1400,
@@ -121,7 +126,7 @@ class MinarBurrito extends Phaser.Scene{
                 duration: 3000,
                 delay: 1000,
                 onComplete: ()=>{ this.time.delayedCall(700, () =>{ 
-                    var max = this.GetStadistic(minar);
+                    let max = this.GetStadistic(minar);
                     this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2250, "orbs", max.index).setScale(0.5);
                 }, [], this)}
             });
@@ -146,7 +151,7 @@ class MinarBurrito extends Phaser.Scene{
         this.particles = this.add.particles('spark');
             this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this).GetComponents();
             this.card.setDepth(2);
-            var timeline = this.tweens.createTimeline();
+            let timeline = this.tweens.createTimeline();
             timeline.add({
                 targets: this.card,
                 y: this.sys.game.scale.gameSize.height / 2 - 100,

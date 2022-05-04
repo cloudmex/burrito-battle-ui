@@ -53,12 +53,12 @@ export function GetAccountId(){
     return wallet.getAccountId()
 }
 export async function GetSTRWToken(){
-    var currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
+    let currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
     return currentSTRW
 }
 export async function NFTMint(){
-    var currentSTRW = await GetSTRWToken();
-    var requiredSTRW = 600_000;
+    let currentSTRW = await GetSTRWToken();
+    let requiredSTRW = 600_000;
 
     if(currentSTRW >= requiredSTRW){
         await contract_burritos.nft_mint(
@@ -83,24 +83,24 @@ export async function NFTMint(){
     }
 }
 export async function NFTTokens(burrito_id) {
-    var result = await contract_burritos.nft_tokens();
+    let result = await contract_burritos.nft_tokens();
     return result[burrito_id];
 }
 export async function NFTSupplyForOwner() {
-    var result = await contract_burritos.nft_supply_for_owner({account_id: GetAccountId()})
+    let result = await contract_burritos.nft_supply_for_owner({account_id: GetAccountId()})
     return result;
 }
 export async function NFTTokensForOwner(from, limit){
-    var tokens = await contract_burritos.nft_tokens_for_owner (
+    let tokens = await contract_burritos.nft_tokens_for_owner (
         {
             account_id: GetAccountId(),
             from_index: from.toString(),
             limit: parseInt(limit)
         }
     )
-    var result = [];
+    let result = [];
     tokens.forEach(token => {
-        var json = JSON.parse(token.metadata.extra.replace(/'/g, '"'));
+        let json = JSON.parse(token.metadata.extra.replace(/'/g, '"'));
         json["media"] = token.metadata.media;
         json["name"] = token.metadata.title;
         json["token_id"] = token.token_id;
@@ -110,15 +110,15 @@ export async function NFTTokensForOwner(from, limit){
     return result;
 }
 export async function GetNFTToken(index){
-    var burritoJson = await NFTTokens(index)
-    var burritoPlayer = JSON.parse(burritoJson.metadata.extra.replace(/'/g, '"'));
+    let burritoJson = await NFTTokens(index)
+    let burritoPlayer = JSON.parse(burritoJson.metadata.extra.replace(/'/g, '"'));
     burritoPlayer["media"] = burritoJson.metadata.media;
     burritoPlayer["name"] = burritoJson.metadata.title;
     burritoPlayer["token_id"] = burritoJson.token_id;
     return burritoPlayer;
 }
 export async function CreateBattlePlayerCpu () {
-    var result = await contract_burritos.create_battle_player_cpu(
+    let result = await contract_burritos.create_battle_player_cpu(
         {
             burrito_id: localStorage.getItem("burrito_selected"),
             accesorio1_id: "0", 
@@ -130,23 +130,23 @@ export async function CreateBattlePlayerCpu () {
     return result;
 }
 export async function GetBattleActiveCpu () {
-    var result = await contract_burritos.get_battle_active_cpu({ });
+    let result = await contract_burritos.get_battle_active_cpu({ });
     return result;
 }
 export async function SurrenderCpu () {
-    var result = await contract_burritos.surrender_cpu({});
+    let result = await contract_burritos.surrender_cpu({});
     return result;
 }
 export async function GetInfoByURL(){
     return new Promise(async resolve => {
-    var URLactual = window.location.toString();
+    let URLactual = window.location.toString();
         if(URLactual.indexOf("?") == -1){
             resolve(null);
         } else {
             if(URLactual.indexOf("transactionHashes") !== -1){
-                var start = URLactual.indexOf("=");
-                var end = URLactual.indexOf("&");
-                var transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
+                let start = URLactual.indexOf("=");
+                let end = URLactual.indexOf("&");
+                let transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
                 
                 const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
                 console.log(resultJson);
@@ -163,21 +163,21 @@ export async function GetInfoByURL(){
     });
 }
 export async function BattlePlayerCPU(typeMove){
-    var result = await contract_burritos.battle_player_cpu({ type_move: typeMove}, 300000000000000, 0 );
+    let result = await contract_burritos.battle_player_cpu({ type_move: typeMove}, 300000000000000, 0 );
     return result;
 }
 export async function GetState() {
     return new Promise(async resolve => {
-        var URLactual = window.location.toString();
-        var burrito = null;
+        let URLactual = window.location.toString();
+        let burrito = null;
 
         if(URLactual.indexOf("?") == -1){
             resolve(null);
         } else {
             if(URLactual.indexOf("transactionHashes") !== -1){
-                var start = URLactual.indexOf("=");
-                var end = URLactual.indexOf("&");
-                var transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
+                let start = URLactual.indexOf("=");
+                let end = URLactual.indexOf("&");
+                let transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
                 
                 const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
                 console.log(resultJson);
