@@ -156,7 +156,7 @@ class Establo extends Phaser.Scene{
     async SpawnCard(){
         let burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
-            burrito.hp = Phaser.Math.Between(0, 4);
+            //burrito.hp = Phaser.Math.Between(0, 4);
             let card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{ this.ShowCard(burrito); });
             this.cards.push(card);
         });
