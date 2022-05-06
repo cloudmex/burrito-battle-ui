@@ -40,10 +40,10 @@ const config = {
             debugShowBody: true,
             debugShowStaticBody: true,
         },
-        matter: {
+        /*matter: {
             debug: true,
             gravity: { y: 0.5 }
-        }
+        }*/
     },
     autorRound: false,
     width: 1920,

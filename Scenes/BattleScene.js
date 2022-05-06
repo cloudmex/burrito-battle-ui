@@ -6,7 +6,8 @@ export class Battle extends Phaser.Scene{
         super("Battle");
     }
     async preload(){
-        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
         
@@ -64,8 +65,8 @@ export class Battle extends Phaser.Scene{
     }
     burritoMediaToSkin(media){
         switch(media){
-            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return "fuego"//"electrico";
-            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return "agua"//"planta";
+            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return "electrico";
+            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return "planta";
             case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return "fuego";
             case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
         }
@@ -87,7 +88,7 @@ export class Battle extends Phaser.Scene{
         this.anims.create({ key: `victoria_${player}`, frames: this.anims.generateFrameNumbers(`burrito_victoria_${player}`, { frames: this.Range(0, 23) }), frameRate: 24, repeat: -1 });
     }
     RandomBurrito(){
-        let values = ["agua", "fuego", "cyberpunk"];
+        let values = ["agua", "fuego", "electrico", "planta"];
         return values[Math.floor(Math.random() * values.length)];
     }
     CreateActionsMenu = async () => {

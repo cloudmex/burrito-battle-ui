@@ -46,11 +46,12 @@ export class Button{
 }
 export class LoadingScreen {
     constructor(scene){
+        let animation = Phaser.Math.Between(1, 2);
         this.loadingBackground = scene.add.image(0, 0, "loading_bg").setScale(120).setOrigin(0).setAlpha(0.9);
-        this.loadingScreen = scene.add.sprite(scene.sys.game.scale.gameSize.width / 2, scene.sys.game.scale.gameSize.height / 2, "loading_screen", 1).setOrigin(0.5);
+        this.loadingScreen = scene.add.sprite(scene.sys.game.scale.gameSize.width / 2, scene.sys.game.scale.gameSize.height / 2, `loading_screen_${animation}`, 0).setOrigin(0.5);
         this.loadingScreen.depth = 1;
         this.loadingBackground.depth = 1;
-        scene.anims.create({ key: "loading", frames: scene.anims.generateFrameNumbers(`loading_screen`, { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}), frameRate: 24, repeat: -1 });
+        scene.anims.create({ key: "loading", frames: scene.anims.generateFrameNumbers(`loading_screen_${animation}`), frameRate: 24, repeat: -1 });
         this.loadingScreen.play("loading")
     }
     async OnComplete(){
@@ -75,7 +76,10 @@ export class Card{
         this.cardResult = scene.add.container(x, y).setScrollFactor(0);
         this.card = scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type));
         this.cardResult.add(this.card);
-        this.cardResult.add(this.burrito = scene.add.image(0, 0, this.Active ? burrito.media : "burrito_muerto").setScale(.4));
+        this.cardResult.add(this.burrito = scene.add.image(0, 0, this.Active ? burrito.media : "burrito_muerto"));
+        if(this.Active){
+            this.burrito.setScale(.4);
+        }
         if(localStorage.getItem("burrito_selected") == burrito.token_id){
             this.cardResult.add(scene.add.image(300, -350, "selected").setScale(4));
         }

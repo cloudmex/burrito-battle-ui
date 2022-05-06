@@ -14,7 +14,8 @@ class Pradera extends Phaser.Scene{
         super("Pradera");
     }
     preload(){
-        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
 
@@ -45,7 +46,7 @@ class Pradera extends Phaser.Scene{
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
 
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
-
+        
         this.physics.world.setBounds(0,0,this.background.displayWidth, this.background.displayHeight, true, true, true, true);
         this.camera = this.cameras.main;
 
@@ -96,6 +97,26 @@ class Pradera extends Phaser.Scene{
         this.physics.world.enable(this.coliseo);
         this.coliseoCollider = this.physics.add.overlap(this.coliseo, this.burrito, this.ShowAlert, null, this);
 
+        if(localStorage.getItem("burrito_selected") < 0 || localStorage.getItem("burrito_selected")  == null) {
+            Swal.fire({
+                icon: 'info',
+                title: 'No tienes ningun burrito seleccionado',
+                html: `Para poder navegar por el mapa y luchar contra otros burritos, necesitas seleccionar uno de tus burritos para que te acompañe\nVe al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.`,
+                showCancelButton: true,
+                confirmButtonText: 'Ir a establo',
+                cancelButtonText: "Ir a silo"
+            }).then((result) =>{
+                if(result.isConfirmed)
+                    this.scene.start("Establo");
+                else
+                    this.scene.start("MinarBurrito");
+            });
+        } else {
+            let burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+            if(burritoPlayer.hp <= 0)
+                Swal.fire({ icon: 'info', title: 'Tu burrito se ha quedado sin vida', html: `El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando`, confirmButtonText: 'Ir a establo' }).then(async (result) => { if (result.isConfirmed) this.scene.start("Establo"); });
+        }
+        
         await this.loadingScreen.OnComplete();
     }
    
@@ -135,7 +156,7 @@ class Pradera extends Phaser.Scene{
     }
     update(){        
         this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.silo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.establo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.coliseo.getBounds());
-        this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
+        this.camera.setBounds(0, 0, this.background.displayWidth, this.background.displayHeight);
         this.camera.startFollow(this.burrito);
 
         this.keyboardMovement();

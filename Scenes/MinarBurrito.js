@@ -6,7 +6,8 @@ class MinarBurrito extends Phaser.Scene{
         super("MinarBurrito");
     }
     preload(){
-        this.load.spritesheet("loading_screen", "../src/images/Loading_screen sprite.webp", { frameWidth: 512, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
         
