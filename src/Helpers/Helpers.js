@@ -69,7 +69,8 @@ export class Card{
     overColor = 0xaaaaaa
     disabledColor = 0x666666; 
 
-    constructor(x, y, burrito, scene, interactuable = false){
+    constructor(x, y, burrito, scene, interactuable = false, isEstablo = false){
+        this.scene = scene;
         this.Card = {x: x, y: y, burrito: burrito, scene: scene };
         this.Active = burrito.hp > 0;
 
@@ -77,15 +78,11 @@ export class Card{
         this.card = scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type));
         this.cardResult.add(this.card);
         this.cardResult.add(this.burrito = scene.add.image(0, 0, this.Active ? burrito.media : "burrito_muerto"));
-        if(this.Active){
+        if(this.Active)
             this.burrito.setScale(.4);
-        }
-        if(localStorage.getItem("burrito_selected") == burrito.token_id){
-            this.cardResult.add(scene.add.image(300, -350, "selected").setScale(4));
-        }
 
         this.cardResult.add(scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
-        this.cardResult.add(scene.add.text(-180, - 380, burrito.name, { fontSize: 70, fontFamily: "BangersRegular" }));//name
+        this.cardResult.add(scene.add.text(-180, - 380, burrito.name, { fontSize: 60, fontFamily: "BangersRegular" }));//name
 
         this.cardResult.add(scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" }));//wins
         this.cardResult.add(scene.add.text(310, - 40, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular" }));//health
@@ -93,6 +90,9 @@ export class Card{
         this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
         this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" }));//defense
         this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" }));//speed
+
+        if(localStorage.getItem("burrito_selected") == burrito.token_id && isEstablo)
+            this.cardResult.add(this.selected = scene.add.image(300, -350, "selected").setScale(0.35));
 
         if(interactuable){
             this.card
@@ -112,14 +112,14 @@ export class Card{
         return this;
     }
     GetIndexByType(type){
-            switch(type){
-                case "Agua": return 0;
-                case "Volador": return 1;
-                case "Fuego": return 2;
-                case "Planta": return 3;
-                case "Eléctrico": return 4;
-                default: return 0;
-            }
+        switch(type){
+            case "Agua": return 0;
+            case "Volador": return 1;
+            case "Fuego": return 2;
+            case "Planta": return 3;
+            case "Eléctrico": return 4;
+            default: return 0;
+        }
     }
     setScale(value){
         this.cardResult.setScale(value);
@@ -127,6 +127,15 @@ export class Card{
     }
     GetComponents () { 
         return this.cardResult;
+    }
+    setSelected(value){
+        if(value){
+            this.cardResult.add(this.scene.add.image(300, -350, "selected").setScale(0.35));
+        } else{
+            if(this.selected != null)
+                this.selected.destroy();
+        }
+
     }
 }
 export class Slider{

@@ -13,7 +13,7 @@ class Pradera extends Phaser.Scene{
     constructor(){
         super("Pradera");
     }
-    preload(){
+    async preload(){
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -24,12 +24,12 @@ class Pradera extends Phaser.Scene{
         this.load.spritesheet("water", "../src/images/Pradera/Agua_sprites.webp", {frameWidth: 1920, frameHeight: 1080});
         this.load.spritesheet("details", "../src/images/Pradera/Detalles_sprites.webp", {frameWidth: 1920, frameHeight: 1080});
 
-        this.load.image("burrito", "../src/images/Burrito Agua.png");
         this.load.image("gloves", "../src/images/fightTest.png");
         this.load.image("buttonContainer3", "../src/images/button.png");
 
-        this.load.spritesheet("burrito_gris", "../src/images/Pradera/Gris_sprites.png", {frameWidth: 213, frameHeight: 222})
-        this.load.json('shape', '../src/images/Pradera/Island.json');
+        this.burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+        this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(this.burritoPlayer.media)}.png`, {frameWidth: 51, frameHeight: 53})
+        //this.load.json('shape', '../src/images/Pradera/Island.json');
     }
     async create(){
         let shape = this.cache.json.get('shape');
@@ -38,7 +38,7 @@ class Pradera extends Phaser.Scene{
         this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
 
-        this.island = this.add.image(0,0, "island").setOrigin(0).setScale(1);
+        this.island = this.add.image(0, 0, "island").setOrigin(0).setScale(1);
         
         //this.matter.add.fromPhysicsEditor(0, 0, shape.Island, { isStatic: true})
 
@@ -50,10 +50,10 @@ class Pradera extends Phaser.Scene{
         this.physics.world.setBounds(0,0,this.background.displayWidth, this.background.displayHeight, true, true, true, true);
         this.camera = this.cameras.main;
 
-        this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
-        this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
-        this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('burrito_gris', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
-        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "burrito_gris", 0).setOrigin(0.5).setScale(0.35).setCollideWorldBounds(true);
+        this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
+        this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
+        this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
+        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1).setCollideWorldBounds(true);
         
         this.physics.world.enable(this.burrito);
 
@@ -112,14 +112,21 @@ class Pradera extends Phaser.Scene{
                     this.scene.start("MinarBurrito");
             });
         } else {
-            let burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-            if(burritoPlayer.hp <= 0)
+            this.burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+            if(this.burritoPlayer.hp <= 0)
                 Swal.fire({ icon: 'info', title: 'Tu burrito se ha quedado sin vida', html: `El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando`, confirmButtonText: 'Ir a establo' }).then(async (result) => { if (result.isConfirmed) this.scene.start("Establo"); });
         }
         
         await this.loadingScreen.OnComplete();
     }
-   
+    burritoMediaToSkin = (media) => {
+        switch(media){
+            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return "electrico";
+            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return "planta";
+            case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return "fuego";
+            case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
+        }
+    }
     ShowAlert = (title, description, scene) => {
         if(!this.showAlert){
             Swal.fire({
