@@ -242,3 +242,39 @@ export class Actions{
         ]}); 
     }
 }
+
+export class InfoCard{
+    InfoCard;
+    constructor(x, y, burrito, scene, interactuable = false){
+        this.InfoCard = {x, y, burrito, scene };
+
+
+        console.log('scene',scene.bigCard)
+        const components = scene.bigCard.GetComponents().list
+        components[1].visible = false;
+        for (const item of components) {
+            if(item.type === "Text") {
+
+                item.visible = false        
+            }
+        }
+
+        this.cardResult = scene.add.container(x, y).setScrollFactor(0)
+
+        this.cardResult.add(scene.add.text(-100, -200, "Tipo: "+burrito.burrito_type+"\nnivel: "+burrito.level+"\nVictorias: "+burrito.win+" \nVidas: "+burrito.hp+"\nFuerza: "+burrito.attack+"\nDefensa: "+burrito.defense+"\nVelocidad: "+burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
+
+    }
+    
+    setScale(value){
+        this.cardResult.setScale(value);
+        return this;
+    }
+    setTint(value) {
+        this.infoCard.setTint(0x808080);
+        this.burrito.setTint(0x808080)
+        return this;
+    }
+    GetComponents () { 
+        return this.cardResult;
+    }
+}
