@@ -45,6 +45,8 @@ class Establo extends Phaser.Scene{
 
         this.cards = [];
         this.bigCard = null;
+        this.info_bigCard = false;
+        this.infoCard = null;
         this.totalTokens = await Near.NFTSupplyForOwner();
 
         if(this.totalTokens == 0){
@@ -61,7 +63,7 @@ class Establo extends Phaser.Scene{
             this.buttonEvolve.GetComponents().destroy();
         }
 
-        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, true).setScale(0.8);
+        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, true).setScale(0.7).On(()=>{ this.infoBigCard(burrito);});
         if(burrito.hp <= 0){
             this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ResetBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         } else {
@@ -170,6 +172,26 @@ class Establo extends Phaser.Scene{
             //let card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{ this.ShowCard(burrito); });
             this.cards.push(card);
         });
+    }
+
+    infoBigCard(burrito){
+        if(this.info_bigCard == false){
+            this.infoCard = new Helpers.InfoCard(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this).setScale(0.7);
+            this.bigCard.PointerOver();
+            this.info_bigCard = true;
+        }else{
+            this.bigCard.PointerOut();
+            this.info_bigCard = false;
+            const components = this.bigCard.GetComponents().list
+            components[1].visible = true;
+        for (const item of components) {
+            if(item.type === "Text") {
+
+                item.visible = true        
+            }
+        } 
+            this.infoCard.GetComponents().destroy();
+        }
     }
 }
 export { Establo }
