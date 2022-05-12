@@ -91,7 +91,7 @@ export async function NFTMint(){
     }
 }
 export async function NFTTokens(burrito_id) {
-    let result = await contract_burritos.nft_tokens();
+    let result = await contract_burritos.nft_tokens({});
     return result[burrito_id];
 }
 export async function NFTSupplyForOwner() {
@@ -142,11 +142,11 @@ export async function CreateBattlePlayerCpu () {
     return result;
 }
 export async function GetBattleActiveCpu () {
-    let result = await contract_PVEBattle.get_battle_active({ });
+    let result = await contract_PVEBattle.get_battle_active({ }, 300000000000000);
     return result;
 }
 export async function SurrenderCpu () {
-    let result = await contract_PVEBattle.surrender_cpu({});
+    let result = await contract_PVEBattle.surrender_cpu({}, 300000000000000);
     return result;
 }
 export async function GetInfoByURL(){

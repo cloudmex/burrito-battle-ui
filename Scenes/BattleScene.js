@@ -81,7 +81,6 @@ export class Battle extends Phaser.Scene{
         }
     }
     loadSpriteSheet(player, folder){
-        console.log("player: "  + player + ". Folder: " + folder)
         this.load.spritesheet(`burrito_idle_${player}`, `../src/images/Battle/${folder}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_${player}`, `../src/images/Battle/${folder}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque2_${player}`, `../src/images/Battle/${folder}/Ataque_pesado.webp`, {frameWidth: 360, frameHeight: 600});
@@ -104,6 +103,7 @@ export class Battle extends Phaser.Scene{
     CreateActionsMenu = async () => {
         try{
             this.currentBattle = await Near.GetBattleActiveCpu();
+            console.log(this.currentBattle);
             new Helpers.Actions(this.game.config.width / 2 - 600, this.game.config.height - 400, this, this.currentBattle, { Action1: ()=>{ this.Action1("Player"); }, Action2: ()=> { this.Action2("Player"); }});
             this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
             this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
