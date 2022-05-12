@@ -3,7 +3,9 @@ import * as nearAPI from "../lib/near-api-js.js"
 const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
 const config = {
       networkId: 'testnet',
-      keyStore: new keyStores.BrowserLocalStorageKeyStore(),
+      keyStore: typeof window === "undefined"
+      ? new keyStores.InMemoryKeyStore()
+      : new keyStores.BrowserLocalStorageKeyStore(),
       nodeUrl: 'https://rpc.testnet.near.org',
       walletUrl: 'https://wallet.testnet.near.org',
       helperUrl: 'https://helper.testnet.near.org',
@@ -11,10 +13,12 @@ const config = {
     
 }
 const near = await connect(config);
+
 const wallet = new WalletConnection(near, 'ncd-ii');
-const contract_id_burritos = "dev-1648843231450-76383111338516";
+const contract_id_burritos = "dev-1652376462131-97539161016715";
 const contract_id_strw_tokens = "dev-1648843322449-70578827831792";
 const contract_id_items = "dev-1647986467816-61735125036881";
+const contract_id_PVEBattle = "dev-1652376335913-86387308955071";
 
 const provider = new providers.JsonRpcProvider(
   "https://archival-rpc.testnet.near.org"
@@ -22,7 +26,7 @@ const provider = new providers.JsonRpcProvider(
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner" ],
-    changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint', "create_battle_player_cpu", "battle_player_cpu", "get_battle_active_cpu", "surrender_cpu" ],
+    changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint' ],
     sender: wallet.account()
 });
 const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
@@ -35,10 +39,14 @@ const contract_items = new Contract(wallet.account(), contract_id_items, {
     changeMethods: [  ],
     sender: wallet.account()
 });
-
+const contract_PVEBattle = new Contract(wallet.account(), contract_id_PVEBattle, {
+    viewMethods: [ "is_in_battle",  ],
+    changeMethods: [ "create_battle_player_cpu", "battle_player_cpu", "get_battle_active", "surrender_cpu" ],
+    sender: wallet.account()
+})
 export function Login() {
     wallet.requestSignIn(
-        contract_id_burritos,
+        contract_id_PVEBattle,
         "Burrito Battle",
         window.location.origin,
     );
@@ -90,6 +98,10 @@ export async function NFTSupplyForOwner() {
     let result = await contract_burritos.nft_supply_for_owner({account_id: GetAccountId()})
     return result;
 }
+export async function IsInBattle(){
+    let result = await contract_PVEBattle.is_in_battle({account_id:GetAccountId()});
+    return result;
+}
 export async function NFTTokensForOwner(from, limit){
     let tokens = await contract_burritos.nft_tokens_for_owner (
         {
@@ -118,7 +130,7 @@ export async function GetNFTToken(index){
     return burritoPlayer;
 }
 export async function CreateBattlePlayerCpu () {
-    let result = await contract_burritos.create_battle_player_cpu(
+    let result = await contract_PVEBattle.create_battle_player_cpu(
         {
             burrito_id: localStorage.getItem("burrito_selected"),
             accesorio1_id: "0", 
@@ -130,11 +142,11 @@ export async function CreateBattlePlayerCpu () {
     return result;
 }
 export async function GetBattleActiveCpu () {
-    let result = await contract_burritos.get_battle_active_cpu({ });
+    let result = await contract_PVEBattle.get_battle_active({ });
     return result;
 }
 export async function SurrenderCpu () {
-    let result = await contract_burritos.surrender_cpu({});
+    let result = await contract_PVEBattle.surrender_cpu({});
     return result;
 }
 export async function GetInfoByURL(){
@@ -149,7 +161,7 @@ export async function GetInfoByURL(){
                 let transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
                 
                 const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
-                console.log(resultJson);
+                resolve(resultJson);
             }
             else if(URLactual.indexOf("rejected") !== -1) {
                 Swal.fire({
@@ -163,7 +175,7 @@ export async function GetInfoByURL(){
     });
 }
 export async function BattlePlayerCPU(typeMove){
-    let result = await contract_burritos.battle_player_cpu({ type_move: typeMove}, 300000000000000, 0 );
+    let result = await contract_PVEBattle.battle_player_cpu({ type_move: typeMove}, 300000000000000, 0 );
     return result;
 }
 export async function GetState() {

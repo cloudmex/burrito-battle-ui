@@ -15,12 +15,13 @@ class MainMenu extends Phaser.Scene{
     }
     async create(){
         this.loadingScreen = new Helpers.LoadingScreen(this);
+        
         if(localStorage.getItem("lastScene")) {
             this.scene.start(localStorage.getItem("lastScene"));
         } else {
             try{
-                let currentBattle = await Near.GetBattleActiveCpu();
-                if(currentBattle){
+                let isInBattle = await Near.IsInBattle();
+                if(isInBattle){
                     Swal.fire({
                         icon: 'info',
                         title: 'Existe una batalla pendiente',

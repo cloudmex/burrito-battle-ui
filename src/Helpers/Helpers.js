@@ -138,11 +138,13 @@ export class Card{
     }
 }
 export class Slider{
-    constructor(x, y, scene){
+    constructor(x, y, scene, head){
         this.sliderResult = scene.add.container(x, y).setScrollFactor(0);
-
+        
         this.sliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
-        this.sliderResult.add(this.fill = scene.add.sprite(0, 0, "slider_fill").setOrigin(0.5));
+        this.sliderResult.add(scene.add.sprite(-280, 0, "burritos", head));
+        this.sliderResult.add(scene.add.sprite(60, 20, "slider_fill", 2).setOrigin(0.5));
+        this.sliderResult.add(this.fill = scene.add.sprite(60, 20, "slider_fill", 1).setOrigin(0.5));
     }
     SetValue(value){
         this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
