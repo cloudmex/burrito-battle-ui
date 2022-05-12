@@ -9,7 +9,7 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
-        this.loadingScreen = new Helpers.LoadingScreen(this);
+        //this.loadingScreen = new Helpers.LoadingScreen(this);
         
         this.load.image("background_Battle", "../src/images/Establo/Background.webp")
         this.load.image("burrito", "../src/images/Burrito Agua.png");
@@ -18,7 +18,7 @@ export class Battle extends Phaser.Scene{
 
         this.load.image("slider_background", "../src/images/Battle/slider_background.png");
         this.load.image("slider_fill", "../src/images/Battle/slider_fill.png");
-
+        
         if(localStorage.getItem("burritoCPU") == null)
            localStorage.setItem("burritoCPU", this.RandomBurrito());
         this.burritoSkinCPU = localStorage.getItem("burritoCPU");
@@ -33,7 +33,7 @@ export class Battle extends Phaser.Scene{
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer3", "Rendirse", this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
         
-        try {
+        /*try {
             this.currentBattle = await Near.GetBattleActiveCpu();
         } catch { 
             this.currentBattle = await Near.CreateBattlePlayerCpu();
@@ -42,7 +42,7 @@ export class Battle extends Phaser.Scene{
         if(info){
             console.log(info);
             console.log(info.receipts_outcome[0].outcome.logs[0]); //logs[0, 1] accion del jugador
-        }
+        }*/
 
         //#region Burrito Player
         this.CreateAnimations("Player");
@@ -50,7 +50,7 @@ export class Battle extends Phaser.Scene{
         this.burritoPlayer.play("idle_Player");
         new Helpers.Slider(this.game.config.width / 2 - 750, 100, this, "slider_background", "slider_fill").SetValue(1).SetFlipX(false);
         this.CreateActionsMenu();
-        this.healthPlayer = this.add.text(this.game.config.width/ 2 - 850, 150, `Health ${this.currentBattle.health_player}`, {fontSize: 30, fontFamily: "BangersRegular"})
+        this.healthPlayer = this.add.text(this.game.config.width/ 2 - 850, 150, `Health ${this.currentBattle.health_player}`, {fontSize: 30, fontFamily: "BangersRegular"});
         //#endregion
 
         //#region Burrito CPU
@@ -60,8 +60,7 @@ export class Battle extends Phaser.Scene{
         new Helpers.Slider(this.game.config.width / 2 + 750, 100, this, "slider_background", "slider_fill").SetValue(1).SetFlipX(true);
         this.healthCPU = this.add.text(this.game.config.width/ 2 + 650, 150, `${this.currentBattle.health_cpu} Health`, {fontSize: 30, fontFamily: "BangersRegular"});
         //#endregion
-        
-        await this.loadingScreen.OnComplete();
+        //await this.loadingScreen.OnComplete();
     }
     burritoMediaToSkin(media){
         switch(media){

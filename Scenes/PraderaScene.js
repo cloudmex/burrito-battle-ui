@@ -1,7 +1,7 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
 
-class Pradera extends Phaser.Scene{
+export class Pradera extends Phaser.Scene{
     gloves;
     speed = 200;
     angle = 0;
@@ -27,44 +27,57 @@ class Pradera extends Phaser.Scene{
         this.load.image("gloves", "../src/images/fightTest.png");
         this.load.image("buttonContainer3", "../src/images/button.png");
 
-        this.burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-        this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(this.burritoPlayer.media)}.png`, {frameWidth: 51, frameHeight: 53})
-        //this.load.json('shape', '../src/images/Pradera/Island.json');
+        if(localStorage.getItem("burrito_selected") != null){
+            let burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+            this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayer.media)}.png`, {frameWidth: 51, frameHeight: 53});
+        }
     }
     async create(){
-        let shape = this.cache.json.get('shape');
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
-
         this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
-
         this.island = this.add.image(0, 0, "island").setOrigin(0).setScale(1);
-        
-        //this.matter.add.fromPhysicsEditor(0, 0, shape.Island, { isStatic: true})
-
         this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
 
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        
+        if(localStorage.getItem("burrito_selected") == null){
+            await this.loadingScreen.OnComplete();
+            Swal.fire({
+                icon: 'info',
+                title: 'No tienes ningun burrito seleccionado',
+                html: `Para poder navegar por el mapa y luchar contra otros burritos, necesitas seleccionar uno de tus burritos para que te acompañe\nVe al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.`,
+                showCancelButton: true,
+                confirmButtonText: 'Ir a establo',
+                cancelButtonText: "Ir a silo"
+            }).then((result) =>{
+                if(result.isConfirmed)
+                    this.scene.start("Establo");
+                else
+                    this.scene.start("MinarBurrito");
+            });
+            return;
+        }
+
+        this.burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+        if(this.burritoPlayer.hp <= 0)
+            Swal.fire({ icon: 'info', title: 'Tu burrito se ha quedado sin vida', html: `El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando`, confirmButtonText: 'Ir a establo' }).then(async (result) => { if (result.isConfirmed) this.scene.start("Establo"); });
+
+        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1).setCollideWorldBounds(true);
+        this.physics.world.enable(this.burrito);
+        this.burrito.setCollideWorldBounds(true);
+        this.burrito.onWorldBounds = true;
+
         this.physics.world.setBounds(0,0,this.background.displayWidth, this.background.displayHeight, true, true, true, true);
         this.camera = this.cameras.main;
 
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
-        this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1).setCollideWorldBounds(true);
-        
-        this.physics.world.enable(this.burrito);
-
-        //this.burrito.body.setSize(this.burrito.width * (1/0.35) * 2, this.burrito.height * (1/0.35) * 2)
-        this.burrito.play("walkRight");
-        this.burrito.setCollideWorldBounds(true);
-        this.burrito.onWorldBounds = true;
+        this.burrito.play("walkRight");;
 
         this.Cursors = this.input.keyboard.createCursorKeys();
         this.velocity = {x: 0, y: 0};
-        
 
         this.input.on("pointerdown", function(pointer){
             if(!this.burrito.anims.isPlaying){
@@ -83,7 +96,6 @@ class Pradera extends Phaser.Scene{
             this.zoneBattles.create(x, y, null, null, false, true);
         }
         this.physics.add.overlap(this.burrito, this.zoneBattles, this.Battle, null, this);
-        this.detailText = this.add.text(100,100)
 
         this.silo = this.add.zone(700, 700, 100, 100).setRectangleDropZone(300, 300);
         this.physics.world.enable(this.silo);
@@ -97,27 +109,23 @@ class Pradera extends Phaser.Scene{
         this.physics.world.enable(this.coliseo);
         this.coliseoCollider = this.physics.add.overlap(this.coliseo, this.burrito, this.ShowAlert, null, this);
 
-        if(localStorage.getItem("burrito_selected") < 0 || localStorage.getItem("burrito_selected")  == null) {
-            Swal.fire({
-                icon: 'info',
-                title: 'No tienes ningun burrito seleccionado',
-                html: `Para poder navegar por el mapa y luchar contra otros burritos, necesitas seleccionar uno de tus burritos para que te acompañe\nVe al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.`,
-                showCancelButton: true,
-                confirmButtonText: 'Ir a establo',
-                cancelButtonText: "Ir a silo"
-            }).then((result) =>{
-                if(result.isConfirmed)
-                    this.scene.start("Establo");
-                else
-                    this.scene.start("MinarBurrito");
-            });
-        } else {
-            this.burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-            if(this.burritoPlayer.hp <= 0)
-                Swal.fire({ icon: 'info', title: 'Tu burrito se ha quedado sin vida', html: `El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando`, confirmButtonText: 'Ir a establo' }).then(async (result) => { if (result.isConfirmed) this.scene.start("Establo"); });
-        }
-        
         await this.loadingScreen.OnComplete();
+    }
+    update(){        
+        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.silo == null || Swal.isVisible())
+            return;
+
+        this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.silo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.establo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.coliseo.getBounds());
+        let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
+        if(this.burrito.body.speed > 0){
+            this.PlayAnimation();
+            if(distance < 4 && !this.isKeyboard)
+                this.burrito.body.reset(this.target.x, this.target.y)
+        } else
+            this.StopAnimation();
+            
+        this.keyboardMovement();
+        this.camera.setBounds(0, 0, this.background.displayWidth, this.background.displayHeight);
     }
     burritoMediaToSkin = (media) => {
         switch(media){
@@ -129,6 +137,9 @@ class Pradera extends Phaser.Scene{
     }
     ShowAlert = (title, description, scene) => {
         if(!this.showAlert){
+            
+            this.burrito.body.stop();
+            this.burrito.stop();
             Swal.fire({
                 icon: 'info',
                 title: title,
@@ -136,13 +147,14 @@ class Pradera extends Phaser.Scene{
                 showCancelButton: true,
                 confirmButtonText: 'Entrar',
             }).then((result) => {
-                if(result.isConfirmed)
-                    this.scene.start(scene);
+                if(result.isConfirmed) this.scene.start(scene);
             })
             this.showAlert = true;
         }
     }
     Battle(burrito, triggerZone){
+        burrito.body.stop();
+        this.burrito.stop();
         triggerZone.disableBody(true, true);
         triggerZone.destroy();
         Swal.fire({
@@ -153,30 +165,11 @@ class Pradera extends Phaser.Scene{
             confirmButtonText: 'Pelear',
             cancelButtonText: "Huir"
           }).then((result) => {
-            if (result.isConfirmed) {
-                this.GoToBattle();
-            }
+            if (result.isConfirmed) this.GoToBattle();
           })
     }
     GoToBattle(){
         this.scene.start("Battle");
-    }
-    update(){        
-        this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.silo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.establo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.coliseo.getBounds());
-        this.camera.setBounds(0, 0, this.background.displayWidth, this.background.displayHeight);
-        this.camera.startFollow(this.burrito);
-
-        this.keyboardMovement();
-        
-        let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
-        
-        if(this.burrito.body.speed > 0){
-            this.PlayAnimation();
-            if(distance < 4 && !this.isKeyboard)
-                this.burrito.body.reset(this.target.x, this.target.y)
-        } else{
-            this.StopAnimation();
-        }
     }
     
     PlayAnimation() {
@@ -201,16 +194,12 @@ class Pradera extends Phaser.Scene{
         }
     }
     StopAnimation(){
-        if(this.burrito.anims.isPlaying) {
+        if(this.burrito.anims.isPlaying)
             this.burrito.stop();
-        }
     }
     BackToMainMenu = () => {
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
-    }
-    MouseMovement(){
-
     }
     keyboardMovement(){
         if(this.Cursors.up.isDown || this.Cursors.down.isDown){
@@ -223,9 +212,8 @@ class Pradera extends Phaser.Scene{
                 !this.burrito.anims.isPlaying && this.burrito.play("walkUp");
             }
             this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180 / Math.PI);
-        } else {
+        } else
             this.velocity.y = 0;
-        }
 
         if(this.Cursors.right.isDown || this.Cursors.left.isDown){
             this.isKeyboard = true;
@@ -239,18 +227,15 @@ class Pradera extends Phaser.Scene{
                 !this.burrito.anims.isPlaying && this.burrito.play("walkRight");
             }
             this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180 / Math.PI);
-        } else {
+        } else
             this.velocity.x = 0;
-        }
-        if(this.isKeyboard){
+
+        if(this.isKeyboard)
             this.burrito.setVelocity(this.velocity.x * this.speed, this.velocity.y * this.speed);
-        }
     }
     clampAngle(angle){
         let result = angle - Math.ceil(angle / 360) * 360;
-        if(result < 0)
-            result += 360;
+        if(result < 0) result += 360;
         return result;
     }
 }
-export{ Pradera };

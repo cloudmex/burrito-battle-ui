@@ -130,12 +130,11 @@ export class Card{
     }
     setSelected(value){
         if(value){
-            this.cardResult.add(this.scene.add.image(300, -350, "selected").setScale(0.35));
-        } else{
-            if(this.selected != null)
-                this.selected.destroy();
+            this.cardResult.add(this.selected = this.scene.add.image(300, -350, "selected").setScale(0.35));
+        } else if(this.selected != null) {
+            this.selected.destroy();
+            this.selected = null;
         }
-
     }
 }
 export class Slider{
@@ -242,7 +241,6 @@ export class Actions{
         ]}); 
     }
 }
-
 export class InfoCard{
     InfoCard;
     constructor(x, y, burrito, scene, interactuable = false){

@@ -63,7 +63,7 @@ class Establo extends Phaser.Scene{
             this.buttonEvolve.GetComponents().destroy();
         }
 
-        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, true).setScale(0.7).On(()=>{ this.infoBigCard(burrito);});
+        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, false).setScale(0.7).On(()=>{ this.infoBigCard(burrito);});
         if(burrito.hp <= 0){
             this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ResetBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         } else {
@@ -73,10 +73,7 @@ class Establo extends Phaser.Scene{
     }
     SetSelected = (_index) => { 
         this.cards.forEach((element, index) => {
-            if(index == _index)
-                element.setSelected(true) 
-            else
-                element.setSelected(false)
+            element.setSelected(index == _index);
         });
     }
     SelectBurrito = (burrito) =>{
@@ -89,7 +86,6 @@ class Establo extends Phaser.Scene{
         } else{
             localStorage.setItem("burrito_selected", burrito.token_id);
             Swal.fire({
-                //position: 'top-end',
                 icon: 'success',
                 title: 'El burrito fue seleccionado',
                 showConfirmButton: false,
@@ -121,12 +117,6 @@ class Establo extends Phaser.Scene{
                 showCancelButton: false,
                 showConfirmButton: true
             });
-            /*Swal.fire({
-                background: '#fff url(https://image.shutterstock.com/z/stock-vector--exclamation-mark-exclamation-mark-hazard-warning-symbol-flat-design-style-vector-eps-444778462.jpg)',
-                title: 'Para subir de nivel un burrito debes tener al menos 10 victorias en combate',
-                showCancelButton: false,
-                showConfirmButton: true
-            })*/
         } else{
             let currentSTRW = await Near.GetSTRWToken();
             Swal.fire({
@@ -165,15 +155,13 @@ class Establo extends Phaser.Scene{
         }
     }
     SpawnCard = async() => {
+        this.cards = [];
         let burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
-            //burrito.hp = Phaser.Math.Between(0, 4);
             let card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true, true).setScale(0.3).On(()=>{ this.ShowCard(burrito, index); });
-            //let card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true).setScale(0.3).On(()=>{ this.ShowCard(burrito); });
             this.cards.push(card);
         });
     }
-
     infoBigCard(burrito){
         if(this.info_bigCard == false){
             this.infoCard = new Helpers.InfoCard(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this).setScale(0.7);
