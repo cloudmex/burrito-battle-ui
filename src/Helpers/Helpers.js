@@ -15,7 +15,7 @@ export class Button{
         this.buttonResult.add(this.button)
 
         if(label !== null){
-            this.text = scene.add.text(0, 0, label)
+            this.text = scene.add.text(0, 10, label)
             .setScrollFactor(0)
             .setOrigin(0.5)
             .setStyle(fontStyle)
@@ -82,8 +82,7 @@ export class Card{
             this.burrito.setScale(.4);
 
         this.cardResult.add(scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
-        this.textName = scene.add.text(-180, - 380, burrito.name, { fontSize: 60, fontFamily: "BangersRegular" })
-        this.cardResult.add(this.textName);//name
+        this.cardResult.add(scene.add.text(-180, - 380, burrito.name.split("#", 1), { fontSize: 60, fontFamily: "BangersRegular" }));//name
 
         this.cardResult.add(scene.add.sprite(325, -150, "level", Math.round((burrito.win / 10) * 24)));
         this.cardResult.add(scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" }));//wins
@@ -258,7 +257,7 @@ export class InfoCard{
         this.InfoCard = {x, y, burrito, scene };
 
 
-        console.log('scene',scene.bigCard)
+        //console.log('scene',scene.bigCard)
         const components = scene.bigCard.GetComponents().list
         components[1].visible = false;
         for (const item of components) {
@@ -269,8 +268,9 @@ export class InfoCard{
         }
 
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
+        this.numBurrito = burrito.name.split("#", 2);
 
-        this.cardResult.add(scene.add.text(-100, -200, "Tipo: "+burrito.burrito_type+"\nnivel: "+burrito.level+"\nVictorias: "+burrito.win+" \nVidas: "+burrito.hp+"\nFuerza: "+burrito.attack+"\nDefensa: "+burrito.defense+"\nVelocidad: "+burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
+        this.cardResult.add(scene.add.text(-100, -235, "Burrito #"+this.numBurrito[1]+"\nTipo: "+burrito.burrito_type+"\nnivel: "+burrito.level+"\nVictorias: "+burrito.win+" \nVidas: "+burrito.hp+"\nFuerza: "+burrito.attack+"\nDefensa: "+burrito.defense+"\nVelocidad: "+burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
 
     }
     
