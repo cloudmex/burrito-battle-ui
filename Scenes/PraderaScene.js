@@ -74,7 +74,7 @@ export class Pradera extends Phaser.Scene{
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
-        this.burrito.play("walkRight");;
+        this.burrito.play("walkRight");
 
         this.Cursors = this.input.keyboard.createCursorKeys();
         this.velocity = {x: 0, y: 0};

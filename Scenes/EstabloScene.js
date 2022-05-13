@@ -57,7 +57,8 @@ class Establo extends Phaser.Scene{
         else
             this.SpawnCard();
 
-        //http://localhost:8000/?transactionHashes=9N7yiaN6ciBVUvfZGJwfzdtaEnd4wvTgbXQmYWt2m9DX
+        //http://localhost:8000/?transactionHashes=9N7yiaN6ciBVUvfZGJwfzdtaEnd4wvTgbXQmYWt2m9DX health
+        //http://localhost:8000/?transactionHashes=2ysirJemW8reZY9iQGckuABiWUFZePJiQv8rF2UG2HoN level
         let result = await Near.GetInfoByURL();
 
         if(result != null){
@@ -65,7 +66,11 @@ class Establo extends Phaser.Scene{
                 let token_id = result.receipts_outcome[5].outcome.logs[0];
                 this.cards.forEach(value => {
                     if(value.Card.burrito.token_id == token_id)
-                        value.RecoverHealth();
+                        if(localStorage.getItem("tmp") == "restart")
+                            value.RecoverHealth();
+                        else if(localStorage.getItem("tmp") == "evolve")
+                            value.ResetLevel();
+                        localStorage.removeItem("tmp");
                 });
             } catch { }
         }
@@ -92,9 +97,6 @@ class Establo extends Phaser.Scene{
         });
     }
     SelectBurrito = async (burrito) =>{
-        let result = await Near.BurritoIncrementWin(burrito.token_id);
-        console.log(result);
-        return;
         if(burrito.hp <= 0){
             Swal.fire({
                 icon: 'info',
@@ -122,6 +124,7 @@ class Establo extends Phaser.Scene{
           }).then(async (result) => {
             if (result.isConfirmed) {
                 localStorage.setItem("lastScene", "Establo");
+                localStorage.setItem("tmp", "restart");
                 await Near.ResetBurrito(burrito.token_id);
                 console.log("se restauro la salud del burrito v:");
             }
@@ -135,7 +138,11 @@ class Establo extends Phaser.Scene{
                 showCancelButton: false,
                 showConfirmButton: true
             });
-        } else{
+        } else {
+            localStorage.setItem("lastScene", "Establo");
+            localStorage.setItem("tmp", "evolve");
+            let result = await Near.EvolveBurrito(burrito.token_id);
+        } /*else{
             let currentSTRW = await Near.GetSTRWToken();
             Swal.fire({
                 icon: 'info',
@@ -149,7 +156,7 @@ class Establo extends Phaser.Scene{
                     console.log("se evoluciono el burrito v:");
                 }
             });
-        }
+        }*/
     }
     BackToMainMenu = () => {
         localStorage.removeItem("lastScene");
