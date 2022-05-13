@@ -45,8 +45,8 @@ export class Pradera extends Phaser.Scene{
             await this.loadingScreen.OnComplete();
             Swal.fire({
                 icon: 'info',
-                title: 'No tienes ningun burrito seleccionado',
-                html: `Para poder navegar por el mapa y luchar contra otros burritos, necesitas seleccionar uno de tus burritos para que te acompañe\nVe al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.`,
+                title: 'Ningun burrito seleccionado',
+                html: `Para poder navegar por el mapa y luchar contra otros burritos necesitas seleccionar uno de tus burritos.<br><br>Ve al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.`,
                 showCancelButton: true,
                 confirmButtonText: 'Ir a establo',
                 cancelButtonText: "Ir a silo"
@@ -99,11 +99,11 @@ export class Pradera extends Phaser.Scene{
 
         this.silo = this.add.zone(700, 700, 100, 100).setRectangleDropZone(300, 300);
         this.physics.world.enable(this.silo);
-        this.siloCollider = this.physics.add.overlap(this.silo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al silo?", "Aqui puedes minar un nuevo burrito", "MinarBurrito") }, null, this);
+        this.siloCollider = this.physics.add.overlap(this.silo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al silo?", "Aqui puedes minar un nuevo burrito.", "MinarBurrito") }, null, this);
 
         this.establo = this.add.zone(580, 550, 80, 80).setRectangleDropZone(80, 80);
         this.physics.world.enable(this.establo);
-        this.establoCollider = this.physics.add.overlap(this.establo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel", "Establo") }, null, this);
+        this.establoCollider = this.physics.add.overlap(this.establo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel.", "Establo") }, null, this);
 
         this.coliseo = this.add.zone(1280, 300, 200, 200).setRectangleDropZone(600, 600);
         this.physics.world.enable(this.coliseo);
@@ -160,7 +160,7 @@ export class Pradera extends Phaser.Scene{
         Swal.fire({
             icon: 'info',
             title: 'Burrito salvaje ha aparecido',
-            html: `Un burrito salvaje ha aparecido, ¿deseas enfrentarte a el?<br>Se desconoce el nivel y las estadisticas del burrito, una vez entrando en combate si huyes, se te restara una vida`,
+            html: `Un burrito salvaje ha aparecido, ¿deseas enfrentarte a el?<br><br>Se desconoce el nivel y las estadisticas del burrito, una vez entrando en combate si huyes, se te restara una vida.`,
             showCancelButton: true,
             confirmButtonText: 'Pelear',
             cancelButtonText: "Huir"
