@@ -102,8 +102,6 @@ export class Battle extends Phaser.Scene{
     }
     CreateActionsMenu = async () => {
         try{
-            this.currentBattle = await Near.GetBattleActiveCpu();
-            console.log(this.currentBattle);
             new Helpers.Actions(this.game.config.width / 2 - 600, this.game.config.height - 400, this, this.currentBattle, { Action1: ()=>{ this.Action1("Player"); }, Action2: ()=> { this.Action2("Player"); }});
             this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
             this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
@@ -116,10 +114,14 @@ export class Battle extends Phaser.Scene{
     }
     Action1 = async(player) => {
         let result = await Near.BattlePlayerCPU(this.ActionIndex(1, player));
+        this.currentBattle = result;
+        console.log(result);
         this.CreateActionsMenu();
     }
     Action2 = async(player) =>{
-        let result = await Near.BattlePlayerCPU(this.ActionIndex(2, player))
+        let result = await Near.BattlePlayerCPU(this.ActionIndex(2, player));
+        this.currentBattle = result;
+        console.log(result);
         this.CreateActionsMenu();
     }
     ActionIndex(index, player){
