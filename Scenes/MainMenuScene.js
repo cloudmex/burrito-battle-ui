@@ -47,7 +47,6 @@ class MainMenu extends Phaser.Scene{
         new Helpers.Button(450, 600, 0.75, "buttonContainer1", "Minar Burrito", this, this.MinarBurrito, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer1", "Pradera", this, this.Pradera, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer1", "Establo", this, this.Establo, null, {fontSize: 60, fontFamily: "BangersRegular"});
-        this.add.image(0,0, "burro");
         await this.loadingScreen.OnComplete();
     }
     LogOut = () => {

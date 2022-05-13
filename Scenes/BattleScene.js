@@ -101,28 +101,26 @@ export class Battle extends Phaser.Scene{
         return values[Math.floor(Math.random() * values.length)];
     }
     CreateActionsMenu = async () => {
-        try{
-            new Helpers.Actions(this.game.config.width / 2 - 600, this.game.config.height - 400, this, this.currentBattle, { Action1: ()=>{ this.Action1("Player"); }, Action2: ()=> { this.Action2("Player"); }});
-            this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
-            this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
-        } catch{
-            
-        }
+        new Helpers.Actions(this.game.config.width / 2 - 600, this.game.config.height - 400, this, this.currentBattle, { Action1: ()=>{ this.Action("Player", 1); }, Action2: ()=> { this.Action("Player", 2); }});
+        this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
+        this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
     }
-    IsMyTurn(player){
+    IsMyTurn(player) {
         return this.currentBattle.turn == player;
     }
-    Action1 = async(player) => {
-        let result = await Near.BattlePlayerCPU(this.ActionIndex(1, player));
-        this.currentBattle = result;
+    Action = async(player, index) => {
+        let result = await Near.BattlePlayerCPU(this.ActionIndex(index, player));
         console.log(result);
+        let tempBattle = this.currentBattle;
+        this.currentBattle = result;
+        this.CompareBattles(tempBattle);
         this.CreateActionsMenu();
     }
-    Action2 = async(player) =>{
-        let result = await Near.BattlePlayerCPU(this.ActionIndex(2, player));
-        this.currentBattle = result;
-        console.log(result);
-        this.CreateActionsMenu();
+    CompareBattles(tempBattle){
+        let strongAttack_cpu = tempBattle.strong_attack_cpu != this.currentBattle.strong_attack_cpu;
+        let strongAttack_player = tempBattle.strong_attack_player != this.currentBattle.strong_attack_player;
+
+        let weakAttack_player = tempBattle.shields_player != this.currentBattle.shields_player;
     }
     ActionIndex(index, player){
         let result = (this.IsMyTurn(player) ? 0 : 2) + index;

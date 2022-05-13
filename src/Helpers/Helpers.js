@@ -82,9 +82,15 @@ export class Card{
             this.burrito.setScale(.4);
 
         this.cardResult.add(scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" }));//level
-        this.cardResult.add(scene.add.text(-180, - 380, burrito.name, { fontSize: 60, fontFamily: "BangersRegular" }));//name
+        this.textName = scene.add.text(-180, - 380, burrito.name, { fontSize: 60, fontFamily: "BangersRegular" })
+        this.cardResult.add(this.textName);//name
 
+        this.cardResult.add(scene.add.sprite(325, -150, "level", Math.round((burrito.win / 10) * 24)));
         this.cardResult.add(scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" }));//wins
+        
+        this.cardResult.add( this.Heart = scene.add.sprite(325,0,"heart", Math.round((burrito.hp / 5) * 24)));
+        scene.anims.create({ key: "recoverHealth", frames: scene.anims.generateFrameNumbers("heart", { frames: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]}), frameRate: 24, repeat: 0 });
+        
         this.cardResult.add(scene.add.text(310, - 40, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular" }));//health
 
         this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
@@ -100,6 +106,9 @@ export class Card{
             .on("pointerout", this.PointerOut);
         }
         this.card.setTint (this.Active ? this.enabledColor : this.disabledColor);
+    }
+    RecoverHealth(){
+        this.Heart.play("recoverHealth");
     }
     PointerOver = () => {
          this.card.setTint (this.overColor);

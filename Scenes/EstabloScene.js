@@ -22,7 +22,11 @@ class Establo extends Phaser.Scene{
         this.load.image("selected", "../src/images/Establo/selected.png")
 
         this.load.image("establo_ui", "../src/images/Establo/establo UI.png");
-        this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
+        this.load.spritesheet("cards", "../src/images/Cards/blank_cards.png", {frameWidth: 1080, frameHeight: 1080});
+
+        this.load.spritesheet("heart", "../src/images/Establo/vida.webp", {frameWidth: 150, frameHeight: 150 });
+        
+        this.load.spritesheet("level", "../src/images/Establo/nivel.webp", {frameWidth: 150, frameHeight: 150 });
 
         this.load.image("buttonContainer3", "../src/images/button.png");
         this.load.image("left_arrow", "../src/images/Establo/left_arrow.png");
@@ -34,7 +38,6 @@ class Establo extends Phaser.Scene{
         });
     }
     async create(){
-
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
         this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 - 350, "Establo", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5);
@@ -49,10 +52,22 @@ class Establo extends Phaser.Scene{
         this.infoCard = null;
         this.totalTokens = await Near.NFTSupplyForOwner();
 
-        if(this.totalTokens == 0){
+        if(this.totalTokens == 0)
             this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, "No cuentas con ningun burrito", {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
-        } else{
+        else
             this.SpawnCard();
+
+        //http://localhost:8000/?transactionHashes=9N7yiaN6ciBVUvfZGJwfzdtaEnd4wvTgbXQmYWt2m9DX
+        let result = await Near.GetInfoByURL();
+
+        if(result != null){
+            try {
+                let token_id = result.receipts_outcome[5].outcome.logs[0];
+                this.cards.forEach(value => {
+                    if(value.Card.burrito.token_id == token_id)
+                        value.RecoverHealth();
+                });
+            } catch { }
         }
         await this.loadingScreen.OnComplete();
     }
@@ -76,7 +91,10 @@ class Establo extends Phaser.Scene{
             element.setSelected(index == _index);
         });
     }
-    SelectBurrito = (burrito) =>{
+    SelectBurrito = async (burrito) =>{
+        let result = await Near.BurritoIncrementWin(burrito.token_id);
+        console.log(result);
+        return;
         if(burrito.hp <= 0){
             Swal.fire({
                 icon: 'info',

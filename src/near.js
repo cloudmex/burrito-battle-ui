@@ -26,7 +26,7 @@ const provider = new providers.JsonRpcProvider(
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner" ],
-    changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint' ],
+    changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint', "burrito_increment_win", "burrito_ready_reset" ],
     sender: wallet.account()
 });
 const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
@@ -224,4 +224,10 @@ export async function ResetBurrito(index){
         300000000000000, 
         utils.format.parseNearAmount("1") 
     );
+}
+export async function BurritoIncrementWin(token_id){
+    await contract_burritos.burrito_increment_win({burrito_id: token_id}, 300000000000000);
+}
+export async function BurritoReadyReset(token_id){
+    await contract_burritos.burrito_ready_reset({burrito_id: token_id}, 300000000000000 )
 }
