@@ -106,11 +106,13 @@ export class Card{
         }
         this.card.setTint (this.Active ? this.enabledColor : this.disabledColor);
     }
-    RecoverHealth(){
-        this.Heart.play("recoverHealth");
+    RecoverHealth() {
+        console.log("Recover Health");
+        this.Heart.play("recoverHealth"); 
     }
     
     ResetLevel(){
+        console.log("Reset Level");
         this.Level.play("resetLevel");
     }
     PointerOver = () => {
