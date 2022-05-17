@@ -56,6 +56,9 @@ class Establo extends Phaser.Scene{
             this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, "No cuentas con ningun burrito", {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
         else
             this.SpawnCard();
+            if(localStorage.getItem("last_burritoIndex") !== null){
+                this.lastBigCard();
+            }
 
         //http://localhost:8000/?transactionHashes=9N7yiaN6ciBVUvfZGJwfzdtaEnd4wvTgbXQmYWt2m9DX health
         //http://localhost:8000/?transactionHashes=2ysirJemW8reZY9iQGckuABiWUFZePJiQv8rF2UG2HoN level
@@ -90,6 +93,9 @@ class Establo extends Phaser.Scene{
             this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito); this.SetSelected(index); this.bigCard.setSelected(true); }, null, {fontSize: 28, fontFamily: "BangersRegular"});
         }
         this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Subir de nivel", this, ()=>{ this.EvolveBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+
+        localStorage.setItem("last_burritoIndex", burrito.token_id);
+        console.log(localStorage.getItem("last_burritoIndex"));
     }
     SetSelected = (_index) => { 
         this.cards.forEach((element, index) => {
@@ -206,5 +212,16 @@ class Establo extends Phaser.Scene{
             this.infoCard.GetComponents().destroy();
         }
     }
+
+    lastBigCard = async() => {
+        let burritos = await Near.NFTTokensForOwner(0, this.totalTokens);
+        burritos.forEach((burrito, index) => {
+            if(burrito.token_id == localStorage.getItem("last_burritoIndex")){
+                this.ShowCard(burrito, index)
+                console.log(burrito);
+            }
+        });
+    }
+
 }
 export { Establo }
