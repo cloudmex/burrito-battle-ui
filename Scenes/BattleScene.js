@@ -35,32 +35,39 @@ export class Battle extends Phaser.Scene{
                 this.burritoSkinPlayer = result;
                 await this.loadSpriteSheet(this.burritoMediaToSkin(result.media), this.burritoSkinCPU);
             });
-       })
-        }
+       });
+       this.initialTime = 5;
+    }
+    
     async GetBattle(){
-        let info = await Near.GetInfoByURL();
-        if(info != null){
-            console.log(info);
-            try{
-                this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[0]);
-                localStorage.removeItem("tempBattle");
-            } catch {
-                this.currentBattle = JSON.parse(info.receipts_outcome[0].outcome.logs[0]);
+        if(true){
+            let info = await Near.GetInfoByURL();
+            if(info != null){
+                console.log(info);
+                try{
+                    this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[0]);
+                    localStorage.removeItem("tempBattle");
+                } catch {
+                    this.currentBattle = JSON.parse(info.receipts_outcome[0].outcome.logs[0]);
+                }
+                if(localStorage.getItem("tempBattle") != null){
+                    let tempBattle = JSON.parse(localStorage.getItem("tempBattle"));
+                    let diff = this.Diff(this.currentBattle, tempBattle);
+                    this.battleAnims = this.DiffStatus(diff)
+                    localStorage.removeItem("tempBattle");
+                } 
+            } else {
+                let isInBattle = await Near.IsInBattle();
+                if(isInBattle)
+                    this.currentBattle = await Near.GetBattleActiveCpu();
+                else
+                    this.currentBattle = await Near.CreateBattlePlayerCpu();
             }
-            if(localStorage.getItem("tempBattle") != null){
-                let tempBattle = JSON.parse(localStorage.getItem("tempBattle"));
-                let diff = this.Diff(this.currentBattle, tempBattle);
-                this.battleAnims = this.DiffStatus(diff)
-                localStorage.removeItem("tempBattle");
-            } 
         } else {
-            let isInBattle = await Near.IsInBattle();
-            if(isInBattle)
-                this.currentBattle = await Near.GetBattleActiveCpu();
-            else
-                this.currentBattle = await Near.CreateBattlePlayerCpu();
+            this.currentBattle = JSON.parse('{"accesories_attack_b1":"0","accesories_attack_b2":"0","accesories_defense_b1":"0","accesories_defense_b2":"0","accesories_speed_b1":"0","accesories_speed_b2":"0","attack_b1":"8","burrito_cpu_attack":"8","burrito_cpu_defense":"7","burrito_cpu_level":"1","burrito_cpu_speed":"6","burrito_cpu_type":"Planta","burrito_id":"2","defense_b1":"7","health_cpu":"11","health_player":"20","level_b1":"1","player_id":"jesus13th.testnet","shields_cpu":"3","shields_player":"3","speed_b1":"5","start_health_cpu":"11","start_health_player":"20","status":"2","strong_attack_cpu":"3","strong_attack_player":"3","turn":"CPU"}');
+    
         }
-        //this.currentBattle = JSON.parse('{"accesories_attack_b1":"0","accesories_attack_b2":"0","accesories_defense_b1":"0","accesories_defense_b2":"0","accesories_speed_b1":"0","accesories_speed_b2":"0","attack_b1":"8","burrito_cpu_attack":"8","burrito_cpu_defense":"7","burrito_cpu_level":"1","burrito_cpu_speed":"6","burrito_cpu_type":"Planta","burrito_id":"2","defense_b1":"7","health_cpu":"11","health_player":"20","level_b1":"1","player_id":"jesus13th.testnet","shields_cpu":"3","shields_player":"3","speed_b1":"5","start_health_cpu":"11","start_health_player":"20","status":"2","strong_attack_cpu":"3","strong_attack_player":"3","turn":"CPU"}');
+        
     }
     async LoadBurritos(){
         //#region Burrito Player
@@ -69,7 +76,11 @@ export class Battle extends Phaser.Scene{
         this.burritoPlayer.play("idle_Player");
         if(typeof this.battleAnims !== 'undefined'){
             this.burritoPlayer.play(this.battleAnims.animPlayer + "_Player").once('animationcomplete', () => {
-                this.burritoPlayer.play("idle_Player");
+                if(this.battleAnims.animPlayer !== "derrota"){
+                    this.burritoPlayer.play("idle_Player");
+                } else {
+                    this.BackToPradera("CPU");
+                }
             });
         }
         this.sliderPlayer = new Helpers.Slider(this.game.config.width / 2 - 550, 150, this, this.burritoMediaToSkinHead(this.burritoSkinPlayer.media)).SetFlipX(false)
@@ -83,7 +94,11 @@ export class Battle extends Phaser.Scene{
         this.burritoCPU.play("idle_CPU");
         if(typeof this.battleAnims !== 'undefined'){
             this.burritoCPU.play(this.battleAnims.animCPU + "_CPU").once('animationcomplete', () => {
-                this.burritoCPU.play("idle_CPU");
+                if(this.battleAnims.animCPU !== "derrota"){
+                    this.burritoCPU.play("idle_CPU");
+                } else {
+                    this.BackToPradera("Player");
+                }
             });
         }
         this.sliderCPU = new Helpers.Slider(this.game.config.width / 2 + 550, 150, this, this.burritoMediaToSkinHead(this.burritoSkinCPU)).SetFlipX(true)
@@ -94,11 +109,11 @@ export class Battle extends Phaser.Scene{
     }
     CreateActionsMenu = async () => {
         if(this.currentBattle.health_cpu <= 0){
-            this.Win();
-            console.log("el jugador gano");
+            //this.Win();
+            //console.log("el jugador gano");
         } else if(this.currentBattle.health_player <= 0){
-            this.Loose();
-            console.log("el cpu gano");
+            //this.Loose();
+            //console.log("el cpu gano");
         } else {
             new Helpers.Actions(this.game.config.width / 2 - 600, this.game.config.height - 400, this, this.currentBattle, { Action1: ()=>{ this.Action("Player", 1); }, Action2: ()=> { this.Action("Player", 2); }});
         }
@@ -131,10 +146,21 @@ export class Battle extends Phaser.Scene{
     Loose(){
         this.burritoCPU.play("victoria_CPU");
         this.burritoPlayer.play("derrota_Player");
+        this.BackToPradera("CPU");
     }
     Win(){
         this.burritoCPU.play("derrota_CPU");
         this.burritoPlayer.play("victoria_Player");
+        this.BackToPradera("Player");
+    }
+    BackToPradera(winner){
+        localStorage.removeItem("burritoCPU");
+        localStorage.removeItem("lastScene");
+        this.add.text(this.game.config.width / 2, this.game.config.height / 2 - 200, `El ganador es ${winner}`, {fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000, strokeThickness: 3}).setOrigin(0.5).setDepth(3);
+        this.add.text(this.game.config.width / 2, this.game.config.height / 2 - 100, `Automaticamente volveras a pradera en 5 seg.`, {fontSize: 30, fontFamily: "BangersRegular", stroke: 0x000, strokeThickness: 3}).setOrigin(0.5).setDepth(3);
+        setTimeout(() => {
+            this.scene.start("Pradera")
+        }, 5000);
     }
     IsDefined(obj){
         return typeof obj !== "undefined";
@@ -143,47 +169,41 @@ export class Battle extends Phaser.Scene{
         console.log(diff);
         let _animCPU;
         let _animPlayer;
+
         if(diff.turn == "Player"){
             if(this.IsDefined(diff.strong_attack_player)){
-                console.log("player hizo ataque fuerte")
                 _animPlayer = "Ataque1";
             } else { 
-                console.log("player hizo ataque debil")
                  _animPlayer = "Ataque2";
             }
             if(this.IsDefined(diff.shields_cpu)) {
                 _animCPU = "idle";//cambiar por animacion de cubrirse
-                console.log("cpu se cubrio");
             } else {
-                console.log("CPU no hizo nada");
                 _animCPU = "dano";
             }
-        } else {
+        } else if(diff.turn == "CPU"){
             if(this.IsDefined(diff.strong_attack_cpu)) {
                 _animCPU = "Ataque1";
-                console.log("cpu hizo ataque fuerte");
             } else { 
-                console.log("cpu hizo ataque debil");
                 _animCPU = "Ataque2";
             }
 
             if(this.IsDefined(diff.shields_player)) { 
                 _animPlayer = "idle";//cambiar por animacion de cubrirse
-                console.log("player utilizo escudo")
             } else { 
                 console.log("Player no hizo nada"); 
                 _animPlayer = "dano";
             }
         }
-        if(typeof diff.health_player !== null){
-            console.log(diff.health_player)
-            if(diff.health_player <= 0)
-                this.Win();
+        if(this.currentBattle.health_player <= 0){
+            //this.Loose();
+            _animCPU = "victoria";
+            _animPlayer = "derrota";
         }
-        if(typeof diff.health_cpu !== null){
-            console.log(diff.health_cpu);
-            if(diff.health_cpu <= 0)
-                this.Loose();
+        if(this.currentBattle.health_cpu <= 0){
+            //this.Win();
+            _animCPU = "derrota";
+            _animPlayer = "victoria";
         }
 
         return { "animPlayer": _animPlayer, "animCPU": _animCPU, "healthPlayer": diff.healthPlayer, "healthCPU": diff.healthCPU }
@@ -261,14 +281,14 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet(`burrito_ataque1_Player`, `../src/images/Battle/${folderPlayer}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque2_Player`, `../src/images/Battle/${folderPlayer}/Ataque_pesado.webp`, {frameWidth: 700, frameHeight: 512});
         this.load.spritesheet(`burrito_dano_Player`, `../src/images/Battle/${folderPlayer}/Dano.webp`, {frameWidth: 512, frameHeight: 512});
-        this.load.spritesheet(`burrito_derrota_Player`, `../src/images/Battle/${folderPlayer}/Derrota.webp`, {frameWidth: 620, frameHeight: 512});
+        this.load.spritesheet(`burrito_derrota_Player`, `../src/images/Battle/${folderPlayer}/Derrota.webp`, {frameWidth: 700, frameHeight: 512});
         this.load.spritesheet(`burrito_victoria_Player`, `../src/images/Battle/${folderPlayer}/Victoria.webp`, {frameWidth: 512, frameHeight: 512});
 
         this.load.spritesheet(`burrito_idle_CPU`, `../src/images/Battle/${folderCPU}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_CPU`, `../src/images/Battle/${folderCPU}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque2_CPU`, `../src/images/Battle/${folderCPU}/Ataque_pesado.webp`, {frameWidth: 700, frameHeight: 512});
         this.load.spritesheet(`burrito_dano_CPU`, `../src/images/Battle/${folderCPU}/Dano.webp`, {frameWidth: 512, frameHeight: 512});
-        this.load.spritesheet(`burrito_derrota_CPU`, `../src/images/Battle/${folderCPU}/Derrota.webp`, {frameWidth: 620, frameHeight: 512});
+        this.load.spritesheet(`burrito_derrota_CPU`, `../src/images/Battle/${folderCPU}/Derrota.webp`, {frameWidth: 700, frameHeight: 512});
         this.load.spritesheet(`burrito_victoria_CPU`, `../src/images/Battle/${folderCPU}/Victoria.webp`, {frameWidth: 512, frameHeight: 512});
 
         this.load.once("complete", this.LoadBurritos, this);
