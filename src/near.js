@@ -15,7 +15,7 @@ const config = {
 const near = await connect(config);
 
 const wallet = new WalletConnection(near, 'ncd-ii');
-const contract_id_burritos = "dev-1652376462131-97539161016715";
+const contract_id_burritos = "dev-1652924595303-59024384289373";
 const contract_id_strw_tokens = "dev-1648843322449-70578827831792";
 const contract_id_items = "dev-1647986467816-61735125036881";
 const contract_id_PVEBattle = "dev-1652376335913-86387308955071";
@@ -138,6 +138,7 @@ export async function CreateBattlePlayerCpu () {
             accesorio3_id: "0"
         },
         300000000000000
+
     )
     return result;
 }
