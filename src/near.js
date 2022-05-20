@@ -62,7 +62,7 @@ export function GetAccountId(){
 }
 
 export async function GetAccountBalance(){
-    const cuenta = await near.account("missael.testnet");
+    const cuenta = await near.account(GetAccountId());
     const balance = await cuenta.getAccountBalance();
     return balance;
 }

@@ -42,8 +42,8 @@ export class Pradera extends Phaser.Scene{
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
         //this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
         //this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
-        //this.map = this.add.image(0, 0, "map").setOrigin(0).setScale(1);
-        this.map = this.physics.add.image(960, 540, "map");
+        this.map = this.add.image(0, 0, "map").setOrigin(0).setScale(1);
+        //this.map = this.physics.add.image(960, 540, "map");
         //this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         //this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
@@ -247,5 +247,9 @@ export class Pradera extends Phaser.Scene{
         let result = angle - Math.ceil(angle / 360) * 360;
         if(result < 0) result += 360;
         return result;
+    }
+    stopBurrito(){
+        this.burrito.stop();
+        this.burrito.body.stop();
     }
 }
