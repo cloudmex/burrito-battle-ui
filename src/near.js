@@ -60,6 +60,13 @@ export function IsConnected() {
 export function GetAccountId(){
     return wallet.getAccountId()
 }
+
+export async function GetAccountBalance(){
+    const cuenta = await near.account("missael.testnet");
+    const balance = await cuenta.getAccountBalance();
+    return balance;
+}
+
 export async function GetSTRWToken(){
     let currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
     return currentSTRW
