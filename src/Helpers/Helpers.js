@@ -82,20 +82,37 @@ export class Card{
         if(this.Active)
             this.burrito.setScale(.4);
 
-        this.cardResult.add(this.levelText = scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular" , stroke: 0x000000, strokeThickness: 5 }));//level
-        this.cardResult.add(scene.add.text(-180, - 380, burrito.name.split("#", 1), { fontSize: 60, fontFamily: "BangersRegular" }));//name
+        this.cardResult.add(this.levelText = scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.3, 0));//level
+        this.cardResult.add(scene.add.text(-180, - 380, burrito.name.split("#", 1), { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(-0.02, 0));//name
 
         this.cardResult.add(this.Level = scene.add.sprite(325, -150, "level", Math.round((burrito.win / 10) * 24)));
         scene.anims.create({ key: "resetLevel", frames: scene.anims.generateFrameNumbers("level", { frames: [24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]}), frameRate: 24, repeat: 0 });
-        this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular" }));//wins
-        
+        if(burrito.win < 10){
+            this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//wins    
+        }else{
+            this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.25, 0));//wins
+        }
         this.cardResult.add( this.Heart = scene.add.sprite(325,0,"heart", Math.round((burrito.hp / 5) * 24)));
         scene.anims.create({ key: "recoverHealth", frames: scene.anims.generateFrameNumbers("heart", { frames: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]}), frameRate: 24, repeat: 0 });
-        this.cardResult.add(this.heartText = scene.add.text(310, - 40, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular" }));//health
+        this.cardResult.add(this.heartText = scene.add.text(310, - 40, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//health
 
-        this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular" }));//attack
-        this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular" }));//defense
-        this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular" }));//speed
+        if(burrito.attack <= 9){
+            this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//attack
+        }else{
+            this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.3, 0));//attack
+        }
+
+        if(burrito.defense <= 9 ){
+            this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//defense
+        }else{
+            this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.3, 0));//defense    
+        }
+
+        if(burrito.speed <= 9){
+            this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(-0.1, 0));//speed
+        }else{
+            this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.2, 0));//speed
+        }
 
         if(localStorage.getItem("burrito_selected") == burrito.token_id && isEstablo)
             this.cardResult.add(this.selected = scene.add.image(300, -350, "selected").setScale(0.35));
@@ -303,5 +320,66 @@ export class InfoCard{
     }
     GetComponents () { 
         return this.cardResult;
+    }
+}
+
+
+export class BurritoHud{
+    BurritoHud;
+    constructor(x, y, burrito, scene){
+        this.BurritoHud = {x, y, burrito, scene };
+
+        this.hudResult = scene.add.container(x, y).setScrollFactor(0);
+        this.hud = scene.add.image(0, 0, "hud", this.GetIndexByType(burrito.burrito_type));   //HUD segun el tipo
+        this.hudResult.add(this.hud);
+        this.burrito = scene.add.image(-83, -51, "burritoHud", this.GetSkinBurrito(burrito.media));  //Imagen del burrito en HUD     
+        this.hudResult.add(this.burrito);
+        this.hudResult.add(scene.add.text(130, -82, burrito.hp, { fontSize: 50, fontFamily: "BangersRegular" }));//health
+        this.hudResult.add(scene.add.text(130, 26, burrito.win, { fontSize: 50, fontFamily: "BangersRegular" }));//wins
+
+    }
+
+    GetIndexByType(type){
+        switch(type){
+            case "Agua": return 0;
+            case "Volador": return 1;
+            case "Fuego": return 2;
+            case "Planta": return 3;
+            case "Eléctrico": return 4;
+            default: return 0;
+        }
+    }
+
+    GetSkinBurrito(media){
+        switch(media){
+            case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return 0;
+            case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return 1;
+            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return 2;
+            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return 3;
+            default: return 0;
+        }
+    }
+}
+
+export class TokenHud{
+    TokenHud;
+    constructor(x, y, scene, currentNEAR, currentSTRW){
+        this.TokenHud = {x, y, scene};
+
+        this.cantidad = (currentNEAR.available/1000000000000000000000000)+"";
+        this.decimales = this.cantidad.split(".");
+        this.disponible = this.decimales[0]+"."+(this.decimales[1].substring(0, 2));
+
+        this.hudResult = scene.add.container(x, y).setScrollFactor(0);
+        this.nearHud = scene.add.image(-40, -150, "tokenHud");
+        this.strwHud = scene.add.image(-40, -80, "tokenHud");
+        this.hudResult.add(this.nearHud);
+        this.hudResult.add(this.strwHud);
+        this.nearToken = scene.add.image(-140, -150, "tokenIcon", 1);// Icono de NEAR Token
+        this.strwToken = scene.add.image(-140, -80, "tokenIcon", 0);// Icono de STRW Token
+        this.hudResult.add(this.nearToken);
+        this.hudResult.add(this.strwToken);
+        this.hudResult.add(scene.add.text(-56, -100, currentSTRW, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de STRW Tokens del usuario
+        this.hudResult.add(scene.add.text(-56, -171, this.disponible, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
     }
 }
