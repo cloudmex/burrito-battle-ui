@@ -20,11 +20,12 @@ export class Pradera extends Phaser.Scene{
         this.loadingScreen = new Helpers.LoadingScreen(this);
 
         this.load.image("background", "../src/images/Pradera/Map background.png");
-        this.load.image("island", "../src/images/Pradera/Island.png");
-        this.load.spritesheet("water", "../src/images/Pradera/Agua_sprites.webp", {frameWidth: 1920, frameHeight: 1080});
-        this.load.spritesheet("details", "../src/images/Pradera/Detalles_sprites.webp", {frameWidth: 1920, frameHeight: 1080});
+        //this.load.image("island", "../src/images/Pradera/Island.png");
+        this.load.image("map", "../src/images/Pradera/Map_redesign.png");
+        //this.load.spritesheet("water", "../src/images/Pradera/Agua_sprites.webp", {frameWidth: 1920, frameHeight: 1080});
+        //this.load.spritesheet("details", "../src/images/Pradera/Detalles_sprites.webp", {frameWidth: 1920, frameHeight: 1080});
 
-        this.load.image("gloves", "../src/images/fightTest.png");
+        //this.load.image("gloves", "../src/images/fightTest.png");
         this.load.image("buttonContainer3", "../src/images/button.png");
 
         if(localStorage.getItem("burrito_selected") != null){
@@ -39,12 +40,13 @@ export class Pradera extends Phaser.Scene{
     }
     async create(){
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
-        this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
-        this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
-        this.island = this.add.image(0, 0, "island").setOrigin(0).setScale(1);
-        this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
-        this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
+        //this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
+        //this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
+        //this.map = this.add.image(0, 0, "map").setOrigin(0).setScale(1);
+        this.map = this.physics.add.image(960, 540, "map");
+        //this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
+        //this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
 
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
         this.hudBurrito = new Helpers.BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
@@ -105,15 +107,15 @@ export class Pradera extends Phaser.Scene{
         }
         this.physics.add.overlap(this.burrito, this.zoneBattles, this.Battle, null, this);
 
-        this.silo = this.add.zone(700, 700, 100, 100).setRectangleDropZone(300, 300);
+        this.silo = this.add.zone(460, 740, 155, 300).setRectangleDropZone(300, 300);
         this.physics.world.enable(this.silo);
         this.siloCollider = this.physics.add.overlap(this.silo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al silo?", "Aqui puedes minar un nuevo burrito.", "MinarBurrito") }, null, this);
 
-        this.establo = this.add.zone(580, 550, 80, 80).setRectangleDropZone(80, 80);
+        this.establo = this.add.zone(255, 510, 140, 120).setRectangleDropZone(80, 80);
         this.physics.world.enable(this.establo);
         this.establoCollider = this.physics.add.overlap(this.establo, this.burrito, ()=> {this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel.", "Establo") }, null, this);
 
-        this.coliseo = this.add.zone(1280, 300, 200, 200).setRectangleDropZone(600, 600);
+        this.coliseo = this.add.zone(1595, 135, 250, 250).setRectangleDropZone(600, 600);
         this.physics.world.enable(this.coliseo);
         this.coliseoCollider = this.physics.add.overlap(this.coliseo, this.burrito, this.ShowAlert, null, this);
 
