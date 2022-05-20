@@ -293,3 +293,64 @@ export class InfoCard{
         return this.cardResult;
     }
 }
+
+
+export class BurritoHud{
+    BurritoHud;
+    constructor(x, y, burrito, scene){
+        this.BurritoHud = {x, y, burrito, scene };
+
+        this.hudResult = scene.add.container(x, y).setScrollFactor(0);
+        this.hud = scene.add.image(0, 0, "hud", this.GetIndexByType(burrito.burrito_type));   //HUD segun el tipo
+        this.hudResult.add(this.hud);
+        this.burrito = scene.add.image(-83, -51, "burritoHud", this.GetSkinBurrito(burrito.media));  //Imagen del burrito en HUD     
+        this.hudResult.add(this.burrito);
+        this.hudResult.add(scene.add.text(130, -82, burrito.hp, { fontSize: 50, fontFamily: "BangersRegular" }));//health
+        this.hudResult.add(scene.add.text(130, 26, burrito.win, { fontSize: 50, fontFamily: "BangersRegular" }));//wins
+
+    }
+
+    GetIndexByType(type){
+        switch(type){
+            case "Agua": return 0;
+            case "Volador": return 1;
+            case "Fuego": return 2;
+            case "Planta": return 3;
+            case "Eléctrico": return 4;
+            default: return 0;
+        }
+    }
+
+    GetSkinBurrito(media){
+        switch(media){
+            case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return 0;
+            case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return 1;
+            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return 2;
+            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return 3;
+            default: return 0;
+        }
+    }
+}
+
+export class TokenHud{
+    TokenHud;
+    constructor(x, y, scene, currentNEAR, currentSTRW){
+        this.TokenHud = {x, y, scene};
+
+        this.cantidad = (currentNEAR.available/1000000000000000000000000)+"";
+        this.decimales = this.cantidad.split(".");
+        this.disponible = this.decimales[0]+"."+(this.decimales[1].substring(0, 2));
+
+        this.hudResult = scene.add.container(x, y).setScrollFactor(0);
+        this.nearHud = scene.add.image(-40, -150, "tokenHud");
+        this.strwHud = scene.add.image(-40, -80, "tokenHud");
+        this.hudResult.add(this.nearHud);
+        this.hudResult.add(this.strwHud);
+        this.nearToken = scene.add.image(-140, -150, "tokenIcon", 1);// Icono de NEAR Token
+        this.strwToken = scene.add.image(-140, -80, "tokenIcon", 0);// Icono de STRW Token
+        this.hudResult.add(this.nearToken);
+        this.hudResult.add(this.strwToken);
+        this.hudResult.add(scene.add.text(-56, -100, currentSTRW, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de STRW Tokens del usuario
+        this.hudResult.add(scene.add.text(-56, -171, this.disponible, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
+    }
+}

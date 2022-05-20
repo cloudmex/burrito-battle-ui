@@ -31,6 +31,11 @@ export class Pradera extends Phaser.Scene{
             let burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
             this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayer.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
+
+        this.load.spritesheet("burritoHud", "../src/images/HUD/Burritos.png", {frameWidth: 215, frameHeight: 305});
+        this.load.spritesheet("hud", "../src/images/HUD/HUD.png", {frameWidth: 390, frameHeight: 226});
+        this.load.image("tokenHud", "../src/images/HUD/Information.png");
+        this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
     }
     async create(){
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
@@ -40,6 +45,9 @@ export class Pradera extends Phaser.Scene{
         this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
+
+        this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
+        this.hudBurrito = new Helpers.BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
 
         if(localStorage.getItem("burrito_selected") == null){
             await this.loadingScreen.OnComplete();

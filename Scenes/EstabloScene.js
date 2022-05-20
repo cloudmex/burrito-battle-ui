@@ -31,6 +31,9 @@ class Establo extends Phaser.Scene{
         this.load.image("buttonContainer3", "../src/images/button.png");
         this.load.image("left_arrow", "../src/images/Establo/left_arrow.png");
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
+
+        this.load.image("tokenHud", "../src/images/HUD/Information.png");
+        this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
     }
     later(delay) {
         return new Promise(function(resolve) {
@@ -51,6 +54,8 @@ class Establo extends Phaser.Scene{
         this.info_bigCard = false;
         this.infoCard = null;
         this.totalTokens = await Near.NFTSupplyForOwner();
+
+        this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
 
         if(this.totalTokens == 0)
             this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, "No cuentas con ningun burrito", {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
