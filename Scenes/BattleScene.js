@@ -58,10 +58,15 @@ export class Battle extends Phaser.Scene{
                 } 
             } else {
                 let isInBattle = await Near.IsInBattle();
-                if(isInBattle)
+                if(isInBattle){
+                    console.log("get")
                     this.currentBattle = await Near.GetBattleActiveCpu();
-                else
+                    console.log(this.currentBattle);
+                } else{
                     this.currentBattle = await Near.CreateBattlePlayerCpu();
+                    console.log("create")
+                    console.log(this.currentBattle)
+                }
             }
         } else {
             this.currentBattle = JSON.parse('{"accesories_attack_b1":"0","accesories_attack_b2":"0","accesories_defense_b1":"0","accesories_defense_b2":"0","accesories_speed_b1":"0","accesories_speed_b2":"0","attack_b1":"8","burrito_cpu_attack":"8","burrito_cpu_defense":"7","burrito_cpu_level":"1","burrito_cpu_speed":"6","burrito_cpu_type":"Planta","burrito_id":"2","defense_b1":"7","health_cpu":"11","health_player":"20","level_b1":"1","player_id":"jesus13th.testnet","shields_cpu":"3","shields_player":"3","speed_b1":"5","start_health_cpu":"11","start_health_player":"20","status":"2","strong_attack_cpu":"3","strong_attack_player":"3","turn":"CPU"}');
@@ -205,8 +210,24 @@ export class Battle extends Phaser.Scene{
             _animCPU = "derrota";
             _animPlayer = "victoria";
         }
-
-        return { "animPlayer": _animPlayer, "animCPU": _animCPU, "healthPlayer": diff.healthPlayer, "healthCPU": diff.healthCPU }
+        try{
+            this.burritoCPU.play(_animCPU + "_CPU").once('animationcomplete', () => {
+                if(_animCPU !== "derrota"){
+                    this.burritoCPU.play("idle_CPU");
+                } else {
+                    this.BackToPradera("Player");
+                }
+            });
+            this.burritoPlayer.play(_animPlayer + "_Player").once('animationcomplete', () => {
+                if(_animPlayer !== "derrota"){
+                    this.burritoPlayer.play("idle_Player");
+                } else {
+                    this.BackToPradera("CPU");
+                }
+            });
+        } catch{
+            return { "animPlayer": _animPlayer, "animCPU": _animCPU, "healthPlayer": diff.healthPlayer, "healthCPU": diff.healthCPU }
+        }
     }
 
     Diff(obj1, obj2) {

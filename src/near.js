@@ -145,7 +145,6 @@ export async function CreateBattlePlayerCpu () {
             accesorio3_id: "0"
         },
         300000000000000
-
     )
     return result;
 }
@@ -221,7 +220,7 @@ export async function EvolveBurrito(index){
             burrito_id: index
         },
         300000000000000, 
-        utils.format.parseNearAmount("2") 
+        utils.format.parseNearAmount("2")
     );
 }
 export async function ResetBurrito(index){
