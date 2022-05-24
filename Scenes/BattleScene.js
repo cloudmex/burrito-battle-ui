@@ -36,14 +36,12 @@ export class Battle extends Phaser.Scene{
                 await this.loadSpriteSheet(this.burritoMediaToSkin(result.media), this.burritoSkinCPU);
             });
        });
-       this.initialTime = 5;
     }
     
     async GetBattle(){
         if(true){
             let info = await Near.GetInfoByURL();
             if(info != null){
-                console.log(info);
                 try{
                     this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[0]);
                     localStorage.removeItem("tempBattle");
@@ -51,26 +49,19 @@ export class Battle extends Phaser.Scene{
                     this.currentBattle = JSON.parse(info.receipts_outcome[0].outcome.logs[0]);
                 }
                 if(localStorage.getItem("tempBattle") != null){
-                    let tempBattle = JSON.parse(localStorage.getItem("tempBattle"));
-                    let diff = this.Diff(this.currentBattle, tempBattle);
-                    this.battleAnims = this.DiffStatus(diff)
+                    this.battleAnims = this.DiffStatus(this.Diff(this.currentBattle, JSON.parse(localStorage.getItem("tempBattle"))))
                     localStorage.removeItem("tempBattle");
                 } 
             } else {
                 let isInBattle = await Near.IsInBattle();
                 if(isInBattle){
-                    console.log("get")
                     this.currentBattle = await Near.GetBattleActiveCpu();
-                    console.log(this.currentBattle);
                 } else{
                     this.currentBattle = await Near.CreateBattlePlayerCpu();
-                    console.log("create")
-                    console.log(this.currentBattle)
                 }
             }
         } else {
             this.currentBattle = JSON.parse('{"accesories_attack_b1":"0","accesories_attack_b2":"0","accesories_defense_b1":"0","accesories_defense_b2":"0","accesories_speed_b1":"0","accesories_speed_b2":"0","attack_b1":"8","burrito_cpu_attack":"8","burrito_cpu_defense":"7","burrito_cpu_level":"1","burrito_cpu_speed":"6","burrito_cpu_type":"Planta","burrito_id":"2","defense_b1":"7","health_cpu":"11","health_player":"20","level_b1":"1","player_id":"jesus13th.testnet","shields_cpu":"3","shields_player":"3","speed_b1":"5","start_health_cpu":"11","start_health_player":"20","status":"2","strong_attack_cpu":"3","strong_attack_player":"3","turn":"CPU"}');
-    
         }
         
     }
@@ -79,15 +70,6 @@ export class Battle extends Phaser.Scene{
         this.CreateAnimations("Player");
         this.burritoPlayer = this.add.sprite(this.game.config.width /2 - 700, this.game.config.height - 300, "burrito_idle_player").setOrigin(0.5);
         this.burritoPlayer.play("idle_Player");
-        if(typeof this.battleAnims !== 'undefined'){
-            this.burritoPlayer.play(this.battleAnims.animPlayer + "_Player").once('animationcomplete', () => {
-                if(this.battleAnims.animPlayer !== "derrota"){
-                    this.burritoPlayer.play("idle_Player");
-                } else {
-                    this.BackToPradera("CPU");
-                }
-            });
-        }
         this.sliderPlayer = new Helpers.Slider(this.game.config.width / 2 - 550, 150, this, this.burritoMediaToSkinHead(this.burritoSkinPlayer.media)).SetFlipX(false)
         .SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
         this.CreateActionsMenu();
@@ -97,33 +79,33 @@ export class Battle extends Phaser.Scene{
         this.CreateAnimations("CPU");
         this.burritoCPU = this.add.sprite(this.game.config.width / 2 + 700, this.game.config.height - 300, "burrito_idle_CPU", 0).setOrigin(0.5).setFlipX(true);
         this.burritoCPU.play("idle_CPU");
-        if(typeof this.battleAnims !== 'undefined'){
-            this.burritoCPU.play(this.battleAnims.animCPU + "_CPU").once('animationcomplete', () => {
-                if(this.battleAnims.animCPU !== "derrota"){
-                    this.burritoCPU.play("idle_CPU");
-                } else {
-                    this.BackToPradera("Player");
-                }
-            });
-        }
         this.sliderCPU = new Helpers.Slider(this.game.config.width / 2 + 550, 150, this, this.burritoMediaToSkinHead(this.burritoSkinCPU)).SetFlipX(true)
         .SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
+
+        //#region Animaciones para cuando manda al explorer
+        if(typeof this.battleAnims !== 'undefined'){
+            this.burritoPlayer.play(this.battleAnims.animPlayer + "_Player").once('animationcomplete', () => {
+                if(this.battleAnims.animPlayer !== "derrota")
+                    this.burritoPlayer.play("idle_Player");
+                else
+                    this.BackToPradera("CPU");
+            });
+            this.burritoCPU.play(this.battleAnims.animCPU + "_CPU").once('animationcomplete', () => {
+                if(this.battleAnims.animCPU !== "derrota")
+                    this.burritoCPU.play("idle_CPU");
+                else
+                    this.BackToPradera("Player");
+            });
+        }
         //#endregion
         
         await this.loadingScreen.OnComplete();
     }
     CreateActionsMenu = async () => {
-        if(this.currentBattle.health_cpu <= 0){
-            //this.Win();
-            //console.log("el jugador gano");
-        } else if(this.currentBattle.health_player <= 0){
-            //this.Loose();
-            //console.log("el cpu gano");
-        } else {
             new Helpers.Actions(this.game.config.width / 2 - 600, this.game.config.height - 400, this, this.currentBattle, { Action1: ()=>{ this.Action("Player", 1); }, Action2: ()=> { this.Action("Player", 2); }});
-        }
     }
     Action = async(player, index) => {
+        console.log("action")
         let tempBattle = this.currentBattle;
         localStorage.setItem("tempBattle", JSON.stringify(tempBattle));
         let result = await Near.BattlePlayerCPU(this.ActionIndex(index, player));
@@ -136,16 +118,17 @@ export class Battle extends Phaser.Scene{
             this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
             this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
         }, 2000);
-        if(typeof diff.healthCPU === "undefined" || typeof diff.healthCPU === "undefined"){
-            setTimeout(() => {
-                this.CreateActionsMenu();
-            }, 1000);
+
+        console.log(diff);
+        if(!this.IsDefined(diff.healthCPU) && !this.IsDefined(diff.healthCPU)){
+            console.log("defined")
+            setTimeout(() => {this.CreateActionsMenu(); console.log("wea ")}, 1000);
         } else{
-            if(diff.healthCPU <= 0){
+            console.log("aqui xd")
+            if(diff.healthCPU <= 0)
                 this.Win();
-            } else if(diff.healthPlayer <= 0){
+            else if(diff.healthPlayer <= 0)
                 this.Loose();
-            }
         }
     }
     Loose(){
@@ -276,7 +259,6 @@ export class Battle extends Phaser.Scene{
     Range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
     }
-
     RandomBurrito(){
         let values = ["agua", "fuego", "electrico", "planta"];
         return values[Math.floor(Math.random() * values.length)];
