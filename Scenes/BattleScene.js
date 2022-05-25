@@ -119,16 +119,14 @@ export class Battle extends Phaser.Scene{
             this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
         }, 2000);
 
-        console.log(diff);
-        if(!this.IsDefined(diff.healthCPU) && !this.IsDefined(diff.healthCPU)){
-            console.log("defined")
-            setTimeout(() => {this.CreateActionsMenu(); console.log("wea ")}, 1000);
-        } else{
-            console.log("aqui xd")
+        //console.log(diff);
+        if(this.IsDefined(diff.healthCPU) || this.IsDefined(diff.healthCPU)){
             if(diff.healthCPU <= 0)
                 this.Win();
             else if(diff.healthPlayer <= 0)
-                this.Loose();
+                this.Loose(); 
+            else
+                setTimeout(() => {this.CreateActionsMenu(); console.log("wea ")}, 1000);
         }
     }
     Loose(){
