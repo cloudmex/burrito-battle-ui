@@ -359,6 +359,15 @@ export class BurritoHud{
             default: return 0;
         }
     }
+
+    GetComponents () { 
+        return this.hudResult;
+    }
+
+    SetAlpha(alpha){
+        this.hud.setAlpha(alpha);
+        this.burrito.setAlpha(alpha)
+    }
 }
 
 export class TokenHud{
@@ -381,5 +390,9 @@ export class TokenHud{
         this.hudResult.add(this.strwToken);
         this.hudResult.add(scene.add.text(-56, -100, currentSTRW, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de STRW Tokens del usuario
         this.hudResult.add(scene.add.text(-56, -171, this.disponible, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
+    }
+
+    GetComponents () { 
+        return this.hudResult;
     }
 }
