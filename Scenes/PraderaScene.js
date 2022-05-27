@@ -132,11 +132,43 @@ export class Pradera extends Phaser.Scene{
         this.physics.world.enable(this.coliseo);
         this.coliseoCollider = this.physics.add.overlap(this.coliseo, this.burrito, this.ShowAlert, null, this);
 
+        this.bordoIzq = this.add.zone(0, 0, 1, this.sys.game.scale.gameSize.height * 2);
+        this.physics.world.enable(this.bordoIzq);
+        this.bordoIzqCollider = this.physics.add.overlap(this.bordoIzq, this.burrito, this.stopBurrito, null, this);
+
+        this.bordoDer = this.add.zone(1920, 0, 1, this.sys.game.scale.gameSize.height * 2);
+        this.physics.world.enable(this.bordoDer);
+        this.bordoDerCollider = this.physics.add.overlap(this.bordoDer, this.burrito, this.stopBurrito, null, this);
+
+        this.bordoSup = this.add.zone(0, 0, this.sys.game.scale.gameSize.width * 2, 1);
+        this.physics.world.enable(this.bordoSup);
+        this.bordoSupCollider = this.physics.add.overlap(this.bordoSup, this.burrito, this.stopBurrito, null, this);
+
+        this.bordoInf = this.add.zone(0, 1080, this.sys.game.scale.gameSize.width * 2, 1);
+        this.physics.world.enable(this.bordoInf);
+        this.bordoInfCollider = this.physics.add.overlap(this.bordoInf, this.burrito, this.stopBurrito, null, this);    
+
+        this.hudBurritoZone = this.add.zone(0, 1080, 790, 600);
+        this.physics.world.enable(this.hudBurritoZone);
+        this.physics.add.overlap(this.burrito, this.hudBurritoZone, this.hudBurritoAlpha, null, this);
+
+        this.hudTokensZone = this.add.zone(0, 0, 630, 350);
+        this.physics.world.enable(this.hudTokensZone);
+        this.physics.add.overlap(this.burrito, this.hudTokensZone, this.hudTokensAlpha, null, this);
+
+        this.buttonZone = this.add.zone(960, 58, 295, 75);
+        this.physics.world.enable(this.buttonZone);
+        this.physics.add.overlap(this.burrito, this.buttonZone, this.buttonAlpha, null, this);
+
         await this.loadingScreen.OnComplete();
     }
     update(){        
         if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.burrito.body == null || this.silo == null || Swal.isVisible())
             return;
+
+        this.touchingHudBurritoZone();
+        this.touchingHudTokensZone();
+        this.touchingButtonZone();
 
         this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.silo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.establo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.coliseo.getBounds());
         let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
@@ -264,5 +296,101 @@ export class Pradera extends Phaser.Scene{
     stopBurrito(){
         this.burrito.stop();
         this.burrito.body.stop();
+    }
+
+    touchingHudBurritoZone(){
+        var touching = !this.hudBurritoZone.body.touching.none || this.hudBurritoZone.body.embedded;
+        var wasTouching = !this.hudBurritoZone.body.wasTouching.none;
+
+        if (touching && !wasTouching) this.burrito.emit("overlapHudBurritoStart");
+        else if (!touching && wasTouching) this.burrito.emit("overlapHudBurritoEnd");
+    }
+
+    hudBurritoAlpha(){
+        const componentsHudBurrito = this.hudBurrito.GetComponents().list;
+        this.burrito.on("overlapHudBurritoStart", function(){
+            for (const item of componentsHudBurrito) {
+                if(item.type === "Text") {
+                    item.visible = false        
+                }
+                if(item.type === "Image"){
+                    item.setAlpha(0.2);
+                }
+            }
+        });
+        this.burrito.on("overlapHudBurritoEnd", function() {
+            for (const item of componentsHudBurrito) {
+                if(item.type === "Text") {
+                    item.visible = true        
+                }
+                if(item.type === "Image"){
+                    item.setAlpha(1);
+                }
+            }
+          });
+    }
+
+    touchingHudTokensZone(){
+        var touching = !this.hudTokensZone.body.touching.none || this.hudTokensZone.body.embedded;
+        var wasTouching = !this.hudTokensZone.body.wasTouching.none;
+
+        if (touching && !wasTouching) this.burrito.emit("overlapHudTokensStart");
+        else if (!touching && wasTouching) this.burrito.emit("overlapHudTokensEnd");
+    }
+
+    hudTokensAlpha(){
+        const componentsHudTokens = this.hudTokens.GetComponents().list;
+        this.burrito.on("overlapHudTokensStart", function(){
+            for (const item of componentsHudTokens) {
+                if(item.type === "Text") {
+                    item.visible = false        
+                }
+                if(item.type === "Image"){
+                    item.setAlpha(0.2);
+                }
+            }
+        });
+        this.burrito.on("overlapHudTokensEnd", function() {
+            for (const item of componentsHudTokens) {
+                if(item.type === "Text") {
+                    item.visible = true        
+                }
+                if(item.type === "Image"){
+                    item.setAlpha(1);
+                }
+            }
+          });
+    }
+
+    touchingButtonZone(){
+        var touching = !this.buttonZone.body.touching.none || this.buttonZone.body.embedded;
+        var wasTouching = !this.buttonZone.body.wasTouching.none;
+
+        if (touching && !wasTouching) this.burrito.emit("overlapButtonStart");
+        else if (!touching && wasTouching) this.burrito.emit("overlapButtonEnd");
+    }
+
+    buttonAlpha(){
+        const componentsButton = this.button.GetComponents().list;
+        this.burrito.on("overlapButtonStart", function(){
+            for (const item of componentsButton) {
+                if(item.type === "Text") {
+                    item.visible = false        
+                }
+                if(item.type === "Sprite"){
+                    item.setAlpha(0.2);
+                }
+            }
+        });
+        this.burrito.on("overlapButtonEnd", function() {
+            for (const item of componentsButton) {
+                if(item.type === "Text") {
+                    item.visible = true        
+                }
+                if(item.type === "Sprite"){
+                    item.setAlpha(1);
+                }
+            }
+          });
     }
 }
