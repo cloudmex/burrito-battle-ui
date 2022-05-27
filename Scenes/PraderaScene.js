@@ -293,16 +293,13 @@ export class Pradera extends Phaser.Scene{
         var touching = !this.hudBurritoZone.body.touching.none || this.hudBurritoZone.body.embedded;
         var wasTouching = !this.hudBurritoZone.body.wasTouching.none;
 
-        if (touching && !wasTouching) this.burrito.emit("overlapstart");
-        else if (!touching && wasTouching) this.burrito.emit("overlapend");
-
-        touching = null;
-        wasTouching = null;
+        if (touching && !wasTouching) this.burrito.emit("overlapHudBurritoStart");
+        else if (!touching && wasTouching) this.burrito.emit("overlapHudBurritoEnd");
     }
 
     hudBurritoAlpha(){
         const componentsHudBurrito = this.hudBurrito.GetComponents().list;
-        this.burrito.on("overlapstart", function(){
+        this.burrito.on("overlapHudBurritoStart", function(){
             for (const item of componentsHudBurrito) {
                 if(item.type === "Text") {
                     item.visible = false        
@@ -312,7 +309,7 @@ export class Pradera extends Phaser.Scene{
                 }
             }
         });
-        this.burrito.on("overlapend", function() {
+        this.burrito.on("overlapHudBurritoEnd", function() {
             for (const item of componentsHudBurrito) {
                 if(item.type === "Text") {
                     item.visible = true        
@@ -328,13 +325,13 @@ export class Pradera extends Phaser.Scene{
         var touching = !this.hudTokensZone.body.touching.none || this.hudTokensZone.body.embedded;
         var wasTouching = !this.hudTokensZone.body.wasTouching.none;
 
-        if (touching && !wasTouching) this.burrito.emit("overlapstart");
-        else if (!touching && wasTouching) this.burrito.emit("overlapend");
+        if (touching && !wasTouching) this.burrito.emit("overlapHudTokensStart");
+        else if (!touching && wasTouching) this.burrito.emit("overlapHudTokensEnd");
     }
 
     hudTokensAlpha(){
         const componentsHudTokens = this.hudTokens.GetComponents().list;
-        this.burrito.on("overlapstart", function(){
+        this.burrito.on("overlapHudTokensStart", function(){
             for (const item of componentsHudTokens) {
                 if(item.type === "Text") {
                     item.visible = false        
@@ -344,7 +341,7 @@ export class Pradera extends Phaser.Scene{
                 }
             }
         });
-        this.burrito.on("overlapend", function() {
+        this.burrito.on("overlapHudTokensEnd", function() {
             for (const item of componentsHudTokens) {
                 if(item.type === "Text") {
                     item.visible = true        
@@ -360,13 +357,13 @@ export class Pradera extends Phaser.Scene{
         var touching = !this.buttonZone.body.touching.none || this.buttonZone.body.embedded;
         var wasTouching = !this.buttonZone.body.wasTouching.none;
 
-        if (touching && !wasTouching) this.burrito.emit("overlapstart");
-        else if (!touching && wasTouching) this.burrito.emit("overlapend");
+        if (touching && !wasTouching) this.burrito.emit("overlapButtonStart");
+        else if (!touching && wasTouching) this.burrito.emit("overlapButtonEnd");
     }
 
     buttonAlpha(){
         const componentsButton = this.button.GetComponents().list;
-        this.burrito.on("overlapstart", function(){
+        this.burrito.on("overlapButtonStart", function(){
             for (const item of componentsButton) {
                 if(item.type === "Text") {
                     item.visible = false        
@@ -376,7 +373,7 @@ export class Pradera extends Phaser.Scene{
                 }
             }
         });
-        this.burrito.on("overlapend", function() {
+        this.burrito.on("overlapButtonEnd", function() {
             for (const item of componentsButton) {
                 if(item.type === "Text") {
                     item.visible = true        
