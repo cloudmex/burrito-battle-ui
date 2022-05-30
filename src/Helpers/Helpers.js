@@ -409,6 +409,9 @@ export class BattleEnd{
         setTimeout(() => {
             this.resultUI.add(scene.add.text(245, 390, `+${STRWTokens}`, {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
             this.resultUI.add(scene.add.text(-255, 390, isVictoria ? "+1" : "-1", {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
+
+            this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
+            this.burrito.play(isVictoria ? "victoria_Player" : "derrota_Player");
         }, 1000);
     }
 }

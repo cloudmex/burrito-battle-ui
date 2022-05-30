@@ -165,18 +165,18 @@ export class Battle extends Phaser.Scene{
 
         if(diff.turn == "Player"){
             if(this.IsDefined(diff.strong_attack_player))
-                _animPlayer = "Ataque1";
+                _animPlayer = "Ataque2";
             else
-                 _animPlayer = "Ataque2";
+                 _animPlayer = "Ataque1";
             if(this.IsDefined(diff.shields_cpu))
                 _animCPU = "idle";//cambiar por animacion de cubrirse
             else
                 _animCPU = "dano";
         } else if(diff.turn == "CPU"){
             if(this.IsDefined(diff.strong_attack_cpu))
-                _animCPU = "Ataque1";
-            else
                 _animCPU = "Ataque2";
+            else
+                _animCPU = "Ataque1";
 
             if(this.IsDefined(diff.shields_player))
                 _animPlayer = "idle";//cambiar por animacion de cubrirse
@@ -191,8 +191,10 @@ export class Battle extends Phaser.Scene{
             _animCPU = "derrota";
             _animPlayer = "victoria";
         }
+
         try{
             this.burritoCPU.play(_animCPU + "_CPU").once('animationcomplete', () => {
+                this.AccionLog("CPU", _animCPU);
                 if(_animCPU  !== "derrota"){
                     this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
                     this.burritoCPU.play("idle_CPU");
@@ -201,6 +203,7 @@ export class Battle extends Phaser.Scene{
                     this.BackToPradera("Player");
             });
             this.burritoPlayer.play(_animPlayer + "_Player").once('animationcomplete', () => {
+                this.AccionLog("Player",  _animPlayer);
                 if(_animPlayer !== "derrota"){
                     this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
                     this.burritoPlayer.play("idle_Player");
@@ -213,7 +216,27 @@ export class Battle extends Phaser.Scene{
             return { "animPlayer": _animPlayer, "animCPU": _animCPU, "healthPlayer": diff.healthPlayer, "healthCPU": diff.healthCPU }
         }
     }
-
+    AccionLog(burrito, accion){
+        let result = "";
+        switch (accion) {
+            case "Ataque1":
+                result = `${burrito}: ha realizado un ataque debil`; 
+                break;
+            case "Ataque2":
+                result = `${burrito}: ha realizado un ataque fuerte`; 
+                break;
+            case "dano":
+                result = `${burrito}: ha recibido un daño de 12`; 
+                break;
+            case "idle"://reemplazar con cubrirse
+                result = `${burrito}: ha cubrido el ataque`; 
+                break;
+            default:
+                result = "no definido xd";
+                break;
+        }
+        console.log(result);
+    }
     Diff(obj1, obj2) {
         const result = {};
         if (Object.is(obj1, obj2)) {

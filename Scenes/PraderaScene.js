@@ -163,7 +163,7 @@ export class Pradera extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
     }
     update(){        
-        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.burrito.body == null || this.silo == null || Swal.isVisible())
+        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.burrito.body == null || this.silo == null || Swal.isVisible() || this.touching)
             return;
 
         this.touchingHudBurritoZone();
@@ -299,8 +299,10 @@ export class Pradera extends Phaser.Scene{
     }
 
     touchingHudBurritoZone(){
-        var touching = !this.hudBurritoZone.body.touching.none || this.hudBurritoZone.body.embedded;
-        var wasTouching = !this.hudBurritoZone.body.wasTouching.none;
+        if(this.hudBurritoZone.body == null)
+            return;
+        let touching = !this.hudBurritoZone.body.touching.none || this.hudBurritoZone.body.embedded;
+        let wasTouching = !this.hudBurritoZone.body.wasTouching.none;
 
         if (touching && !wasTouching) this.burrito.emit("overlapHudBurritoStart");
         else if (!touching && wasTouching) this.burrito.emit("overlapHudBurritoEnd");
@@ -331,8 +333,10 @@ export class Pradera extends Phaser.Scene{
     }
 
     touchingHudTokensZone(){
-        var touching = !this.hudTokensZone.body.touching.none || this.hudTokensZone.body.embedded;
-        var wasTouching = !this.hudTokensZone.body.wasTouching.none;
+        if(this.hudTokensZone.body == null)
+            return;
+        let touching = !this.hudTokensZone.body.touching.none || this.hudTokensZone.body.embedded;
+        let wasTouching = !this.hudTokensZone.body.wasTouching.none;
 
         if (touching && !wasTouching) this.burrito.emit("overlapHudTokensStart");
         else if (!touching && wasTouching) this.burrito.emit("overlapHudTokensEnd");
@@ -363,8 +367,10 @@ export class Pradera extends Phaser.Scene{
     }
 
     touchingButtonZone(){
-        var touching = !this.buttonZone.body.touching.none || this.buttonZone.body.embedded;
-        var wasTouching = !this.buttonZone.body.wasTouching.none;
+        if(this.buttonZone.body == null)
+            return;
+        let touching = !this.buttonZone.body.touching.none || this.buttonZone.body.embedded;
+        let wasTouching = !this.buttonZone.body.wasTouching.none;
 
         if (touching && !wasTouching) this.burrito.emit("overlapButtonStart");
         else if (!touching && wasTouching) this.burrito.emit("overlapButtonEnd");
