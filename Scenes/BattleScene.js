@@ -208,7 +208,7 @@ export class Battle extends Phaser.Scene{
                 result = "no definido xd";
                 break;
         }
-        DisplayText(burrito, result);
+        this.DisplayText(burrito, result);
         console.error(result);
     }
     DisplayText(burrito, result){
