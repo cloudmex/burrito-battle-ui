@@ -23,6 +23,8 @@ export class Pradera extends Phaser.Scene{
         this.load.image("background", "../src/images/Pradera/Map background.png");
         //this.load.image("island", "../src/images/Pradera/Island.png");
         this.load.image("map", "../src/images/Pradera/Mapa.png");
+        this.load.image("arboles", "../src/images/Pradera/Arboles.png");
+        this.load.image("edificiosSup", "../src/images/Pradera/Edificios_sup.png");
         
         this.load.spritesheet("details", "../src/images/Pradera/Detalles.webp", {frameWidth: 1920, frameHeight: 1080});
         this.load.spritesheet("nubes", "../src/images/Pradera/Nubes.webp", {frameWidth: 1920, frameHeight: 1080});
@@ -85,6 +87,9 @@ export class Pradera extends Phaser.Scene{
 
         this.physics.world.setBounds(0,0,this.background.displayWidth, this.background.displayHeight, true, true, true, true);
         this.camera = this.cameras.main;
+
+        this.add.image(0, 0, "arboles").setOrigin(0).setScale(1);
+        this.add.image(0, 0, "edificiosSup").setOrigin(0).setScale(1);
 
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
