@@ -47,7 +47,6 @@ export class Pradera extends Phaser.Scene{
         //this.map = this.physics.add.image(960, 540, "map");
         //this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         //this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
 
         if(localStorage.getItem("burrito_selected") == null){
             await this.loadingScreen.OnComplete();
@@ -95,6 +94,8 @@ export class Pradera extends Phaser.Scene{
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
         this.burrito.play("walkRight");
+
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
 
         this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
