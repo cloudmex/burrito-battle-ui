@@ -136,7 +136,9 @@ export class Pradera extends Phaser.Scene{
 
         this.coliseo = this.add.zone(1595, 135, 250, 250).setRectangleDropZone(600, 600);
         this.physics.world.enable(this.coliseo);
-        this.coliseoCollider = this.physics.add.overlap(this.coliseo, this.burrito, this.ShowAlert, null, this);
+        this.coliseoOverlap = this.physics.add.overlap(this.coliseo, this.burrito, this.stopBurrito, null, this);
+        this.coliseoCollider = this.physics.add.collider(this.coliseo, this.burrito, this.ShowAlert, null, this);
+        
 
         this.bordoIzq = this.add.zone(0, 0, 1, this.sys.game.scale.gameSize.height * 2);
         this.physics.world.enable(this.bordoIzq);
@@ -166,6 +168,34 @@ export class Pradera extends Phaser.Scene{
         this.physics.world.enable(this.buttonZone);
         this.physics.add.overlap(this.burrito, this.buttonZone, this.buttonAlpha, null, this);
 
+        this.siloFront = this.add.zone(456, 810, 93, 1);
+        this.physics.world.enable(this.siloFront);
+        this.physics.add.collider(this.burrito, this.siloFront, this.stopBurrito, null, this);
+
+        this.establoFront = this.add.zone(254, 526, 120, 1);
+        this.physics.world.enable(this.establoFront);
+        this.physics.add.collider(this.burrito, this.establoFront, this.stopBurrito, null, this);
+
+        this.castilloFront = this.add.zone(1408, 845, 335, 1);
+        this.physics.world.enable(this.castilloFront);
+        this.physics.add.collider(this.burrito, this.castilloFront, this.stopBurrito, null, this);
+
+        this.molinoFront = this.add.zone(676, 338, 45, 1);
+        this.physics.world.enable(this.molinoFront);
+        this.physics.add.collider(this.burrito, this.molinoFront, this.stopBurrito, null, this);
+
+        this.fogataFront1 = this.add.zone(681, 420, 55, 1);
+        this.physics.world.enable(this.fogataFront1);
+        this.physics.add.collider(this.burrito, this.fogataFront1, this.stopBurrito, null, this);
+
+        this.fogataFront2 = this.add.zone(407, 166, 55, 1);
+        this.physics.world.enable(this.fogataFront2);
+        this.physics.add.collider(this.burrito, this.fogataFront2, this.stopBurrito, null, this);
+
+        this.fogataFront3 = this.add.zone(776, 181, 55, 1);
+        this.physics.world.enable(this.fogataFront3);
+        this.physics.add.collider(this.burrito, this.fogataFront3, this.stopBurrito, null, this);
+
         await this.loadingScreen.OnComplete();
     }
     update(){        
@@ -175,7 +205,8 @@ export class Pradera extends Phaser.Scene{
         this.touchingHudBurritoZone();
         this.touchingHudTokensZone();
         this.touchingButtonZone();
-
+        this.immovableZones();
+        
         this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.silo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.establo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.coliseo.getBounds());
         let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
         if(this.burrito.body.speed > 0){
@@ -404,5 +435,18 @@ export class Pradera extends Phaser.Scene{
                 }
             }
           });
+    }
+
+    immovableZones(){
+        if(this.siloFront.body == null || this.establoFront.body == null || this.coliseo.body == null || this.castilloFront.body == null || this.molinoFront.body == null || this.fogataFront1.body == null || this.fogataFront2.body == null || this.fogataFront3.body == null)
+            return;
+        this.siloFront.body.setImmovable(true);
+        this.establoFront.body.setImmovable(true);
+        this.coliseo.body.setImmovable(true);
+        this.castilloFront.body.setImmovable(true);
+        this.molinoFront.body.setImmovable(true);
+        this.fogataFront1.body.setImmovable(true);
+        this.fogataFront2.body.setImmovable(true);
+        this.fogataFront3.body.setImmovable(true);
     }
 }
