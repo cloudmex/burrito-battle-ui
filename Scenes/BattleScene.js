@@ -74,8 +74,10 @@ export class Battle extends Phaser.Scene{
         this.burritoPlayer.play("idle_Player");
         
         this.sliderPlayer = new Helpers.Slider(this.game.config.width / 2 - 550, 150, this, this.burritoMediaToSkinHead(this.burritoSkinPlayer.media)).SetFlipX(false)
-        .SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
-        this.CreateActionsMenu();
+        //.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
+        console.log(this.currentBattle);
+        if(this.currentBattle.rewards == "")
+            this.CreateActionsMenu();
         //#endregion
 
         //#region Burrito CPU
@@ -102,27 +104,25 @@ export class Battle extends Phaser.Scene{
             this.Animation(this.battleAnims.animPlayer, this.battleAnims.animCPU);
         
         await this.loadingScreen.OnComplete();
-        //this.DisplayText("Player", "Texto de prueba")
-        //this.DisplayText("CPU", "Texto de prueba")
     }
     Animation(animPlayer, animCPU){
         this.burritoCPU.play(animCPU + "_CPU").once('animationcomplete', () => {
+            this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
+            this.AccionLog("CPU", animCPU);
             if(animCPU  !== "derrota"){
-                this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
                 this.burritoCPU.play("idle_CPU");
-                this.AccionLog("CPU", animCPU);
-            }
-            else
+            } else
                 this.BackToPradera("Player");
         });
         this.burritoPlayer.play(animPlayer + "_Player").once('animationcomplete', () => {
+            this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
+            this.AccionLog("Player",  animPlayer);
+                
             if(animPlayer !== "derrota"){
-                this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
                 this.burritoPlayer.play("idle_Player");
-                this.AccionLog("Player",  animPlayer);
-            }
-            else
+            } else
                 this.BackToPradera("CPU");
+                
         });
     }
     CreateActionsMenu = async () => {
@@ -191,6 +191,10 @@ export class Battle extends Phaser.Scene{
     }
     AccionLog(burrito, accion){
         let result = "";
+        let currentBattle = this.currentBattle;
+        let tmpBattle = (localStorage.getItem("tempBattle") != null) ? JSON.parse(localStorage.getItem("tempBattle")) : this.tmpBattle;
+        
+        let damage = parseFloat(tmpBattle["health_" + burrito.toLowerCase()]) - parseFloat(currentBattle["health_" + burrito.toLowerCase()]);
         switch (accion) {
             case "Ataque1":
                 result = `${burrito}: \nHa realizado un ataque debil`; 
@@ -199,33 +203,31 @@ export class Battle extends Phaser.Scene{
                 result = `${burrito}: \nHa realizado un ataque fuerte`; 
                 break;
             case "dano":
-                result = `${burrito}: \nHa recibido un daño de 12`; 
+                result = `${burrito}: \nHa recibido un daño de ${damage.toFixed(2)}`; 
                 break;
             case "defensa":
                 result = `${burrito}: \nHa cubrido el ataque`; 
                 break;
             default:
-                result = "no definido xd";
+                result = "undefined";
                 break;
         }
-        this.DisplayText(burrito, result);
-        console.error(result);
+        if(result != "undefined")
+            this.DisplayText(burrito, result);
     }
     DisplayText(burrito, result){
-        console.log(this.currentBattle);
-        console.log(this.tmpBattle);
-        let text = this.add.text(this.game.config.width / 2 + (burrito == "Player" ? - 700 : 700), this.game.config.height / 2 + 200, result, { fontSize:30, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5 })
+        let text = this.add.text(this.game.config.width / 2 + (burrito == "Player" ? - 700 : 700), 300, result, { fontSize:35   , fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5 })
         .setOrigin(0.5)
         .setTint(0xffffff);
         this.tweens.timeline({
             ease: 'Power2',
             duration: 3000,
-            delay:500,
+            delay:1000,
             tweens:[
             {
                 alpha: 0, 
                 targets: text,
-                y: this.game.config.height - 200,
+                y: this.game.config.height / 2,
                 onComplete: ()=>{ text.destroy(); }
             }
         ]});
