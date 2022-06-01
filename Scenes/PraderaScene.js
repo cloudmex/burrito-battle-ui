@@ -196,6 +196,78 @@ export class Pradera extends Phaser.Scene{
         this.physics.world.enable(this.fogataFront3);
         this.physics.add.collider(this.burrito, this.fogataFront3, this.stopBurrito, null, this);
 
+        this.arbolFront1 = this.add.zone(184, 320, 25, 1);
+        this.physics.world.enable(this.arbolFront1);
+        this.physics.add.collider(this.burrito, this.arbolFront1, this.stopBurrito, null, this);
+
+        this.arbolFront2 = this.add.zone(131, 622, 25, 1);
+        this.physics.world.enable(this.arbolFront2);
+        this.physics.add.collider(this.burrito, this.arbolFront2, this.stopBurrito, null, this);
+
+        this.arbolFront3 = this.add.zone(85, 862, 25, 1);
+        this.physics.world.enable(this.arbolFront3);
+        this.physics.add.collider(this.burrito, this.arbolFront3, this.stopBurrito, null, this);
+
+        this.arbolFront4 = this.add.zone(414, 1068, 25, 1);
+        this.physics.world.enable(this.arbolFront4);
+        this.physics.add.collider(this.burrito, this.arbolFront4, this.stopBurrito, null, this);
+
+        this.arbolFront5 = this.add.zone(695, 668, 25, 1);
+        this.physics.world.enable(this.arbolFront5);
+        this.physics.add.collider(this.burrito, this.arbolFront5, this.stopBurrito, null, this);
+
+        this.arbolFront6 = this.add.zone(765, 376, 25, 1);
+        this.physics.world.enable(this.arbolFront6);
+        this.physics.add.collider(this.burrito, this.arbolFront6, this.stopBurrito, null, this);
+
+        this.arbolFront7 = this.add.zone(493, 221, 25, 1);
+        this.physics.world.enable(this.arbolFront7);
+        this.physics.add.collider(this.burrito, this.arbolFront7, this.stopBurrito, null, this);
+
+        this.arbolFront8 = this.add.zone(875, 215, 25, 1);
+        this.physics.world.enable(this.arbolFront8);
+        this.physics.add.collider(this.burrito, this.arbolFront8, this.stopBurrito, null, this);
+
+        this.arbolFront9 = this.add.zone(843, 28, 25, 1);
+        this.physics.world.enable(this.arbolFront9);
+        this.physics.add.collider(this.burrito, this.arbolFront9, this.stopBurrito, null, this);
+
+        this.cactusFront1 = this.add.zone(1231.5, 291, 14, 1);
+        this.physics.world.enable(this.cactusFront1);
+        this.physics.add.collider(this.burrito, this.cactusFront1, this.stopBurrito, null, this);
+
+        this.cactusFront2 = this.add.zone(1368.5, 61, 14, 1);
+        this.physics.world.enable(this.cactusFront2);
+        this.physics.add.collider(this.burrito, this.cactusFront2, this.stopBurrito, null, this);
+
+        this.cactusFront3 = this.add.zone(1726.5, 420, 14, 1);
+        this.physics.world.enable(this.cactusFront3);
+        this.physics.add.collider(this.burrito, this.cactusFront3, this.stopBurrito, null, this);
+
+        this.cactusFront4 = this.add.zone(1847.5, 311, 14, 1);
+        this.physics.world.enable(this.cactusFront4);
+        this.physics.add.collider(this.burrito, this.cactusFront4, this.stopBurrito, null, this);
+
+        this.ramasFront1 = this.add.zone(1148.5, 726, 14, 1);
+        this.physics.world.enable(this.ramasFront1);
+        this.physics.add.collider(this.burrito, this.ramasFront1, this.stopBurrito, null, this);
+
+        this.ramasFront2 = this.add.zone(1222.5, 1029, 14, 1);
+        this.physics.world.enable(this.ramasFront2);
+        this.physics.add.collider(this.burrito, this.ramasFront2, this.stopBurrito, null, this);
+
+        this.ramasFront3 = this.add.zone(1637.5, 1048, 14, 1);
+        this.physics.world.enable(this.ramasFront3);
+        this.physics.add.collider(this.burrito, this.ramasFront3, this.stopBurrito, null, this);
+
+        this.ramasFront4 = this.add.zone(1722.5, 860, 14, 1);
+        this.physics.world.enable(this.ramasFront4);
+        this.physics.add.collider(this.burrito, this.ramasFront4, this.stopBurrito, null, this);
+
+        this.ramasFront5 = this.add.zone(1669.5, 627, 14, 1);
+        this.physics.world.enable(this.ramasFront5);
+        this.physics.add.collider(this.burrito, this.ramasFront5, this.stopBurrito, null, this);
+
         await this.loadingScreen.OnComplete();
     }
     update(){        
@@ -438,7 +510,7 @@ export class Pradera extends Phaser.Scene{
     }
 
     immovableZones(){
-        if(this.siloFront.body == null || this.establoFront.body == null || this.coliseo.body == null || this.castilloFront.body == null || this.molinoFront.body == null || this.fogataFront1.body == null || this.fogataFront2.body == null || this.fogataFront3.body == null)
+        if(this.siloFront.body == null || this.establoFront.body == null || this.coliseo.body == null || this.castilloFront.body == null || this.molinoFront.body == null || this.fogataFront1.body == null || this.fogataFront2.body == null || this.fogataFront3.body == null || this.arbolFront1.body == null || this.arbolFront2.body == null || this.arbolFront3.body == null || this.arbolFront4.body == null || this.arbolFront5.body == null || this.arbolFront6.body == null || this.arbolFront7.body == null || this.arbolFront8.body == null || this.arbolFront9.body == null || this.cactusFront1.body == null || this.cactusFront2.body == null || this.cactusFront3.body == null || this.cactusFront4.body == null || this.ramasFront1.body == null || this.ramasFront2.body == null || this.ramasFront3.body == null || this.ramasFront4.body == null || this.ramasFront5.body == null)
             return;
         this.siloFront.body.setImmovable(true);
         this.establoFront.body.setImmovable(true);
@@ -448,5 +520,23 @@ export class Pradera extends Phaser.Scene{
         this.fogataFront1.body.setImmovable(true);
         this.fogataFront2.body.setImmovable(true);
         this.fogataFront3.body.setImmovable(true);
+        this.arbolFront1.body.setImmovable(true);
+        this.arbolFront2.body.setImmovable(true);
+        this.arbolFront3.body.setImmovable(true);
+        this.arbolFront4.body.setImmovable(true);
+        this.arbolFront5.body.setImmovable(true);
+        this.arbolFront6.body.setImmovable(true);
+        this.arbolFront7.body.setImmovable(true);
+        this.arbolFront8.body.setImmovable(true);
+        this.arbolFront9.body.setImmovable(true);
+        this.cactusFront1.body.setImmovable(true);
+        this.cactusFront2.body.setImmovable(true);
+        this.cactusFront3.body.setImmovable(true);
+        this.cactusFront4.body.setImmovable(true);
+        this.ramasFront1.body.setImmovable(true);
+        this.ramasFront2.body.setImmovable(true);
+        this.ramasFront3.body.setImmovable(true);
+        this.ramasFront4.body.setImmovable(true);
+        this.ramasFront5.body.setImmovable(true);
     }
 }
