@@ -66,7 +66,7 @@ export class Card{
     Card;
     Active = true;
     enabledColor = 0xffffff;
-    overColor = 0xaaaaaa
+    overColor = 0xaaaaaa;
     disabledColor = 0x666666;
 
     constructor(x, y, burrito, scene, interactuable = false, isEstablo = false){
@@ -213,6 +213,8 @@ export class Slider{
 }
 export class Actions{
     scene;
+    outColor = 0xffffff;
+    overColor = 0xaaaaaa;
     constructor(x, y, scene, battle, actions){
         this.scene = scene;
         this.actions = actions;
@@ -223,7 +225,7 @@ export class Actions{
         this.actionContainer = scene.add.container(0, 0);
         this.actionsResult.add(this.actionContainer);
         this.actionContainer.add(this.action2 = scene.add.sprite(0, 0, "actions", this.IsMyTurn() ? 3 : 1).setAlpha(0));//strong
-        this.actionContainer.add(this.text = scene.add.text(10, 0, this.IsMyTurn() ? battle.strong_attack_player : battle.shields_player, {fontSize: 60, fontFamily: "BangersRegular"}).setAlpha(0));
+        this.actionContainer.add(this.text = scene.add.text(10, 0, this.IsMyTurn() ? battle.strong_attack_player : battle.shields_player, {fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}).setAlpha(0));
 
         this.action1.setInteractive().on("pointerdown", ()=> { 
             this.SendAction();
@@ -243,6 +245,27 @@ export class Actions{
             }
         });
         this.ShowActions();
+
+        this.action1
+            .on('pointerover', () => {
+                this.action1.setTint (this.overColor);
+                this.actionsResult.add(this.text1 = scene.add.text(this.IsMyTurn() ? -55 : -38, this.IsMyTurn() ? -272 : -290, this.IsMyTurn() ? "Ataque" : "Pasar\nTurno", {fontSize: 30, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}));
+            })
+            .on("pointerout", () => {
+                this.action1.setTint (this.outColor);
+                this.text1.destroy();
+            });
+        this.action2
+            .on('pointerover', () => {
+                this.action2.setTint (this.overColor);
+                this.text.visible = false;
+                this.actionsResult.add(this.text2 = scene.add.text(this.IsMyTurn() ? 185 : 175, this.IsMyTurn() ? -130: -102, this.IsMyTurn() ? "Ataque\nPesado" : "Defensa", {fontSize: 28, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}));
+            })
+            .on("pointerout", () => {
+                this.action2.setTint(this.outColor);
+                this.text.visible = true;
+                this.text2.destroy();
+            });
     }
     ShowActions(){
         let distance = 250;
