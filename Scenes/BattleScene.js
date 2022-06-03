@@ -207,7 +207,7 @@ export class Battle extends Phaser.Scene{
                 result = `${burrito}: \nHa recibido un daño de ${damage.toFixed(2)}`; 
                 break;
             case "defensa":
-                result = `${burrito}: \nHa cubrido el ataque`; 
+                result = `${burrito}: \nHa utilizado escudo`; 
                 break;
             default:
                 result = "undefined";

@@ -62,10 +62,14 @@ class MinarBurrito extends Phaser.Scene{
             this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
         }
         this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5);
+//http://localhost:8000/?transactionHashes=5daoV8EBfdEe6MLSarKMi3PV96LBvf4fbLFYgWuAfhHG
 
-        try {
+        if(localStorage.getItem("action") == "buyStraw"){
+            console.log("entra");
             let info = await Near.GetInfoByURL();
             if(info != null){
+                console.log("info" + info)
+                localStorage.removeItem("action");
                 let tokens = parseInt(info.receipts_outcome[0].outcome.logs[0] / 1_000_000_000_000_000_000_000_000);
                 let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
                 animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
@@ -80,18 +84,16 @@ class MinarBurrito extends Phaser.Scene{
                         this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', () => { 
                             this.MintBurrito();
                             animContainer.destroy();  
-
                         })
                     })
                 });
-            } else {
-                throw new Error('¡Ups!')
+            } else{
+                console.log("error");
+                
             }
-        } catch {
+        } else {
             this.MintBurrito();
         }
-        
-        
     }
     Range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
@@ -122,6 +124,7 @@ class MinarBurrito extends Phaser.Scene{
                 confirmButtonText: 'Comprar',
               }).then(async (result) => {
                 if (result.isConfirmed) {
+                    localStorage.setItem("action", "buyStraw");
                     localStorage.setItem("lastScene", "MinarBurrito");
                     await Near.BuyTokens();
                 }
@@ -170,6 +173,7 @@ class MinarBurrito extends Phaser.Scene{
     }
     GetBurrito = () => {
         localStorage.setItem("lastScene", "MinarBurrito");
+        localStorage.setItem("action", "MintBurrito");
         Near.NFTMint();
     }
     GetElementFromType(type){
@@ -189,6 +193,7 @@ class MinarBurrito extends Phaser.Scene{
     async MintBurrito(){
         //let minar = {attack:5,burrito_type:"Fuego",defense:6 ,description:"Este es un burrito de tipo Fuego", global_win:"0", hp:"5", level:"1", media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:3,win:"0"}
         let minar = await Near.GetState();
+        localStorage.removeItem("action");
         
         if(minar){
             this.anims.create({
