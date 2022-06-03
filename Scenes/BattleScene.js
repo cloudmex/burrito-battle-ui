@@ -26,7 +26,7 @@ export class Battle extends Phaser.Scene{
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer3", "Rendirse", this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
 
-       await this.GetBattle().then( async()=>{
+       await this.GetBattle().then(async () => {
            if(localStorage.getItem("burritoCPU") == null)
             localStorage.setItem("burritoCPU", this.RandomBurrito());
             this.burritoSkinCPU = localStorage.getItem("burritoCPU");
@@ -36,7 +36,6 @@ export class Battle extends Phaser.Scene{
                 await this.loadSpriteSheet(this.burritoMediaToSkin(result.media), this.burritoSkinCPU);
             });
        });
-       
     }
     
     async GetBattle(){
@@ -74,8 +73,7 @@ export class Battle extends Phaser.Scene{
         this.burritoPlayer.play("idle_Player");
         
         this.sliderPlayer = new Helpers.Slider(this.game.config.width / 2 - 550, 150, this, this.burritoMediaToSkinHead(this.burritoSkinPlayer.media)).SetFlipX(false)
-        //.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
-        console.log(this.currentBattle);
+        .SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
         if(this.currentBattle.rewards == "")
             this.CreateActionsMenu();
         //#endregion
@@ -106,6 +104,8 @@ export class Battle extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
     }
     Animation(animPlayer, animCPU){
+        
+        console.log(this.currentBattle)
         this.burritoCPU.play(animCPU + "_CPU").once('animationcomplete', () => {
             this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
             this.AccionLog("CPU", animCPU);
@@ -221,8 +221,8 @@ export class Battle extends Phaser.Scene{
         .setTint(0xffffff);
         this.tweens.timeline({
             ease: 'Power2',
-            duration: 3000,
-            delay:1000,
+            duration: 2000,
+            delay:3000,
             tweens:[
             {
                 alpha: 0, 

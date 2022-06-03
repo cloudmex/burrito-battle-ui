@@ -30,8 +30,8 @@ const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     sender: wallet.account()
 });
 const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
-    viewMethods: [ 'ft_balance_of' ],
-    changeMethods: [  ],
+    viewMethods: [ 'ft_balance_of', "can_buy_tokens" ],
+    changeMethods: [ "buy_tokens" ],
     sender: wallet.account()
 });
 const contract_items = new Contract(wallet.account(), contract_id_items, {
@@ -240,4 +240,21 @@ export async function BurritoReadyEvolve(token_id) {
 }
 export async function BurritoIncrementWin(token_id){
     await contract_burritos.burrito_increment_win({burrito_id: token_id}, 300000000000000);
+}
+export async function CanBuyTokens(){
+    let result = await contract_strw_tokens.can_buy_tokens({account_id: GetAccountId()});
+    if(result == 0){
+        return result;
+    } else {
+        return parseInt(result.substring(0, result.length - 6));
+    }
+    
+}
+export async function BuyTokens(){
+    let result = await contract_strw_tokens.buy_tokens(
+        {},
+        300000000000000, 
+        utils.format.parseNearAmount("1")
+    );
+    console.log(result);
 }

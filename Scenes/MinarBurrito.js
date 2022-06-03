@@ -20,6 +20,10 @@ class MinarBurrito extends Phaser.Scene{
         this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
         this.load.spritesheet("Silo_start", "../src/images/Minar Burrito/Silo animación.webp", {frameWidth: 1920, frameHeight: 4000});
         this.load.image("clouds", "../src/images/Minar Burrito/Loop nubes.webp");
+        this.load.spritesheet("cofre", "../src/images/Minar Burrito/Cofre_abierto.webp", {frameWidth: 1920, frameHeight: 1080})
+
+        this.load.image("tienda", "../src/images/Minar Burrito/Tienda.png");
+        this.load.image("burrito", "../src/images/Minar Burrito/Burrito.png");
 
         this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");
         this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", "../src/images/Burritos/Burrito Planta.png");
@@ -40,11 +44,84 @@ class MinarBurrito extends Phaser.Scene{
         this.clouds = this.add.tileSprite(0,0, this.sys.game.scale.gameSize.width, 2100, "clouds").setOrigin(0);
         this.silo = this.add.sprite(this.sys.game.scale.gameSize.width/2, this.sys.game.scale.gameSize.height/2 + 1500, "silo");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
-
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
-        
-        this.MintBurrito();
+
+        let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
+        this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
+        
+        if(this.remainToBuy == 0)
+        this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
+        this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda").setOrigin(0).setInteractive().on("pointerdown", this.BuyTokens);
+        this.timeToBuy = this.add.text(230, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 30, fontFamily: "BangersRegular"}).setOrigin(0.5);
+
+        try {
+            let info = await Near.GetInfoByURL();
+            if(info != null){
+                let tokens = parseInt(info.receipts_outcome[0].outcome.logs[0] / 1_000_000_000_000_000_000_000_000);
+                let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
+                animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
+                this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });
+                this.anims.create({ key: "cofreAnim", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(39, 58) }), frameRate: 24, repeat: 5 });
+                this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
+                this.cofreAnimation.play("cofreAnimIn")
+                .once('animationcomplete', () => { 
+                    animContainer.add(this.add.text(0, -350, "Obtuviste", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+                    animContainer.add(this.add.text(0,  400, `${tokens} $STRW`, {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+                    this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
+                        this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', () => { 
+                            this.MintBurrito();
+                            animContainer.destroy();  
+
+                        })
+                    })
+                });
+            }
+        } catch {
+            this.MintBurrito();
+         }
+        
+        
+    }
+    Range(start, end) {
+        return Array(end - start + 1).fill().map((_, idx) => start + idx);
+    }
+    Contdown(remainToBuy) {
+        //http://localhost:8000/?transactionHashes=9teFRKRmst8y5MxiX4C48NkbmdUqFzZ2jbMh9xRZPziE
+        let timeNow = Date.now();
+        let time = Math.abs(timeNow - remainToBuy) / 36e5;
+
+        let hour = time;
+        let minutes = (hour % 1) * 60;
+        let seconds = (minutes % 1) * 60;
+        if(remainToBuy == 0){
+            this.timeToBuy.setText("Llego la \nmercancia");
+        } else{
+            this.timeToBuy.setText(`Volvemos en\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+        }
+    }
+    async BuyTokens(){
+        let remain = await Near.CanBuyTokens();
+        if(remain == 0){
+            Swal.fire({
+                icon: 'info',
+                title: '¿Quieres comprar tokens?',
+                html: `Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.`,
+                showCancelButton: true,
+                confirmButtonText: 'Comprar',
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                    localStorage.setItem("lastScene", "MinarBurrito");
+                    await Near.BuyTokens();
+                }
+              })
+        } else{
+            Swal.fire({
+                icon: 'info',
+                title: 'No puedes comprar tokens aun',
+                html: `El comprar tokens paja tarda una epoca, asi que aun debes esperar para poder comprar tokens.`
+              })
+        }
     }
     update(){
         let cursors = this.input.keyboard.createCursorKeys();
@@ -57,16 +134,17 @@ class MinarBurrito extends Phaser.Scene{
             this.cameras.main.scrollY += 24;
     }
     GoToEstablo = () =>{
+        clearInterval(this.counterInterval);
         localStorage.removeItem("lastScene");
         this.scene.start("Establo");
     }
     BackToMainMenu = () =>{
+        clearInterval(this.counterInterval);
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
     }
     ConfirmMint = async () => {
         let currentSTRW = await Near.GetSTRWToken();
-        //console.log(typeof(currentSTRW))
         Swal.fire({
             icon: 'info',
             title: 'Información de la transaccion',
