@@ -2,6 +2,7 @@ import * as Helpers from "../src/Helpers/Helpers.js";
 import * as Near  from "../src/near.js";
 
 class MinarBurrito extends Phaser.Scene{
+    contdown = false;
     constructor(){
         super("MinarBurrito");
     }
@@ -22,7 +23,8 @@ class MinarBurrito extends Phaser.Scene{
         this.load.image("clouds", "../src/images/Minar Burrito/Loop nubes.webp");
         this.load.spritesheet("cofre", "../src/images/Minar Burrito/Cofre_abierto.webp", {frameWidth: 1920, frameHeight: 1080})
 
-        this.load.image("tienda", "../src/images/Minar Burrito/Tienda.png");
+        this.load.image("tienda1", "../src/images/Minar Burrito/Tienda1.png");
+        this.load.image("tienda2", "../src/images/Minar Burrito/Tienda2.png");
         this.load.image("burrito", "../src/images/Minar Burrito/Burrito.png");
 
         this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");
@@ -50,10 +52,16 @@ class MinarBurrito extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
         this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
         
-        if(this.remainToBuy == 0)
-        this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
-        this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda").setOrigin(0).setInteractive().on("pointerdown", this.BuyTokens);
-        this.timeToBuy = this.add.text(230, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 30, fontFamily: "BangersRegular"}).setOrigin(0.5);
+        
+        if(remainToBuy == 0){
+            this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
+            this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda1").setOrigin(0);
+            this.add.sprite(360,  this.sys.game.scale.gameSize.height + 2350, "buttonContainer2").setInteractive().on("pointerdown", this.BuyTokens).setScale(0.25);
+            this.add.text(360,  this.sys.game.scale.gameSize.height + 2350, "Comprar", {fontSize: 20, fontFamily: "BangersRegular"}).setOrigin(0.5);
+        } else {
+            this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
+        }
+        this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5);
 
         try {
             let info = await Near.GetInfoByURL();
@@ -62,7 +70,7 @@ class MinarBurrito extends Phaser.Scene{
                 let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
                 animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
                 this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });
-                this.anims.create({ key: "cofreAnim", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(39, 58) }), frameRate: 24, repeat: 5 });
+                this.anims.create({ key: "cofreAnim", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(39, 58) }), frameRate: 24, repeat: 8 });
                 this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
                 this.cofreAnimation.play("cofreAnimIn")
                 .once('animationcomplete', () => { 
@@ -76,10 +84,12 @@ class MinarBurrito extends Phaser.Scene{
                         })
                     })
                 });
+            } else {
+                throw new Error('¡Ups!')
             }
         } catch {
             this.MintBurrito();
-         }
+        }
         
         
     }
@@ -94,10 +104,11 @@ class MinarBurrito extends Phaser.Scene{
         let hour = time;
         let minutes = (hour % 1) * 60;
         let seconds = (minutes % 1) * 60;
-        if(remainToBuy == 0){
-            this.timeToBuy.setText("Llego la \nmercancia");
-        } else{
+        if(remainToBuy != 0){
+            this.contdown = true;
             this.timeToBuy.setText(`Volvemos en\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+        } else if(this.contdown){
+            location.reload();
         }
     }
     async BuyTokens(){

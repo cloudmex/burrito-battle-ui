@@ -153,6 +153,7 @@ export class Battle extends Phaser.Scene{
     BackToPradera(winner){
         let isWinner = winner == "Player";
         localStorage.removeItem("burritoCPU");
+        localStorage.removeItem("tempBattle");
         localStorage.removeItem("lastScene");
         new Helpers.BattleEnd(this.game.config.width / 2, this.game.config.height / 2, this, isWinner, this.currentBattle.rewards);
         setTimeout(() => {
