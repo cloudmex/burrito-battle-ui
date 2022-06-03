@@ -180,7 +180,9 @@ export class Card{
     }
 }
 export class Slider{
-    constructor(x, y, scene, head){
+    constructor(x, y, scene, head, room, isCPU = false){
+        this.room = room;
+        this.isCPU = isCPU;
         this.sliderResult = scene.add.container(x, y).setScrollFactor(0);
         
         this.sliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
@@ -188,13 +190,24 @@ export class Slider{
         this.sliderResult.add(scene.add.sprite(84, -5, "slider_fill", 2).setOrigin(0.5));
         this.sliderResult.add(this.fill = scene.add.sprite(84, -5, "slider_fill", 1));
         this.sliderResult.add(scene.add.sprite(84, -5, "slider_fill", 0));
+        if(isCPU){
+            this.sliderResult.setScale(-1, 1);
+            this.sliderResult.add(scene.add.text(10, -105, "Nivel: "+room.burrito_cpu_level, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' , stroke: 0x000000, strokeThickness: 5}).setScale(-1, 1));
+            this.sliderResult.add(scene.add.text(108, 45, "Salud: "+parseFloat(room.health_cpu).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }).setScale(-1, 1));
+ 
+        }else{
+            this.sliderResult.add(scene.add.text(-150, -105, "Nivel: "+room.level_b1, { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
+            this.sliderResult.add(scene.add.text(-150, 45, "Salud: "+parseFloat(room.health_player).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
+        }
     }
     SetValue(value){
         this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
-        return this;
-    }
-    SetFlipX(value){
-        this.sliderResult.setScale(value ? -1 : 1, 1);
+        const components = this.sliderResult.list;
+        if(this.isCPU){
+        components[6].setText("Salud: "+(value*this.room.start_health_cpu).toFixed(2));
+        }else{
+        components[6].setText("Salud: "+(value*this.room.start_health_player).toFixed(2));
+        }
         return this;
     }
 }
