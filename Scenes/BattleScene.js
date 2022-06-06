@@ -318,7 +318,7 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet(`burrito_idle_CPU`, `../src/images/Battle/${folderCPU}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_CPU`, `../src/images/Battle/${folderCPU}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque2_CPU`, `../src/images/Battle/${folderCPU}/Ataque_pesado.webp`, {frameWidth: 700, frameHeight: 512});
-        this.load.spritesheet(`burrito_defensa_CPU`, `../src/images/Battle/${folderCPU}/Dano.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_defensa_CPU`, `../src/images/Battle/${folderCPU}/Defensa.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_dano_CPU`, `../src/images/Battle/${folderCPU}/Dano.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_derrota_CPU`, `../src/images/Battle/${folderCPU}/Derrota.webp`, {frameWidth: 700, frameHeight: 512});
         this.load.spritesheet(`burrito_victoria_CPU`, `../src/images/Battle/${folderCPU}/Victoria.webp`, {frameWidth: 512, frameHeight: 512});
