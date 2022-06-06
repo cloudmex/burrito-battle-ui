@@ -36,9 +36,9 @@ const config = {
             gravity:{
                 y: 0
             },
-            debug: true,
-            debugShowBody: true,
-            debugShowStaticBody: true,
+            debug: false,
+            debugShowBody: false,
+            debugShowStaticBody: false,
         },
     },
     autorRound: false,
