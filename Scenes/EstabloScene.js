@@ -131,8 +131,7 @@ class Establo extends Phaser.Scene{
                 showConfirmButton: false,
                 timer: 1500
               })
-              await Near.BurritoReadyEvolve(localStorage.getItem("burrito_selected"));
-        }
+             }
     }
     ResetBurrito = async (burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
