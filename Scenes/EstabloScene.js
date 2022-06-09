@@ -131,6 +131,7 @@ class Establo extends Phaser.Scene{
                 showConfirmButton: false,
                 timer: 1500
               })
+              await Near.BurritoReadyEvolve(localStorage.getItem("burrito_selected"));
         }
     }
     ResetBurrito = async (burrito) =>{
@@ -138,7 +139,7 @@ class Establo extends Phaser.Scene{
         Swal.fire({
             icon: 'info',
             title: '¿Quieres restaurar las vidas de este burrito?',
-            html: `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.<br>El costo es de <b>1 Near</b> y <b>30,000 $STRW.</b><br>Actualmente tienes <b>${currentSTRW} $STRW</b>`,
+            html: `El restaurar las vidas del burrito te permitira volver a utilizar\n este burrito para explorar la pradera y luchar en batallas.<br><br>El costo es de <b>1 Near</b> y <b>30,000 $STRW.</b><br><br>Actualmente tienes <b>${currentSTRW} $STRW.</b>`,
             confirmButtonText: 'Restaurar',
             showCancelButton: true
           }).then(async (result) => {
@@ -150,6 +151,7 @@ class Establo extends Phaser.Scene{
         });
     }
     EvolveBurrito = async (burrito)=> {
+        let currentSTRW = await Near.GetSTRWToken();
         if(burrito.win < 10){
             Swal.fire({
                 icon: 'info',
@@ -158,9 +160,19 @@ class Establo extends Phaser.Scene{
                 showConfirmButton: true
             });
         } else {
-            localStorage.setItem("lastScene", "Establo");
-            localStorage.setItem("tmp", "evolve");
-            let result = await Near.EvolveBurrito(burrito.token_id);
+            Swal.fire({
+                icon: 'info',
+                title: '¿Quieres evolucionar a este burrito?',
+                html: `Al evolucionar este burrito subira su nivel y aumentara sus estadisticas.<br><br>El costo es de <b>2 Near</b> y <b>70,000 $STRW.</b><br><br>Actualmente tienes <b>${currentSTRW} $STRW.</b>`,
+                confirmButtonText: 'Evolucionar',
+                showCancelButton: true
+              }).then(async (result) => {
+                  if(result.isConfirmed){
+                    localStorage.setItem("lastScene", "Establo");
+                    localStorage.setItem("tmp", "evolve");
+                    await Near.EvolveBurrito(burrito.token_id);
+                    }
+              });
         } /*else{
             let currentSTRW = await Near.GetSTRWToken();
             Swal.fire({
