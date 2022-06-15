@@ -25,7 +25,7 @@ const provider = new providers.JsonRpcProvider(
 );
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
-    viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner" ],
+    viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner", "nft_token" ],
     changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint', "burrito_increment_win", "burrito_ready_reset", "burrito_ready_evolve" ],
     sender: wallet.account()
 });
@@ -98,8 +98,8 @@ export async function NFTMint(){
     }
 }
 export async function NFTTokens(burrito_id) {
-    let result = await contract_burritos.nft_tokens({});
-    return result[burrito_id];
+    let result = await contract_burritos.nft_token({token_id: burrito_id});
+    return result;
 }
 export async function NFTSupplyForOwner() {
     let result = await contract_burritos.nft_supply_for_owner({account_id: GetAccountId()})
@@ -129,7 +129,9 @@ export async function NFTTokensForOwner(from, limit){
     return result;
 }
 export async function GetNFTToken(index){
+    console.log(index);
     let burritoJson = await NFTTokens(index)
+    console.log(burritoJson);
     let burritoPlayer = JSON.parse(burritoJson.metadata.extra.replace(/'/g, '"'));
     burritoPlayer["media"] = burritoJson.metadata.media;
     burritoPlayer["name"] = burritoJson.metadata.title;

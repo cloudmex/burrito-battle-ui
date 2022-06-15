@@ -111,7 +111,8 @@ class Establo extends Phaser.Scene{
 
         localStorage.setItem("last_burritoIndex", burrito.token_id);
     }
-    SetSelected = (_index) => { 
+    SetSelected = (_index) => {
+        console.log(_index); 
         this.cards.forEach((element, index) => {
             element.setSelected(index == _index);
         });
