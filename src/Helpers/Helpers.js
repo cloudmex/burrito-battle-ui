@@ -69,7 +69,7 @@ export class Card{
     overColor = 0xaaaaaa;
     disabledColor = 0x666666;
 
-    constructor(x, y, burrito, scene, interactuable = false, isEstablo = false){
+    constructor(x, y, burrito, scene, interactuable = false, isEstablo = false, displayOverIcons = true){
         this.scene = scene;
         this.burrito = burrito;
         this.Card = {x: x, y: y, burrito: burrito, scene: scene };
@@ -85,15 +85,19 @@ export class Card{
         this.cardResult.add(this.levelText = scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.3, 0));//level
         this.cardResult.add(scene.add.text(-180, - 380, burrito.name.split("#", 1), { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(-0.02, 0));//name
 
-        this.cardResult.add(this.Level = scene.add.sprite(325, -150, "level", Math.round((burrito.win / 10) * 24)));
-        scene.anims.create({ key: "resetLevel", frames: scene.anims.generateFrameNumbers("level", { frames: [24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]}), frameRate: 24, repeat: 0 });
+        if(displayOverIcons){
+            this.cardResult.add(this.Level = scene.add.sprite(325, -150, "level", Math.round((burrito.win / 10) * 24)));
+            scene.anims.create({ key: "resetLevel", frames: scene.anims.generateFrameNumbers("level", { frames: [24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]}), frameRate: 24, repeat: 0 });
+        }
         if(burrito.win < 10){
             this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//wins    
         }else{
             this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.25, 0));//wins
         }
-        this.cardResult.add( this.Heart = scene.add.sprite(325,0,"heart", Math.round((burrito.hp / 5) * 24)));
-        scene.anims.create({ key: "recoverHealth", frames: scene.anims.generateFrameNumbers("heart", { frames: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]}), frameRate: 24, repeat: 0 });
+        if(displayOverIcons){
+            this.cardResult.add( this.Heart = scene.add.sprite(325,0,"heart", Math.round((burrito.hp / 5) * 24)));
+            scene.anims.create({ key: "recoverHealth", frames: scene.anims.generateFrameNumbers("heart", { frames: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]}), frameRate: 24, repeat: 0 });
+        }
         this.cardResult.add(this.heartText = scene.add.text(310, - 40, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//health
 
         if(burrito.attack <= 9){
@@ -236,7 +240,6 @@ export class Actions{
                 this.SendAction();
                 this.actions.Action2();
             } else {Swal.fire({
-                position: 'top-end',
                 icon: 'error',
                 title: 'No puedes realizar esta accion',
                 showConfirmButton: false,
@@ -341,7 +344,7 @@ export class InfoCard{
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
         this.numBurrito = burrito.name.split("#", 2);
 
-        this.cardResult.add(scene.add.text(-100, -235, "Burrito #"+this.numBurrito[1]+"\nTipo: "+burrito.burrito_type+"\nnivel: "+burrito.level+"\nVictorias: "+burrito.win+" \nVidas: "+burrito.hp+"\nFuerza: "+burrito.attack+"\nDefensa: "+burrito.defense+"\nVelocidad: "+burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
+        this.cardResult.add(scene.add.text(-100, -235, "Burrito #"+this.numBurrito[1]+"\nTipo: "+burrito.burrito_type+"\nNivel: "+burrito.level+"\nVictorias: "+burrito.win+" \nVidas: "+burrito.hp+"\nFuerza: "+burrito.attack+"\nDefensa: "+burrito.defense+"\nVelocidad: "+burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
 
     }
     

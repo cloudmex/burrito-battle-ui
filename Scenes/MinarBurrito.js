@@ -7,7 +7,6 @@ class MinarBurrito extends Phaser.Scene{
         super("MinarBurrito");
     }
     preload(){
-
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
         
@@ -16,6 +15,12 @@ class MinarBurrito extends Phaser.Scene{
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
         
+        
+    }
+    create(){
+        this.LoadSpritesheet();   
+    }
+    LoadSpritesheet(){
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
         this.load.image("buttonContainer2", "../src/images/button.png");
         this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
@@ -37,9 +42,10 @@ class MinarBurrito extends Phaser.Scene{
 
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
-        this.load.image("spark", "../src/particles/blue.png");
+        this.load.once("complete", this.Start, this);
+        this.load.start();
     }
-    async create(){
+    async Start(){
         this.camera = this.cameras.main;
         this.camera.scrollY = 2920; 
         this.background = this.add.image(this.sys.game.scale.gameSize.width / 2, 0, "mintBurritoBackground").setOrigin(0.5, 0)
@@ -65,10 +71,8 @@ class MinarBurrito extends Phaser.Scene{
 //http://localhost:8000/?transactionHashes=5daoV8EBfdEe6MLSarKMi3PV96LBvf4fbLFYgWuAfhHG
 
         if(localStorage.getItem("action") == "buyStraw"){
-            console.log("entra");
             let info = await Near.GetInfoByURL();
             if(info != null){
-                console.log("info" + info)
                 localStorage.removeItem("action");
                 let tokens = parseInt(info.receipts_outcome[0].outcome.logs[0] / 1_000_000_000_000_000_000_000_000);
                 let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
@@ -138,6 +142,8 @@ class MinarBurrito extends Phaser.Scene{
         }
     }
     update(){
+        if(this.clouds == null)
+            return;
         let cursors = this.input.keyboard.createCursorKeys();
         this.clouds.tilePositionX += 1
         this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
@@ -190,9 +196,14 @@ class MinarBurrito extends Phaser.Scene{
         let max = Math.max.apply(Math, values);
         return {index: values.indexOf(max), value: max };
     }
-    async MintBurrito(){
+    async MintBurrito(){//http://localhost:8000/?transactionHashes=7hpW6ZRqK4pSjs2v8pXE9WdewA3HjRDit5Y6aJ1pLM4C
         //let minar = {attack:5,burrito_type:"Fuego",defense:6 ,description:"Este es un burrito de tipo Fuego", global_win:"0", hp:"5", level:"1", media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:3,win:"0"}
         let minar = await Near.GetState();
+        /*let info = await Near.GetInfoByURL();
+        let minar = null;
+        if(info != null)
+            minar = info.receipts_outcome[5].outcome.logs[2];*/
+
         localStorage.removeItem("action");
         
         if(minar){
@@ -250,7 +261,7 @@ class MinarBurrito extends Phaser.Scene{
     }
     GetCard(minar){
         this.particles = this.add.particles('spark');
-            this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this).GetComponents();
+            this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this, false, false, false).GetComponents();
             this.card.setDepth(2);
             let timeline = this.tweens.createTimeline();
             timeline.add({

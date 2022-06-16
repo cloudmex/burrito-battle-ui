@@ -138,7 +138,7 @@ export class Pradera extends Phaser.Scene{
         this.coliseo = this.add.zone(1595, 135, 250, 250).setRectangleDropZone(600, 600);
         this.physics.world.enable(this.coliseo);
         this.coliseoOverlap = this.physics.add.overlap(this.coliseo, this.burrito, this.stopBurrito, null, this);
-        this.coliseoCollider = this.physics.add.collider(this.coliseo, this.burrito, this.ShowAlert, null, this);
+        this.coliseoCollider = this.physics.add.collider(this.coliseo, this.burrito, ()=>{ this.ShowAlert("El colisio continua en construccion", "Esta es una nueva mecanica que se esta implementado actualmente", null )}, null, this);
         
 
         this.bordoIzq = this.add.zone(0, 0, 1, this.sys.game.scale.gameSize.height * 2);
@@ -310,9 +310,10 @@ export class Pradera extends Phaser.Scene{
                 title: title,
                 html: description,
                 showCancelButton: true,
+                showConfirmButton: scene != null,
                 confirmButtonText: 'Entrar',
             }).then((result) => {
-                if(result.isConfirmed) this.scene.start(scene);
+                if(result.isConfirmed && scene != null) this.scene.start(scene);
             })
             this.showAlert = true;
         }

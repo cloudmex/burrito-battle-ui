@@ -1,6 +1,7 @@
 import * as nearAPI from "../lib/near-api-js.js"
 
 const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
+
 const config = {
       networkId: 'testnet',
       keyStore: typeof window === "undefined"
@@ -13,8 +14,8 @@ const config = {
     
 }
 const near = await connect(config);
-
 const wallet = new WalletConnection(near, 'ncd-ii');
+
 const contract_id_burritos = "dev-1652924595303-59024384289373";
 const contract_id_strw_tokens = "dev-1653415145729-47929415561597";
 const contract_id_items = "dev-1647986467816-61735125036881";
@@ -44,16 +45,19 @@ const contract_PVEBattle = new Contract(wallet.account(), contract_id_PVEBattle,
     changeMethods: [ "create_battle_player_cpu", "battle_player_cpu", "get_battle_active", "surrender_cpu" ],
     sender: wallet.account()
 })
+
 export function Login() {
     wallet.requestSignIn(
-        contract_id_PVEBattle,
+        contract_id_burritos,
         "Burrito Battle",
         window.location.origin,
     );
 }
+
 export function LogOut() {
     wallet.signOut();
 }
+
 export function IsConnected() {
     return wallet.isSignedIn();
 }
@@ -201,7 +205,6 @@ export async function GetState() {
                 let transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
                 
                 const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
-                console.log(resultJson);
                 burrito = JSON.parse(resultJson.receipts_outcome[5].outcome.logs[2]);
                 
                 resolve(burrito);
@@ -273,7 +276,6 @@ export async function CanBuyTokens(){
     } else {
         return parseInt(result.substring(0, result.length - 6));
     }
-    
 }
 export async function BuyTokens(){
     let result = await contract_strw_tokens.buy_tokens(
@@ -281,5 +283,4 @@ export async function BuyTokens(){
         300000000000000, 
         utils.format.parseNearAmount("1")
     );
-    console.log(result);
 }

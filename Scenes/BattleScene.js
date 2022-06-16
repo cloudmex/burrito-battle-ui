@@ -104,8 +104,6 @@ export class Battle extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
     }
     Animation(animPlayer, animCPU){
-        
-        console.log(this.currentBattle)
         this.burritoCPU.play(animCPU + "_CPU").once('animationcomplete', () => {
             this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
             this.AccionLog("CPU", animCPU);
