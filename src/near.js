@@ -133,9 +133,7 @@ export async function NFTTokensForOwner(from, limit){
     return result;
 }
 export async function GetNFTToken(index){
-    console.log(index);
-    let burritoJson = await NFTTokens(index)
-    console.log(burritoJson);
+    let burritoJson = await NFTTokens(index);
     let burritoPlayer = JSON.parse(burritoJson.metadata.extra.replace(/'/g, '"'));
     burritoPlayer["media"] = burritoJson.metadata.media;
     burritoPlayer["name"] = burritoJson.metadata.title;
@@ -163,29 +161,26 @@ export async function SurrenderCpu () {
     return result;
 }
 export async function GetInfoByURL(){
-    return new Promise(async resolve => {
+    let result = null;
     let URLactual = window.location.toString();
-        if(URLactual.indexOf("?") == -1){
-            resolve(null);
-        } else {
-            if(URLactual.indexOf("transactionHashes") !== -1){
-                let start = URLactual.indexOf("=");
-                let end = URLactual.indexOf("&");
-                let transactionHashes = URLactual.substring(start + 1, end == -1 ? URLactual.length : end);
-                
-                const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
-                resolve(resultJson);
-            }
-            else if(URLactual.indexOf("rejected") !== -1) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Operación cancelada',
-                })
-                resolve(null);
-            }
+    if(URLactual.indexOf("?") != -1){
+        if(URLactual.indexOf("transactionHashes") !== -1){
+            let end = URLactual.indexOf("&");
+            let transactionHashes = URLactual.substring(URLactual.indexOf("=") + 1, end == -1 ? URLactual.length : end);
+            
+            const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
+            result = resultJson;
         }
+        else if(URLactual.indexOf("rejected") !== -1) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Operación cancelada',
+            })
+        }
+    }
+    
     history.pushState('Home', 'Title', '/');
-    });
+    return result;
 }
 export async function BattlePlayerCPU(typeMove){
     let result = await contract_PVEBattle.battle_player_cpu({ type_move: typeMove}, 300000000000000, 0 );
@@ -206,7 +201,6 @@ export async function GetState() {
                 
                 const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
                 burrito = JSON.parse(resultJson.receipts_outcome[5].outcome.logs[2]);
-                
                 resolve(burrito);
             } else if(URLactual.indexOf("rejected") !== -1){
                 Swal.fire({

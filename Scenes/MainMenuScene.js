@@ -15,7 +15,7 @@ class MainMenu extends Phaser.Scene{
     }
     async create(){
         this.loadingScreen = new Helpers.LoadingScreen(this);
-        
+
         if(localStorage.getItem("lastScene")) {
             this.scene.start(localStorage.getItem("lastScene"));
         } else {
@@ -47,7 +47,8 @@ class MainMenu extends Phaser.Scene{
         new Helpers.Button(450, 600, 0.75, "buttonContainer1", "Minar Burrito", this, this.MinarBurrito, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer1", "Pradera", this, this.Pradera, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer1", "Establo", this, this.Establo, null, {fontSize: 60, fontFamily: "BangersRegular"});
-        
+
+        await Near.GetInfoByURL();
         await this.loadingScreen.OnComplete();        
     }
     
