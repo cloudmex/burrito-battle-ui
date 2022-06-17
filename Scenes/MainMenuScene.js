@@ -19,6 +19,7 @@ class MainMenu extends Phaser.Scene{
         if(localStorage.getItem("lastScene")) {
             this.scene.start(localStorage.getItem("lastScene"));
         } else {
+            await Near.GetInfoByURL(); 
             try{
                 let isInBattle = await Near.IsInBattle();
                 if(isInBattle){
@@ -48,8 +49,9 @@ class MainMenu extends Phaser.Scene{
         new Helpers.Button(450, 750, 0.75, "buttonContainer1", "Pradera", this, this.Pradera, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer1", "Establo", this, this.Establo, null, {fontSize: 60, fontFamily: "BangersRegular"});
 
-        await Near.GetInfoByURL();
-        await this.loadingScreen.OnComplete();        
+        await this.loadingScreen.OnComplete();
+        
+        //    
     }
     
     LogOut = () => {

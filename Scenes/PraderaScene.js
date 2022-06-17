@@ -68,7 +68,6 @@ export class Pradera extends Phaser.Scene{
         this.LoadSpriteSheet();
     }
     async LoadSpriteSheet(){
-        console.log(await Near.GetNFTToken(localStorage.getItem("burrito_selected"))); 
         let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
         this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         this.load.once("complete", this.CreateScene, this);
@@ -302,7 +301,6 @@ export class Pradera extends Phaser.Scene{
     }
     ShowAlert = (title, description, scene) => {
         if(!this.showAlert){
-            
             this.burrito.body.stop();
             this.burrito.stop();
             Swal.fire({

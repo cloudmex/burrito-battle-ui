@@ -35,11 +35,6 @@ class Establo extends Phaser.Scene{
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
     }
-    later(delay) {
-        return new Promise(function(resolve) {
-            setTimeout(resolve, delay);
-        });
-    }
     async create(){
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
@@ -98,11 +93,11 @@ class Establo extends Phaser.Scene{
             this.buttonEvolve.GetComponents().destroy();
         }
 
-        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, false).setScale(0.7).On(()=>{ this.infoBigCard(burrito);});
+        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, false, true, true).setScale(0.7).On(()=>{ this.infoBigCard(burrito);});
         if(burrito.hp <= 0){
             this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ResetBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         } else {
-            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito); this.SetSelected(index); this.bigCard.setSelected(true); }, null, {fontSize: 28, fontFamily: "BangersRegular"});
+            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito); this.SetSelected(index);}, null, {fontSize: 28, fontFamily: "BangersRegular"});
         }
         this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Subir de nivel", this, ()=>{ this.EvolveBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         
@@ -204,9 +199,7 @@ class Establo extends Phaser.Scene{
     Previous = async () =>{
         if(this.counter >= 1){
             this.counter--;
-            this.cards.forEach(card => 
-                card.GetComponents().destroy()
-            );
+            this.cards.forEach(card => card.GetComponents().destroy());
             this.SpawnCard();
         }
     }
@@ -229,10 +222,8 @@ class Establo extends Phaser.Scene{
             const components = this.bigCard.GetComponents().list
             components[1].visible = true;
         for (const item of components) {
-            if(item.type === "Text") {
-
-                item.visible = true        
-            }
+            if(item.type === "Text")
+                item.visible = true;     
         } 
             this.infoCard.GetComponents().destroy();
         }

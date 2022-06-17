@@ -69,7 +69,7 @@ export class Card{
     overColor = 0xaaaaaa;
     disabledColor = 0x666666;
 
-    constructor(x, y, burrito, scene, interactuable = false, isEstablo = false, displayOverIcons = true){
+    constructor(x, y, burrito, scene, interactuable = false, isEstablo = false, displayOverIcons = true, isBigCard = false){
         this.scene = scene;
         this.burrito = burrito;
         this.Card = {x: x, y: y, burrito: burrito, scene: scene };
@@ -118,7 +118,7 @@ export class Card{
             this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.2, 0));//speed
         }
 
-        if(localStorage.getItem("burrito_selected") == burrito.token_id && isEstablo)
+        if(localStorage.getItem("burrito_selected") == burrito.token_id && isEstablo && !isBigCard)
             this.cardResult.add(this.selected = scene.add.image(300, -350, "selected").setScale(0.35));
 
         if(interactuable){
@@ -336,8 +336,7 @@ export class InfoCard{
         components[1].visible = false;
         for (const item of components) {
             if(item.type === "Text") {
-
-                item.visible = false        
+                item.visible = false;      
             }
         }
 

@@ -39,11 +39,12 @@ export class Battle extends Phaser.Scene{
     }
     
     async GetBattle(){
+        //http://localhost:8000/?transactionHashes=M89kpWNUZPpRnQALKXcHVzVGPKcbgAbHNWxZ3fksj7o
         if(true){
             let info = await Near.GetInfoByURL();
             if(info != null){
                 try{
-                    this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[0]);
+                    this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[2]);
                     localStorage.removeItem("tempBattle");
                 } catch {
                     this.currentBattle = JSON.parse(info.receipts_outcome[0].outcome.logs[0]);
@@ -62,12 +63,10 @@ export class Battle extends Phaser.Scene{
                 }
             }
         } else {
-            //http://localhost:8000/?transactionHashes=8XuK5WC9TpGKamsdG3zzf6VjdKeWMoUP1FkSUHvFQmfG
             let info = await Near.GetInfoByURL();
             console.log(info);
             this.currentBattle = JSON.parse('{"accesories_attack_b1":"0","accesories_attack_b2":"0","accesories_defense_b1":"0","accesories_defense_b2":"0","accesories_speed_b1":"0","accesories_speed_b2":"0","attack_b1":"8","burrito_cpu_attack":"8","burrito_cpu_defense":"7","burrito_cpu_level":"1","burrito_cpu_speed":"6","burrito_cpu_type":"Planta","burrito_id":"2","defense_b1":"7","health_cpu":"11","health_player":"20","level_b1":"1","player_id":"jesus13th.testnet","shields_cpu":"3","shields_player":"3","speed_b1":"5","start_health_cpu":"11","start_health_player":"20","status":"2","strong_attack_cpu":"3","strong_attack_player":"3","turn":"CPU"}');
         }
-        await history.pushState('Home', 'Title', '/');
     }
     async LoadBurritos(){
         //#region Burrito Player

@@ -167,8 +167,8 @@ export async function GetInfoByURL(){
         if(URLactual.indexOf("transactionHashes") !== -1){
             let end = URLactual.indexOf("&");
             let transactionHashes = URLactual.substring(URLactual.indexOf("=") + 1, end == -1 ? URLactual.length : end);
-            
             const resultJson = await provider.txStatus(transactionHashes, GetAccountId());
+            
             result = resultJson;
         }
         else if(URLactual.indexOf("rejected") !== -1) {
