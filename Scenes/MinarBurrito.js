@@ -179,10 +179,12 @@ class MinarBurrito extends Phaser.Scene{
             }
           })
     }
-    GetBurrito = () => {
+    GetBurrito = async () => {
         localStorage.setItem("lastScene", "MinarBurrito");
         localStorage.setItem("action", "MintBurrito");
-        Near.NFTMint();
+        let value = await Near.NFTMint();
+        console.log(value);
+
     }
     GetElementFromType(type){
         switch(type){

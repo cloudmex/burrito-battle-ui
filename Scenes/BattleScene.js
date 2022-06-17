@@ -44,7 +44,8 @@ export class Battle extends Phaser.Scene{
             let info = await Near.GetInfoByURL();
             if(info != null){
                 try{
-                    this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[2]);
+                    console.log(info);
+                    this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[0]);
                     localStorage.removeItem("tempBattle");
                 } catch {
                     this.currentBattle = JSON.parse(info.receipts_outcome[0].outcome.logs[0]);

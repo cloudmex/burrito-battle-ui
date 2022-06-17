@@ -1,6 +1,6 @@
 import * as nearAPI from "../lib/near-api-js.js"
 
-const { connect, keyStores, WalletConnection, Contract, utils, providers, KeyPair } = nearApi;
+const { connect, keyStores, WalletConnection, Contract, utils, providers, KeyPair, transactions } = nearApi;
 
 const config = {
       networkId: 'testnet',
@@ -74,30 +74,14 @@ export async function LoginFullAccess(){
   newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
   await wallet._keyStore.setKey(
     wallet._networkId,
-    PENDING_ACCESS_KEY_PREFIX + accessKey.getPublicKey(),
+    "pending_key" + accessKey.getPublicKey(),
     accessKey
   );
 
+  transactions.functionCallAccessKey(contract_id_burritos, ["nft_mint"]);
   window.location.assign(newUrl.toString());
-} 
-const PENDING_ACCESS_KEY_PREFIX = "pending_key";
+}
 
-const loginFullAccess = async (options) => {
-  const currentUrl = new URL(window.location.href);
-  const newUrl = new URL(wallet._walletBaseUrl + "/login/");
-	newUrl.searchParams.set('success_url', options.successUrl || currentUrl.href);
-  newUrl.searchParams.set('failure_url', options.failureUrl || currentUrl.href);
-
-  const accessKey = KeyPair.fromRandom("ed25519");
-  newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
-  await wallet._keyStore.setKey(
-    wallet._networkId,
-    PENDING_ACCESS_KEY_PREFIX + accessKey.getPublicKey(),
-    accessKey
-  );
-
-  window.location.assign(newUrl.toString());
-};
 export async function GetAccountBalance(){
     const cuenta = await near.account(GetAccountId());
     const balance = await cuenta.getAccountBalance();
@@ -146,8 +130,7 @@ export async function IsInBattle(){
     return result;
 }
 export async function NFTTokensForOwner(from, limit){
-    let tokens = await contract_burritos.nft_tokens_for_owner (
-        {
+    let tokens = await contract_burritos.nft_tokens_for_owner ({
             account_id: GetAccountId(),
             from_index: from.toString(),
             limit: parseInt(limit)
