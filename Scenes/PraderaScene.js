@@ -311,7 +311,10 @@ export class Pradera extends Phaser.Scene{
                 showConfirmButton: scene != null,
                 confirmButtonText: 'Entrar',
             }).then((result) => {
-                if(result.isConfirmed && scene != null) this.scene.start(scene);
+                if(result.isConfirmed && scene != null) {
+                    localStorage.setItem("prevScene", "pradera");
+                    this.scene.start(scene);
+                }
             })
             this.showAlert = true;
         }

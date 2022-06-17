@@ -117,7 +117,7 @@ export class Battle extends Phaser.Scene{
         this.burritoPlayer.play(animPlayer + "_Player").once('animationcomplete', () => {
             this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health_player) / parseFloat(this.currentBattle.start_health_player));
             this.AccionLog("Player",  animPlayer);
-                
+            
             if(animPlayer !== "derrota"){
                 this.burritoPlayer.play("idle_Player");
             } else

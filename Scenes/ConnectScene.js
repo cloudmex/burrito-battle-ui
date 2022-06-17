@@ -34,8 +34,9 @@ class Connection extends Phaser.Scene{
             );
     }
     
-    Login(){
+    async Login(){
         Near.Login();
+        //await Near.LoginFullAccess();
     }
 }
 export { Connection };

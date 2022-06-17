@@ -1,6 +1,6 @@
 import * as nearAPI from "../lib/near-api-js.js"
 
-const { connect, keyStores, WalletConnection, Contract, utils, providers } = nearApi;
+const { connect, keyStores, WalletConnection, Contract, utils, providers, KeyPair } = nearApi;
 
 const config = {
       networkId: 'testnet',
@@ -64,13 +64,45 @@ export function IsConnected() {
 export function GetAccountId(){
     return wallet.getAccountId()
 }
+export async function LoginFullAccess(){
+    const currentUrl = new URL(window.location.href);
+    const newUrl = new URL(wallet._walletBaseUrl + "/login/");
+	newUrl.searchParams.set('success_url', window.location.origin || currentUrl.href);
+    newUrl.searchParams.set('failure_url', window.location.origin || currentUrl.href);
 
+  const accessKey = KeyPair.fromRandom("ed25519");
+  newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
+  await wallet._keyStore.setKey(
+    wallet._networkId,
+    PENDING_ACCESS_KEY_PREFIX + accessKey.getPublicKey(),
+    accessKey
+  );
+
+  window.location.assign(newUrl.toString());
+} 
+const PENDING_ACCESS_KEY_PREFIX = "pending_key";
+
+const loginFullAccess = async (options) => {
+  const currentUrl = new URL(window.location.href);
+  const newUrl = new URL(wallet._walletBaseUrl + "/login/");
+	newUrl.searchParams.set('success_url', options.successUrl || currentUrl.href);
+  newUrl.searchParams.set('failure_url', options.failureUrl || currentUrl.href);
+
+  const accessKey = KeyPair.fromRandom("ed25519");
+  newUrl.searchParams.set("public_key", accessKey.getPublicKey().toString());
+  await wallet._keyStore.setKey(
+    wallet._networkId,
+    PENDING_ACCESS_KEY_PREFIX + accessKey.getPublicKey(),
+    accessKey
+  );
+
+  window.location.assign(newUrl.toString());
+};
 export async function GetAccountBalance(){
     const cuenta = await near.account(GetAccountId());
     const balance = await cuenta.getAccountBalance();
     return balance;
 }
-
 export async function GetSTRWToken(){
     let currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));
     return currentSTRW

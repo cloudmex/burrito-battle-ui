@@ -51,13 +51,14 @@ class MinarBurrito extends Phaser.Scene{
         this.background = this.add.image(this.sys.game.scale.gameSize.width / 2, 0, "mintBurritoBackground").setOrigin(0.5, 0)
         this.clouds = this.add.tileSprite(0,0, this.sys.game.scale.gameSize.width, 2100, "clouds").setOrigin(0);
         this.silo = this.add.sprite(this.sys.game.scale.gameSize.width/2, this.sys.game.scale.gameSize.height/2 + 1500, "silo");
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", "Menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        this.isPrevScene = localStorage.getItem("prevScene") != null;
+        localStorage.removeItem("prevScene");
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? "Volver a pradera" : "Menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
 
         let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
         this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
-        
         
         if(remainToBuy == 0){
             this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
@@ -160,8 +161,9 @@ class MinarBurrito extends Phaser.Scene{
     }
     BackToMainMenu = () =>{
         clearInterval(this.counterInterval);
+        
+        this.scene.start(this.isPrevScene ? "Pradera" :"MainMenu");
         localStorage.removeItem("lastScene");
-        this.scene.start("MainMenu");
     }
     ConfirmMint = async () => {
         let currentSTRW = await Near.GetSTRWToken();
