@@ -1,8 +1,10 @@
 import * as Helpers from "../src/Helpers/Helpers.js";
 import * as Near  from "../src/near.js";
 
-class MinarBurrito extends Phaser.Scene{
+export class MinarBurrito extends Phaser.Scene{
+    sprites = [];
     contdown = false;
+    canNavigate = true;
     constructor(){
         super("MinarBurrito");
     }
@@ -14,8 +16,6 @@ class MinarBurrito extends Phaser.Scene{
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
-        
-        
     }
     create(){
         this.LoadSpritesheet();   
@@ -55,117 +55,60 @@ class MinarBurrito extends Phaser.Scene{
         localStorage.removeItem("prevScene");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? "Volver a pradera" : "Menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
-
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Obtener nuevo burrito", this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"})
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Ir al Establo", this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
+        
         let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
-        this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
-        
+
         if(remainToBuy == 0){
             this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
-            this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda1").setOrigin(0);
-            this.add.sprite(360,  this.sys.game.scale.gameSize.height + 2350, "buttonContainer2").setInteractive().on("pointerdown", this.BuyTokens).setScale(0.25);
-            this.add.text(360,  this.sys.game.scale.gameSize.height + 2350, "Comprar", {fontSize: 20, fontFamily: "BangersRegular"}).setOrigin(0.5);
+            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda1").setOrigin(0);
+            this.comprarBtn = new Helpers.Button(360,  this.sys.game.scale.gameSize.height + 2350, 0.25, "buttonContainer2", "Comprar", this, this.BuyTokens, null, {fontSize: 20, fontFamily: "BangersRegular"}, false)
         } else {
-            this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
+            this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
+            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
         }
-        this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5);
-//http://localhost:8000/?transactionHashes=5daoV8EBfdEe6MLSarKMi3PV96LBvf4fbLFYgWuAfhHG
-
-        if(localStorage.getItem("action") == "buyStraw"){
-            let info = await Near.GetInfoByURL();
-            if(info != null){
-                localStorage.removeItem("action");
-                let tokens = parseInt(info.receipts_outcome[0].outcome.logs[0] / 1_000_000_000_000_000_000_000_000);
-                let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
-                animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
-                this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });
-                this.anims.create({ key: "cofreAnim", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(39, 58) }), frameRate: 24, repeat: 8 });
-                this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
-                this.cofreAnimation.play("cofreAnimIn")
-                .once('animationcomplete', () => { 
-                    animContainer.add(this.add.text(0, -350, "Obtuviste", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
-                    animContainer.add(this.add.text(0,  400, `${tokens} $STRW`, {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
-                    this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
-                        this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', () => { 
-                            this.MintBurrito();
-                            animContainer.destroy();  
-                        })
-                    })
-                });
-            } else{
-                console.log("error");
-                
-            }
-        } else {
-            this.MintBurrito();
-        }
+        this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(5);
     }
-    Range(start, end) {
-        return Array(end - start + 1).fill().map((_, idx) => start + idx);
+    update(){
+        if(this.clouds == null) return;
+        let cursors = this.input.keyboard.createCursorKeys();
+        this.clouds.tilePositionX += 1
+        this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
+
+        if (cursors.up.isDown) this.cameras.main.scrollY -= 24;
+        else if (cursors.down.isDown) this.cameras.main.scrollY += 24;
+    }
+    GoToEstablo = () =>{
+        if(!this.canNavigate || Swal.isVisible())
+            return;
+        clearInterval(this.counterInterval);
+        localStorage.removeItem("lastScene");
+        this.scene.start("Establo");
+    }
+    BackToMainMenu = () =>{
+        if(!this.canNavigate || Swal.isVisible())
+            return;
+        clearInterval(this.counterInterval);
+        localStorage.removeItem("lastScene");
+        this.scene.start(this.isPrevScene ? "Pradera" :"MainMenu");
     }
     Contdown(remainToBuy) {
-        //http://localhost:8000/?transactionHashes=9teFRKRmst8y5MxiX4C48NkbmdUqFzZ2jbMh9xRZPziE
         let timeNow = Date.now();
         let time = Math.abs(timeNow - remainToBuy) / 36e5;
-
         let hour = time;
         let minutes = (hour % 1) * 60;
         let seconds = (minutes % 1) * 60;
         if(remainToBuy != 0){
             this.contdown = true;
             this.timeToBuy.setText(`Volvemos en\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
-        } else if(this.contdown){
+        } else if(this.contdown)
             location.reload();
-        }
-    }
-    async BuyTokens(){
-        let remain = await Near.CanBuyTokens();
-        if(remain == 0){
-            Swal.fire({
-                icon: 'info',
-                title: '¿Quieres comprar tokens?',
-                html: `Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.`,
-                showCancelButton: true,
-                confirmButtonText: 'Comprar',
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                    localStorage.setItem("action", "buyStraw");
-                    localStorage.setItem("lastScene", "MinarBurrito");
-                    await Near.BuyTokens();
-                }
-              })
-        } else{
-            Swal.fire({
-                icon: 'info',
-                title: 'No puedes comprar tokens aun',
-                html: `El comprar tokens paja tarda una epoca, asi que aun debes esperar para poder comprar tokens.`
-              })
-        }
-    }
-    update(){
-        if(this.clouds == null)
-            return;
-        let cursors = this.input.keyboard.createCursorKeys();
-        this.clouds.tilePositionX += 1
-        this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
-
-        if (cursors.up.isDown)
-            this.cameras.main.scrollY -= 24;
-        else if (cursors.down.isDown)
-            this.cameras.main.scrollY += 24;
-    }
-    GoToEstablo = () =>{
-        clearInterval(this.counterInterval);
-        localStorage.removeItem("lastScene");
-        this.scene.start("Establo");
-    }
-    BackToMainMenu = () =>{
-        clearInterval(this.counterInterval);
-        
-        this.scene.start(this.isPrevScene ? "Pradera" :"MainMenu");
-        localStorage.removeItem("lastScene");
     }
     ConfirmMint = async () => {
+        if(!this.canNavigate || Swal.isVisible())
+            return;
         let currentSTRW = await Near.GetSTRWToken();
         Swal.fire({
             icon: 'info',
@@ -174,18 +117,130 @@ class MinarBurrito extends Phaser.Scene{
             showCancelButton: true,
             confirmButtonText: 'Minar',
           }).then((result) => {
-            if (result.isConfirmed) {
-                this.GetBurrito();
-            }
-          })
+            if (result.isConfirmed)
+                this.MintBurrito();
+          });
     }
-    GetBurrito = async () => {
-        localStorage.setItem("lastScene", "MinarBurrito");
-        localStorage.setItem("action", "MintBurrito");
-        let value = await Near.NFTMint();
-        console.log(value);
+    MintBurrito = async() => {
+        this.canNavigate = false;
+        //let minar = JSON.parse('{"attack":"8","burrito_type":"Volador","defense":"7","description":"Este es un burrito de tipo Volador","global_win":"0","hp":"5","level":"1","media":"QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6","name":"Burrito Volador #81","owner_id":"jesusrobles.testnet","speed":"5","win":"0"}')
+        let minar = await Near.NFTMint();
 
+        this.anims.create({
+            key: "loop1",
+            frameRate: 24,
+            frames: this.anims.generateFrameNumbers("Silo_start", { frames: [
+                0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,
+                0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0,
+                5, 6,
+                7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 
+                11, 12,
+                13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 
+                18, 19, 20, 21, 22 ,23
+            ] }),
+            repeat: 0
+        });
+        this.silo.play("loop1");
+        let timeline = this.tweens.createTimeline();
+        timeline.add({
+            targets: this.cameras.main,
+            scrollY: 1400,
+            duration: 6000,
+            delay: 1000,
+            onComplete: ()=>{ this.time.delayedCall(1000, () => { 
+                this.sprites.push(this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 1500, "elements", this.GetElementFromType(minar.burrito_type)).setScale(0.5));
+                }, [], this); }
+        });
+        timeline.add({
+            targets: this.cameras.main,
+            scrollY: 2200,
+            duration: 3000,
+            delay: 1000,
+            onComplete: ()=>{ this.time.delayedCall(700, () => {
+                this.sprites.push(this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2250, "orbs", this.GetStadistic(minar).index).setScale(0.5));
+            }, [], this)}
+        });
+        
+        timeline.add({
+            targets: this.cameras.main,
+            scrollY: 2920,
+            duration: 3000,
+            delay: 1000,
+            onComplete: () => { 
+                this.time.delayedCall(300, () =>{ this.sprites.push((this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2990, minar.media).setScale(0.125))); }, [], this);
+                this.time.delayedCall(2000, () =>{ this.GetCard(minar) }, [], this);
+            }
+        });
+        timeline.play();
     }
+    GetCard(minar){
+        this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this, false, false, false).GetComponents();
+        this.card.setDepth(2);
+        let timeline = this.tweens.createTimeline();
+        timeline.add({
+            targets: this.card,
+            y: this.sys.game.scale.gameSize.height / 2 - 100,
+            duration: 1500,
+            rotation: 360 * 10 * Math.PI / 180, 
+            onComplete: ()=> timeline.pause()
+        });
+        timeline.add({
+            targets: this.card,
+            y: -1000,
+            duration: 1500
+        });
+        this.input.on("pointerdown", () =>{
+            timeline.resume();
+            this.sprites.forEach(s => s.destroy());
+        });
+        timeline.play();
+        this.canNavigate = true;
+    }
+    GetStadistic(burrito){
+        let values = [parseInt(burrito.attack), parseInt(burrito.defense), parseInt(burrito.speed)];
+        let max = Math.max.apply(Math, values);
+        return { index: values.indexOf(max), value: max };
+    }
+    BuyTokens = async() => {
+        if(!this.canNavigate || Swal.isVisible())
+            return;
+        let remain = await Near.CanBuyTokens();
+        if(remain == 0){
+            Swal.fire({icon: 'info', title: '¿Quieres comprar tokens?', html: `Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.`, showCancelButton: true, confirmButtonText: 'Comprar'})
+            .then(async(result) => {
+                if (result.isConfirmed)
+                    this.GetTokens();
+            });
+        } else
+            Swal.fire({icon: 'info', title: 'No puedes comprar tokens aun', html: `El comprar tokens paja tarda una epoca, asi que aun debes esperar para poder comprar tokens.`});
+    }
+    async GetTokens () {
+        this.canNavigate = false;
+        this.comprarBtn.GetComponents().destroy();
+        let tokens = parseInt(await Near.BuyTokens());
+        //let tokens = 10000_000_000_000_000_000_000_000_000;
+        tokens = tokens / 1_000_000_000_000_000_000_000_000;
+        let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
+        animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
+        this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });
+        this.anims.create({ key: "cofreAnim", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(39, 58) }), frameRate: 24, repeat: 8 });
+        this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
+        this.cofreAnimation.play("cofreAnimIn")
+        .once('animationcomplete', () => { 
+            animContainer.add(this.add.text(0, -350, "Obtuviste", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+            animContainer.add(this.add.text(0,  400, `${tokens} $STRW`, {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+            this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
+                this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', async () => {
+                    animContainer.destroy();
+                    this.tienda.setTexture("tienda2");
+                    let remainToBuy = await Near.CanBuyTokens();
+                    this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
+                    this.canNavigate = true;
+                })
+            })
+        });
+    }
+    Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
     GetElementFromType(type){
         switch(type){
             case "Agua": return 0;
@@ -195,120 +250,4 @@ class MinarBurrito extends Phaser.Scene{
             case "Eléctrico": return 4;
         }
     }
-    GetStadistic(burrito){
-        let values = [parseInt(burrito.attack), parseInt(burrito.defense), parseInt(burrito.speed)];
-        let max = Math.max.apply(Math, values);
-        return {index: values.indexOf(max), value: max };
-    }
-    async MintBurrito(){//http://localhost:8000/?transactionHashes=7hpW6ZRqK4pSjs2v8pXE9WdewA3HjRDit5Y6aJ1pLM4C
-        //let minar = {attack:5,burrito_type:"Fuego",defense:6 ,description:"Este es un burrito de tipo Fuego", global_win:"0", hp:"5", level:"1", media:"QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", name:"Burrito Fuego #22",owner_id:"jesus13th.testnet",speed:3,win:"0"}
-        let minar = await Near.GetState();
-        /*let info = await Near.GetInfoByURL();
-        let minar = null;
-        if(info != null)
-            minar = info.receipts_outcome[5].outcome.logs[2];*/
-
-        localStorage.removeItem("action");
-        
-        if(minar){
-            this.anims.create({
-                key: "loop1",
-                frameRate: 24,
-                frames: this.anims.generateFrameNumbers("Silo_start", { frames: [
-                    0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,
-                    0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4,0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0,
-                    5, 6,
-                    7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 
-                    11, 12,
-                    13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 13, 14, 15, 16, 
-                    18, 19, 20, 21, 22 ,23
-                ] }),
-                repeat: 0
-            });
-            this.silo.play("loop1");
-            let timeline = this.tweens.createTimeline();
-            timeline.add({
-                targets: this.cameras.main,
-                scrollY: 1400,
-                duration: 6000,
-                delay: 1000,
-                onComplete: ()=>{ this.time.delayedCall(1000, () =>{ 
-                    this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 1500, "elements", this.GetElementFromType(minar.burrito_type)).setScale(0.5);
-                 }, [], this) }
-            });
-            timeline.add({
-                targets: this.cameras.main,
-                scrollY: 2200,
-                duration: 3000,
-                delay: 1000,
-                onComplete: ()=>{ this.time.delayedCall(700, () =>{ 
-                    let max = this.GetStadistic(minar);
-                    this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2250, "orbs", max.index).setScale(0.5);
-                }, [], this)}
-            });
-            
-            timeline.add({
-                targets: this.cameras.main,
-                scrollY: 2920,
-                duration: 3000,
-                delay: 1000,
-                onComplete: () => { 
-                    this.time.delayedCall(300, () =>{ this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2990, minar.media).setScale(0.125); }, [], this)
-                    this.time.delayedCall(2000, () =>{ this.GetCard(minar) }, [], this)
-                }
-            });
-
-        timeline.play();
-        } else {
-            this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height - 100, 1, "buttonContainer2", "Obtener nuevo burrito", this, this.ConfirmMint, null, {fontSize: 50, fontFamily: "BangersRegular"});
-        }
-    }
-    GetCard(minar){
-        this.particles = this.add.particles('spark');
-            this.card = new Helpers.Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this, false, false, false).GetComponents();
-            this.card.setDepth(2);
-            let timeline = this.tweens.createTimeline();
-            timeline.add({
-                targets: this.card,
-                y: this.sys.game.scale.gameSize.height / 2 - 100,
-                duration: 1500,
-                rotation: 360 * 10 * Math.PI / 180, 
-                onComplete: ()=>{
-                    this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 38, fontFamily: "BangersRegular"})
-                    this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Ir al Establo", this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
-                    //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer2", "Ir a establo", this, this.GoToEstablo, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                    this.SpawnParticles(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2);
-                    timeline.pause()
-                 }
-            })
-            timeline.add({
-                targets: this.card,
-                y: -1000,
-                duration: 1500,
-                //rotation: (-360 * 10) * (Math.PI/180),
-                onComplete: () => {
-                    //this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 200, this.sys.game.scale.gameSize.height - 100, 0.75, "buttonContainer2", "Obtener nuevo burrito", this, this.GetBurrito, null, {fontSize: 40, fontFamily: "BangersRegular"})
-                    //this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 200, this.sys.game.scale.gameSize.height - 100, 0.75, "buttonContainer2", "Ir al Establo", this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
-                }
-            });
-            this.input.on("pointerdown", () =>{
-                timeline.resume();
-                this.particles.destroy();
-            })
-            timeline.play();
-    }
-    SpawnParticles = (x, y) => {
-        this.particles.createEmitter({
-            x: x,
-            y: y,
-            speed: 800,
-            gravityY: 250,
-            lifespan: 800, 
-            blendMode: Phaser.BlendModes.SCREEN,
-            emitZone: { type: "random", source: new Phaser.Geom.Rectangle(-150, -150, 300, 300), quantity: 50 },
-        });
-        this.particles.setDepth(1)
-        this.particles.setScrollFactor(0)
-    }
 }
-export { MinarBurrito };

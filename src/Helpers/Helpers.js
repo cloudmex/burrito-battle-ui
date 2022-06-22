@@ -1,10 +1,10 @@
 export class Button{
     text;
-    constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle) {
-        this.buttonResult = scene.add.container(x, y).setScrollFactor(0);
-
+    constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle, useScrollFactor = true) {
+        this.buttonResult = scene.add.container(x, y);
+        
+        this.scene = scene;
         this.button = scene.add.sprite(0,0, img)
-        .setScrollFactor(0)
         .setScale(scale)
         .setInteractive()
         .on("pointerdown", ()=>{ this.PointerDown(downCallback);})
@@ -16,11 +16,15 @@ export class Button{
 
         if(label !== null){
             this.text = scene.add.text(0, 10, label)
-            .setScrollFactor(0)
             .setOrigin(0.5)
             .setStyle(fontStyle)
             .setPadding({ left: 0, right: 0, top: 0, bottom: 32 });
             this.buttonResult.add(this.text);
+        }
+        if(useScrollFactor){
+            this.buttonResult.setScrollFactor(0);
+            this.text?.setScrollFactor(0);
+            this.button?.setScrollFactor(0);
         }
     }
     GetComponents(){
@@ -52,7 +56,7 @@ export class LoadingScreen {
         this.loadingScreen.depth = 1;
         this.loadingBackground.depth = 1;
         scene.anims.create({ key: "loading", frames: scene.anims.generateFrameNumbers(`loading_screen_${animation}`), frameRate: 24, repeat: -1 });
-        this.loadingScreen.play("loading")
+        this.loadingScreen.play("loading");
     }
     async OnComplete(){
         setTimeout(()=> { this.Destroy(); }, 0);
@@ -78,9 +82,9 @@ export class Card{
         this.cardResult = scene.add.container(x, y).setScrollFactor(0);
         this.card = scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type));
         this.cardResult.add(this.card);
-        this.cardResult.add(this.burrito = scene.add.image(0, 0, this.Active ? burrito.media : "burrito_muerto"));
+        this.cardResult.add(this.burritoImg = scene.add.image(0, 0, this.Active ? burrito.media : "burrito_muerto"));
         if(this.Active)
-            this.burrito.setScale(.4);
+            this.burritoImg.setScale(.4);
 
         this.cardResult.add(this.levelText = scene.add.text(-300, - 400, burrito.level, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.3, 0));//level
         this.cardResult.add(scene.add.text(-180, - 380, burrito.name.split("#", 1), { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(-0.02, 0));//name
@@ -89,62 +93,41 @@ export class Card{
             this.cardResult.add(this.Level = scene.add.sprite(325, -150, "level", Math.round((burrito.win / 10) * 24)));
             scene.anims.create({ key: "resetLevel", frames: scene.anims.generateFrameNumbers("level", { frames: [24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]}), frameRate: 24, repeat: 0 });
         }
-        if(burrito.win < 10){
-            this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//wins    
-        }else{
-            this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.25, 0));//wins
-        }
+        this.cardResult.add(this.winsText = scene.add.text(310, - 180, burrito.win, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(burrito.win < 10 ? 0.1 : 0.25, 0));//wins
         if(displayOverIcons){
             this.cardResult.add( this.Heart = scene.add.sprite(325,0,"heart", Math.round((burrito.hp / 5) * 24)));
             scene.anims.create({ key: "recoverHealth", frames: scene.anims.generateFrameNumbers("heart", { frames: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]}), frameRate: 24, repeat: 0 });
         }
         this.cardResult.add(this.heartText = scene.add.text(310, - 40, burrito.hp, { fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//health
 
-        if(burrito.attack <= 9){
-            this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//attack
-        }else{
-            this.cardResult.add(scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.3, 0));//attack
-        }
-
-        if(burrito.defense <= 9 ){
-            this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.1, 0));//defense
-        }else{
-            this.cardResult.add(scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.3, 0));//defense    
-        }
-
-        if(burrito.speed <= 9){
-            this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(-0.1, 0));//speed
-        }else{
-            this.cardResult.add(scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.2, 0));//speed
-        }
+        this.cardResult.add(this.attackText = scene.add.text(-195, 365, burrito.attack, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(burrito.attack <= 9 ? 0.1 : 0.3, 0));//attack
+        this.cardResult.add(this.defenseText = scene.add.text(0, 320, burrito.defense, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(burrito.defense <= 9 ? 0.1 : 0.3, 0));//defense
+        this.cardResult.add(this.speedText = scene.add.text(195, 365, burrito.speed, { fontSize: 90, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(burrito.speed <= 9 ? -0.1 : 0.2, 0));//speed
 
         if(localStorage.getItem("burrito_selected") == burrito.token_id && isEstablo && !isBigCard)
             this.cardResult.add(this.selected = scene.add.image(300, -350, "selected").setScale(0.35));
 
-        if(interactuable){
-            this.card
-            .on('pointerover', this.PointerOver)
-            .on("pointerout", this.PointerOut);
-        }
+        if(interactuable)
+            this.card.on('pointerover', this.PointerOver).on("pointerout", this.PointerOut);
         this.card.setTint (this.Active ? this.enabledColor : this.disabledColor);
     }
-    RecoverHealth() {
-        this.Heart.setFrame(0);
-        this.heartText.setText(0);
+    RecoverHealth(newBurrito) {
+        this.Heart.play("recoverHealth");
         setTimeout(() => {
-            this.Heart.play("recoverHealth");
-            this.heartText.setText(5);
+            this.heartText.setText(newBurrito.hp);
+            this.burritoImg.setTexture(newBurrito.media);
+            this.burritoImg.setScale(.4);
           }, 1500);
     }
     
-    ResetLevel(){ 
-        this.levelText.setText(parseInt(this.Card.burrito.level) - 1);
-        this.Level.setFrame(23);
-        this.winsText.setText(10);
+    ResetLevel(newBurrito){
+        this.Level.play("resetLevel");
         setTimeout(() => {
-            this.Level.play("resetLevel");
             this.winsText.setText(0);
-            this.levelText.setText(this.Card.burrito.level);
+            this.levelText.setText(parseInt(this.Card.burrito.level) + 1);
+            this.attackText.setText(newBurrito.attack);
+            this.defenseText.setText(newBurrito.defense);
+            this.speedText.setText(newBurrito.speed);
           }, 1500);
     }
     PointerOver = () => {

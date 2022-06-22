@@ -92,11 +92,12 @@ export async function GetSTRWToken(){
     return currentSTRW
 }
 export async function NFTMint(){
+    let result;
     let currentSTRW = await GetSTRWToken();
     let requiredSTRW = 50_000;
 
     if(currentSTRW >= requiredSTRW){
-        await contract_burritos.nft_mint(
+        result = await contract_burritos.nft_mint(
             {
                 token_owner_id: GetAccountId() ,
                 token_metadata: { 
@@ -116,6 +117,7 @@ export async function NFTMint(){
             text: '¡No cuentas con suficientes STRW Tokens!'
           });
     }
+    return result;
 }
 export async function NFTTokens(burrito_id) {
     let result = await contract_burritos.nft_token({token_id: burrito_id});
@@ -229,45 +231,47 @@ export async function GetState() {
     });
 }
 export async function EvolveBurrito(index){
+    let result;
     let currentSTRW = await GetSTRWToken();
     let requiredSTRW = 70_000;
 
     if(currentSTRW >= requiredSTRW){
-        await contract_burritos.evolve_burrito(
+        result = await contract_burritos.evolve_burrito(
             {
                 burrito_id: index
             },
             300000000000000, 
             utils.format.parseNearAmount("2")
         );
-        }else{
-            Swal.fire({
-                icon: 'info',
-                title: 'Atención',
-                text: '¡No cuentas con suficientes STRW Tokens!'
-              });
-        }
+    }else{
+        Swal.fire({
+            icon: 'info',
+            title: 'Atención',
+            text: '¡No cuentas con suficientes STRW Tokens!'
+        });
+    }
+    return result;
 }
 export async function ResetBurrito(index){
     let currentSTRW = await GetSTRWToken();
     let requiredSTRW = 30_000;
-
+    let result;
     if(currentSTRW >= requiredSTRW){
-        await contract_burritos.reset_burrito(
+        result = await contract_burritos.reset_burrito(
             {
                 burrito_id: index
             },
             300000000000000, 
             utils.format.parseNearAmount("1") 
         );
-        }else{
+        } else{
             Swal.fire({
                 icon: 'info',
                 title: 'Atención',
                 text: '¡No cuentas con suficientes STRW Tokens!'
-              });  
+            });  
         }
-    
+    return result;
 }
 export async function BurritoReadyReset(token_id){
     await contract_burritos.burrito_ready_reset({burrito_id: token_id}, 300000000000000 )

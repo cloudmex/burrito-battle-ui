@@ -1,10 +1,10 @@
 // npx es-dev-server --node-resolve --watch
 import * as Connection  from "./Scenes/ConnectScene.js";
 import * as MainMenu from "./Scenes/MainMenuScene.js";
-import * as MinarBurrito from "./Scenes/MinarBurrito.js";
+import * as MinarBurrito from "./Scenes/MinarBurrito_2.js";
 import * as Pradera from "./Scenes/PraderaScene.js";
 import * as Battle from "./Scenes/BattleScene.js";
-import * as Establo from "./Scenes/EstabloScene.js";
+import * as Establo from "./Scenes/EstabloScene_2.js";
 
 const connection = Connection.Connection;
 const mainMenu = MainMenu.MainMenu;
