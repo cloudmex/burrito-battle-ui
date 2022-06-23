@@ -449,3 +449,26 @@ export class BattleEnd{
         }, 1000);
     }
 }
+
+export class Alert{
+    Alert;
+    constructor(x, y, scene, scale, text){
+        this.x = x;
+        this.y = y;
+        this.scene = scene;
+        this.scale = scale;
+        this.text = text;
+        
+
+        this.alertResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
+        this.alert = scene.add.image(0, 0, "alert");
+        this.alertResult.add(this.alert);
+        this.alertResult.add(this.scene.add.text(-133, -425, "Aviso", { fontSize: 100, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }));
+        this.alertResult.add(this.scene.add.text(-420, -210, this.text, { fontSize: 36, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }));
+
+    }
+
+    GetComponents(){
+        return this.alertResult;
+    }
+}

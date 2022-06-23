@@ -6,6 +6,7 @@ export class MinarBurrito extends Phaser.Scene{
     contdown = false;
     canNavigate = true;
     isBigCard = false;
+    alertVisible = false;
     constructor(){
         super("MinarBurrito");
     }
@@ -16,6 +17,8 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
+        this.load.image("buttonContainer2", "../src/images/button.png");
+        this.load.image("alert", "../src/images/Información 1.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
     }
     create(){
@@ -23,7 +26,6 @@ export class MinarBurrito extends Phaser.Scene{
     }
     LoadSpritesheet(){
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
-        this.load.image("buttonContainer2", "../src/images/button.png");
         this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
         this.load.spritesheet("Silo_start", "../src/images/Minar Burrito/Silo animación.webp", {frameWidth: 1920, frameHeight: 4000});
         this.load.image("clouds", "../src/images/Minar Burrito/Loop nubes.webp");
@@ -69,6 +71,7 @@ export class MinarBurrito extends Phaser.Scene{
         } else {
             this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
             this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
+            this.comprarBtn = null;
         }
         this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(3);
 
@@ -122,10 +125,10 @@ export class MinarBurrito extends Phaser.Scene{
     }
     Delay = (ms) => new Promise(res => setTimeout(res, ms));
     ConfirmMint = async () => {
-        if(!this.canNavigate || Swal.isVisible())
+        if(!this.canNavigate || this.alertVisible == true)
             return;
         let currentSTRW = await Near.GetSTRWToken();
-        Swal.fire({
+        /*Swal.fire({
             icon: 'info',
             title: 'Información de la transaccion',
             html: `El minar un burrito te permite luchar contra otros burritos y explorar el mapa.<br><br>El costo del burrito es de <b>5 Nears</b> y <b>50,000 $STRW</b>.<br><br>Actualmente cuentas con <b>${currentSTRW} $STRW</b>.`,
@@ -145,7 +148,32 @@ export class MinarBurrito extends Phaser.Scene{
                 localStorage.removeItem("action");
                 localStorage.removeItem("lastScene");
             }
-        });
+        });*/
+        if(this.alertVisible == false){
+            let alert = new Helpers.Alert(960, 540, this, 0.8, "El minar un burrito te permite luchar contra\notros burritos y explorar el mapa.\n\nEl costo es de 5 Nears y 50,000 $STRW.\n\n Actualmente cuentas con "+currentSTRW+" $STRW.");
+            let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Minar", this, async () => {
+                this.canNavigate = false;
+                alert.GetComponents().destroy();
+                button1.GetComponents().destroy();
+                button2.GetComponents().destroy();
+                this.alertVisible = false;  
+                localStorage.setItem("action", "mintBurrito");
+                localStorage.setItem("lastScene", "MinarBurrito");
+                let minar = await Near.NFTMint();
+                this.MintBurrito(minar);   
+                localStorage.removeItem("action");
+                localStorage.removeItem("lastScene");  
+            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
+                alert.GetComponents().destroy();
+                button1.GetComponents().destroy();
+                button2.GetComponents().destroy();
+                this.alertVisible = false;
+            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            this.alertVisible = true;
+        }else{
+            return;
+        }
     }
     MintBurrito = async(minar) => {
         this.anims.create({
@@ -228,11 +256,11 @@ export class MinarBurrito extends Phaser.Scene{
         return { index: values.indexOf(max), value: max };
     }
     BuyTokens = async() => {
-        if(!this.canNavigate || Swal.isVisible())
+        if(!this.canNavigate || this.alertVisible == true)
             return;
         let remain = await Near.CanBuyTokens();
         if(remain == 0){
-            Swal.fire({icon: 'info', title: '¿Quieres comprar tokens?', html: `Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.`, showCancelButton: true, confirmButtonText: 'Comprar'})
+            /*Swal.fire({icon: 'info', title: '¿Quieres comprar tokens?', html: `Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.`, showCancelButton: true, confirmButtonText: 'Comprar'})
             .then(async(result) => {
                 if (result.isConfirmed){
                     this.canNavigate = false;
@@ -247,13 +275,53 @@ export class MinarBurrito extends Phaser.Scene{
                     localStorage.removeItem("action");
                     localStorage.removeItem("lastScene");
                 }
-            });
-        } else
-            Swal.fire({icon: 'info', title: 'No puedes comprar tokens aun', html: `El comprar tokens paja tarda una epoca, asi que aun debes esperar para poder comprar tokens.`});
+            });*/
+            if(this.alertVisible == false){
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "Los tokens paja te sirven para poder minar \nnuevos burritos, aumentarlos de nivel, restaurar \nsus vidas y entre otras cosas, por desgracia solo \npuedes comprar tokens paja cada epoca.");
+                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Comprar", this, async () => {
+                    this.canNavigate = false;
+                    alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.alertVisible = false;
+                    localStorage.setItem("action", "buyStraw");
+                    localStorage.setItem("lastScene", "MinarBurrito");
+                    let tokens = parseInt(await Near.BuyTokens());
+                    this.GetTokens(tokens);
+                    localStorage.removeItem("action");
+                    localStorage.removeItem("lastScene");    
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
+                    alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.alertVisible = false;
+                    this.canNavigate = true;
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                this.alertVisible = true;
+                }else{
+                return;
+                }
+        } else{
+                //Swal.fire({icon: 'info', title: 'No puedes comprar tokens aun', html: `El comprar tokens paja tarda una epoca, asi que aun debes esperar para poder comprar tokens.`});
+                if(this.alertVisible == false){
+                    let alert = new Helpers.Alert(960, 540, this, 0.8, "El comprar tokens paja tarda una epoca, asi que \naun debes esperar para poder comprar tokens.");
+                    let button1 = new Helpers.Button(968, 820, 0.4, "buttonContainer2", "Aceptar", this, () => {
+                        alert.GetComponents().destroy();
+                        button1.GetComponents().destroy();
+                        this.alertVisible = false;
+                    }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                    this.alertVisible = true; 
+                }else{
+                    return;
+                }
+            }
     }
     async GetTokens (tokens) {
         this.canNavigate = false;
+        if(this.comprarBtn != null){
         this.comprarBtn.GetComponents().destroy();
+        }
         tokens = tokens / 1_000_000_000_000_000_000_000_000;
         let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
         animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
