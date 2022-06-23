@@ -49,14 +49,29 @@ export class Establo extends Phaser.Scene{
         this.info_bigCard = false;
         this.infoCard = null;
         this.totalTokens = await Near.NFTSupplyForOwner();
-
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
+
         if(this.totalTokens == 0)
             this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, "No cuentas con ningun burrito", {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
         else {
             this.SpawnCards();
+            if(localStorage.getItem("last_burritoIndex") !== null)
+                this.LastBigCard();
         }
+        let info = await Near.GetInfoByURL();
         await this.loadingScreen.OnComplete();
+        if(info != null){
+            console.log()
+            if(localStorage.getItem("action") == "evolve"){//http://localhost:8000/?transactionHashes=5F9r6M7rzH5kpSiKRqwDsdnE44sYXVuXopAyCGTSxkqp
+                let value = JSON.parse(info.receipts_outcome[5].outcome.logs[0]);
+                console.log(value);
+                this.EvolveBurrito(value, value);
+            } else if(localStorage.getItem("action") == "heal") {//http://localhost:8000/?transactionHashes=L6hUXzrtwMXKUuiqMvhyvcaMk7ffm2wUjqh9UuvM4A9
+                let value = info.receipts_outcome[5].outcome.logs[1]
+                console.log(value);
+                this.ResetBurrito(value);
+            }
+        }
     }
     BackToMainMenu = () => {
         localStorage.removeItem("lastScene");
@@ -87,40 +102,49 @@ export class Establo extends Phaser.Scene{
 
         this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, false, true, true).setScale(0.7).On(()=>{ this.infoBigCard(burrito);});
         if(burrito.hp <= 0)
-            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ResetBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ConfirmarReset(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         else
             this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito); this.SetSelected(index);}, null, {fontSize: 28, fontFamily: "BangersRegular"});
         
-        this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Subir de nivel", this, ()=>{ this.EvolveBurrito(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Aumentar Victorias", this, ()=>{ Near.BurritoReadyEvolve(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Quitar vidas", this, ()=>{ Near.BurritoReadyReset(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Subir de nivel", this, ()=>{ this.ConfirmarEvolve(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Aumentar Victorias", this, ()=>{ Near.BurritoReadyEvolve(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Quitar vidas", this, ()=>{ Near.BurritoReadyReset(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        localStorage.setItem("last_burritoIndex", burrito.token_id);
     }
-    ResetBurrito = async (burrito) =>{
+    ConfirmarReset = async(burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
-        Swal.fire({
-            icon: 'info',
-            title: '¿Quieres restaurar las vidas de este burrito?',
-            html: `El restaurar las vidas del burrito te permitira volver a utilizar\n este burrito para explorar la pradera y luchar en batallas.<br><br>El costo es de <b>1 Near</b> y <b>30,000 $STRW.</b><br><br>Actualmente tienes <b>${currentSTRW} $STRW.</b>`,
-            confirmButtonText: 'Restaurar',
-            showCancelButton: true
-          }).then(async (result) => {
+        Swal.fire({ icon: 'info', title: '¿Quieres restaurar las vidas de este burrito?', html: `El restaurar las vidas del burrito te permitira volver a utilizar\n este burrito para explorar la pradera y luchar en batallas.<br><br>El costo es de <b>1 Near</b> y <b>30,000 $STRW.</b><br><br>Actualmente tienes <b>${currentSTRW} $STRW.</b>`, confirmButtonText: 'Restaurar', showCancelButton: true})
+        .then(async (result) => {
             if (result.isConfirmed) {
                 this.canSelectCard = false;
                 this.loadingScreen = new Helpers.LoadingScreen(this);
-                let newBurrito = await Near.ResetBurrito(burrito.token_id);
-                await this.loadingScreen.OnComplete();
-                this.cards.forEach((card, index) => {
-                    if(card.Card.burrito.token_id == burrito.token_id) {
-                        this.cards[index].Card.burrito = newBurrito; 
-                        this.bigCard.RecoverHealth(newBurrito);
-                        card.RecoverHealth(newBurrito);
-                    }
-                });
-                this.canSelectCard = true;
+                localStorage.setItem("action", "heal");
+                localStorage.setItem("lastScene", "Establo");
+                this.ResetBurrito(burrito);
             }
         });
     }
-    EvolveBurrito = async (burrito)=> {
+    ResetBurrito = async (burrito, newBurrito = null) =>{
+        let id;
+        if(newBurrito == null) {
+            id = burrito.token_id;
+            newBurrito = await Near.ResetBurrito(burrito.token_id);
+            await this.loadingScreen.OnComplete();
+        } else {
+            id = burrito.name.split('#')[1];
+        }
+        localStorage.removeItem("action");
+        localStorage.removeItem("lastScene");
+        this.cards.forEach((card, index) => {
+            if(card.Card.burrito.token_id == id) {
+                this.cards[index].Card.burrito = newBurrito; 
+                this.bigCard.RecoverHealth(newBurrito);
+                card.RecoverHealth(newBurrito);
+            }
+        });
+        this.canSelectCard = true;
+    }
+    ConfirmarEvolve = async(burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
         if(burrito.win < 10){
             Swal.fire({icon: 'info', title: 'Para subir de nivel un burrito debes tener al menos 10 victorias en combate', showCancelButton: false, showConfirmButton: true});
@@ -128,22 +152,37 @@ export class Establo extends Phaser.Scene{
             Swal.fire({icon: 'info', title: '¿Quieres evolucionar a este burrito?', html: `Al evolucionar este burrito subira su nivel y aumentara sus estadisticas.<br><br>El costo es de <b>2 Near</b> y <b>70,000 $STRW.</b><br><br>Actualmente tienes <b>${currentSTRW} $STRW.</b>`, confirmButtonText: 'Evolucionar', showCancelButton: true})
             .then(async (result) => {
                 if(result.isConfirmed){
-                    this.canSelectCard = false;
                     this.loadingScreen = new Helpers.LoadingScreen(this);
-                    let newBurrito = await Near.EvolveBurrito(burrito.token_id);//burrito.token_id;//
-                    await this.loadingScreen.OnComplete();
-                    this.cards.forEach((card, index) => {
-                        if(card.Card.burrito.token_id == burrito.token_id) {
-                            this.cards[index].Card.burrito = newBurrito; 
-                            this.bigCard.ResetLevel(newBurrito);
-                            card.ResetLevel(newBurrito);
-                        }
-                    });
-                    this.canSelectCard = true;
+                    localStorage.setItem("action", "evolve");
+                    localStorage.setItem("lastScene", "Establo");
+                    this.EvolveBurrito(burrito);
                 }
             });
         }
     }
+    EvolveBurrito = async (burrito, newBurrito = null)=> {
+        this.canSelectCard = false;
+        let id;
+        if(newBurrito == null){
+            id = burrito.token_id;
+            newBurrito = await Near.EvolveBurrito(burrito.token_id);//burrito.token_id;//
+            await this.loadingScreen.OnComplete();
+        } else{
+            id = burrito.name.split('#')[1];
+        }
+        //localStorage.removeItem("action");
+        //localStorage.removeItem("lastScene");
+        this.cards.forEach((card, index) => {
+            if(card.Card.burrito.token_id == id) {
+                console.log("Evoluciona")
+                this.cards[index].Card.burrito = newBurrito; 
+                this.bigCard.ResetLevel(newBurrito);
+                card.ResetLevel(newBurrito);
+            }
+        });
+        this.canSelectCard = true;
+    }
+
     infoBigCard(burrito){
         if(this.info_bigCard == false){
             this.infoCard = new Helpers.InfoCard(this.sys.game.scale.gameSize.width / 2 + 490, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this).setScale(0.7);
@@ -178,5 +217,13 @@ export class Establo extends Phaser.Scene{
                 this.canNavigate = true;
             }
         }
+    }
+    LastBigCard = async() => {
+        let burritos = await Near.NFTTokensForOwner(0, this.totalTokens);
+        burritos.forEach((burrito, index) => {
+            if(burrito.token_id == localStorage.getItem("last_burritoIndex")){
+                this.ShowCard(burrito, index)
+            }
+        });
     }
 }

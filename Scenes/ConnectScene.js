@@ -1,41 +1,49 @@
 import * as Helpers from "../src/Helpers/Helpers.js";
 import * as Near  from "../src/near.js";
 
-class Connection extends Phaser.Scene{
+export class Connection extends Phaser.Scene{
     constructor(){
         super("Connection");
     }
 
-    preload ()
-    {
+    preload () {
         this.load.image("backgroud_Connection", "../src/images/connection_background.png");
         this.load.image("logo", "../src/images/Logo.png");
         this.load.image("buttonContainer", "../src/images/button.png");
 
-        if(Near.IsConnected()){
+        if(Near.IsConnected())
             this.scene.start('MainMenu');
-        }
     }
 
-    create ()
-    {
+    create () {
         this.add.image(0,0, "backgroud_Connection").setOrigin(0,0);
         this.add.image(0,0, "logo").setScale(0.75).setPosition(this.sys.game.scale.gameSize.width / 2, 150);
-        new Helpers.Button(
-            this.sys.game.scale.gameSize.width / 2,
-            this.sys.game.scale.gameSize.height - 150,
-            1,
-            "buttonContainer", 
-            "Connect Wallet", 
-            this, 
-            this.Login, 
-            null, 
-            { fontSize: 56, fontFamily: "BangersRegular" }
-            );
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", "Connect Wallet", this, this.Login, null, { fontSize: 56, fontFamily: "BangersRegular" });
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", "Connect Wallet \n(Full Access)", this, this.LoginFullAccess, null, { fontSize: 56, fontFamily: "BangersRegular" });
     }
     
-    async Login(){
-        await Near.LoginFullAccess();
+    Login = async() => {
+        Swal.fire({
+            icon: 'info',
+            title: 'Acceder en modo seguro',
+            html: `Al conectar tu cuenta con el modo normal, se require la confirmacion en ciertas partes del juego.`,
+            showCancelButton: true,
+            confirmButtonText: 'Acceder',
+          }).then(async(result) => {
+            if (result.isConfirmed)
+                await Near.Login();
+          });
+    }
+    LoginFullAccess = async() => { 
+        Swal.fire({
+            icon: 'info',
+            title: 'Acceder en Full Access',
+            html: `Al conectar tu cuenta con el modo Full Access, el juego no te enviara a la wallet al confirmar las transacciones.`,
+            showCancelButton: true,
+            confirmButtonText: 'Acceder',
+        }).then(async(result) => {
+            if (result.isConfirmed)
+                await Near.LoginFullAccess();
+        });
     }
 }
-export { Connection };

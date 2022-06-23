@@ -112,23 +112,36 @@ export class Card{
         this.card.setTint (this.Active ? this.enabledColor : this.disabledColor);
     }
     RecoverHealth(newBurrito) {
-        this.Heart.play("recoverHealth");
+        this.burritoImg.setTexture("burrito_muerto");
+        this.Heart.setFrame(0);
+        this.heartText.setText(0);
         setTimeout(() => {
-            this.heartText.setText(newBurrito.hp);
-            this.burritoImg.setTexture(newBurrito.media);
-            this.burritoImg.setScale(.4);
-          }, 1500);
+            this.Heart.play("recoverHealth");
+            setTimeout(() => {
+                this.heartText.setText(newBurrito.hp);
+                this.burritoImg.setTexture(newBurrito.media);
+                this.burritoImg.setScale(.4);
+            }, 1500);
+        }, 1500);
     }
     
     ResetLevel(newBurrito){
-        this.Level.play("resetLevel");
+        this.levelText.setText(parseInt(newBurrito.level) - 1);
+        this.Level.setFrame(23);
+        this.winsText.setText(10); 
         setTimeout(() => {
+            this.Level.play("resetLevel");
             this.winsText.setText(0);
-            this.levelText.setText(parseInt(this.Card.burrito.level) + 1);
-            this.attackText.setText(newBurrito.attack);
-            this.defenseText.setText(newBurrito.defense);
-            this.speedText.setText(newBurrito.speed);
-          }, 1500);
+            this.levelText.setText(this.Card.burrito.level);
+        
+            setTimeout(() => {
+                this.winsText.setText(0);
+                this.levelText.setText(this.Card.burrito.level);
+                this.attackText.setText(newBurrito.attack);
+                this.defenseText.setText(newBurrito.defense);
+                this.speedText.setText(newBurrito.speed);
+            }, 1500);
+        }, 1500);
     }
     PointerOver = () => {
          this.card.setTint (this.overColor);
@@ -181,7 +194,6 @@ export class Slider{
             this.sliderResult.setScale(-1, 1);
             this.sliderResult.add(scene.add.text(10, -105, "Nivel: "+room.burrito_cpu_level, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' , stroke: 0x000000, strokeThickness: 5}).setScale(-1, 1));
             this.sliderResult.add(scene.add.text(108, 45, "Salud: "+parseFloat(room.health_cpu).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }).setScale(-1, 1));
- 
         }else{
             this.sliderResult.add(scene.add.text(-150, -105, "Nivel: "+room.level_b1, { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
             this.sliderResult.add(scene.add.text(-150, 45, "Salud: "+parseFloat(room.health_player).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
