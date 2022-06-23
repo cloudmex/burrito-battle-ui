@@ -3,11 +3,13 @@ import * as Near  from "../src/near.js";
 
 class MinarBurrito extends Phaser.Scene{
     contdown = false;
+    alertVisible = false;
     constructor(){
         super("MinarBurrito");
     }
     preload(){
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
+        this.load.image("alert", "../src/images/Información 1.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
         
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
@@ -118,10 +120,10 @@ class MinarBurrito extends Phaser.Scene{
             location.reload();
         }
     }
-    async BuyTokens(){
+    BuyTokens = async () => {
         let remain = await Near.CanBuyTokens();
         if(remain == 0){
-            Swal.fire({
+            /*Swal.fire({
                 icon: 'info',
                 title: '¿Quieres comprar tokens?',
                 html: `Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.`,
@@ -133,13 +135,40 @@ class MinarBurrito extends Phaser.Scene{
                     localStorage.setItem("lastScene", "MinarBurrito");
                     await Near.BuyTokens();
                 }
-              })
-        } else{
-            Swal.fire({
+              })*/
+              if(this.alertVisible == false){
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "Los tokens paja te sirven para poder minar \nnuevos burritos, aumentarlos de nivel, restaurar \nsus vidas y entre otras cosas, por desgracia solo \npuedes comprar tokens paja cada epoca.");
+                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Comprar", this, () => {
+                    localStorage.setItem("action", "buyStraw");
+                    localStorage.setItem("lastScene", "MinarBurrito");
+                    async () => {
+                        await Near.BuyTokens();
+                    }    
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
+                    alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.alertVisible = false;
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                this.alertVisible = true;
+                }else{
+                return;
+                }
+                 
+        }else{
+            /*Swal.fire({
                 icon: 'info',
                 title: 'No puedes comprar tokens aun',
                 html: `El comprar tokens paja tarda una epoca, asi que aun debes esperar para poder comprar tokens.`
-              })
+              })*/
+              let alert = new Helpers.Alert(960, 540, this, 0.8, "El comprar tokens paja tarda una epoca, asi que \naun debes esperar para poder comprar tokens.");
+                let button1 = new Helpers.Button(968, 820, 0.4, "buttonContainer2", "Aceptar", this, () => {
+                    alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
+                    this.alertVisible = false;
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                this.alertVisible = true; 
         }
     }
     update(){
@@ -167,7 +196,7 @@ class MinarBurrito extends Phaser.Scene{
     }
     ConfirmMint = async () => {
         let currentSTRW = await Near.GetSTRWToken();
-        Swal.fire({
+        /*Swal.fire({
             icon: 'info',
             title: 'Información de la transaccion',
             html: `El minar un burrito te permite luchar contra otros burritos y explorar el mapa.<br><br>El costo del burrito es de <b>5 Nears</b> y <b>50,000 $STRW</b>.<br><br>Actualmente cuentas con <b>${currentSTRW} $STRW</b>.`,
@@ -177,7 +206,21 @@ class MinarBurrito extends Phaser.Scene{
             if (result.isConfirmed) {
                 this.GetBurrito();
             }
-          })
+          })*/
+        if(this.alertVisible == false){
+            let alert = new Helpers.Alert(960, 540, this, 0.8, "El minar un burrito te permite luchar contra\notros burritos y explorar el mapa.\n\nEl costo es de 5 Nears y 50,000 $STRW.\n\n Actualmente cuentas con "+currentSTRW+" $STRW.");
+            let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Minar", this, this.GetBurrito, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
+                alert.GetComponents().destroy();
+                button1.GetComponents().destroy();
+                button2.GetComponents().destroy();
+                this.alertVisible = false;
+            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            this.alertVisible = true;
+        }else{
+            return;
+        }
+
     }
     GetBurrito = async () => {
         localStorage.setItem("lastScene", "MinarBurrito");

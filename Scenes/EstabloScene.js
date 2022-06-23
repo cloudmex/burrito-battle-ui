@@ -3,6 +3,7 @@ import * as Helpers from "../src/Helpers/Helpers.js";
 
 class Establo extends Phaser.Scene{
     counter = 0;
+    alertVisible = false;
     constructor(){
         super("Establo");
     }
@@ -19,7 +20,10 @@ class Establo extends Phaser.Scene{
         this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", "../src/images/Burritos/Burrito Agua.png");
 
         this.load.image("burrito_muerto", "../src/images/Establo/gravestone.png");
-        this.load.image("selected", "../src/images/Establo/selected.png")
+        this.load.image("selected", "../src/images/Establo/selected.png");
+
+        this.load.image("alert", "../src/images/Información 1.png");
+        this.load.image("buttonContainer2", "../src/images/button.png");
 
         this.load.image("establo_ui", "../src/images/Establo/establo UI.png");
         this.load.spritesheet("cards", "../src/images/Cards/blank_cards.png", {frameWidth: 1080, frameHeight: 1080});
@@ -116,11 +120,22 @@ class Establo extends Phaser.Scene{
     }
     SelectBurrito = async (burrito) =>{
         if(burrito.hp <= 0){
-            Swal.fire({
+            /*Swal.fire({
                 icon: 'info',
                 title: 'No se puede seleccionar este burrito porque no tiene vidas',
                 confirmButtonText: 'Aceptar',
-              })
+              })*/
+              if(this.alertVisible == false){
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "No se puede seleccionar este burrito porque no tiene vidas.");
+                let button2 = new Helpers.Button(968, 820, 0.4, "buttonContainer2", "Aceptar", this, () => {
+                    alert.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.alertVisible = false;
+            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            this.alertVisible = true;
+            }else{
+            return;
+            }
         } else{
             localStorage.setItem("burrito_selected", burrito.token_id);
             Swal.fire({
@@ -133,7 +148,7 @@ class Establo extends Phaser.Scene{
     }
     ResetBurrito = async (burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
-        Swal.fire({
+        /*Swal.fire({
             icon: 'info',
             title: '¿Quieres restaurar las vidas de este burrito?',
             html: `El restaurar las vidas del burrito te permitira volver a utilizar\n este burrito para explorar la pradera y luchar en batallas.<br><br>El costo es de <b>1 Near</b> y <b>30,000 $STRW.</b><br><br>Actualmente tienes <b>${currentSTRW} $STRW.</b>`,
@@ -145,19 +160,66 @@ class Establo extends Phaser.Scene{
                 localStorage.setItem("tmp", "restart");
                 await Near.ResetBurrito(burrito.token_id);
             }
-        });
+        });*/
+        if(this.alertVisible == false){
+            let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres restaurar las vidas de este burrito?\n\nEl restaurar las vidas del burrito te permitira \nvolver a utilizar este burrito para explorar \nla pradera y luchar en batallas. \n\nEl costo es de 1 Near y 30,000 $STRW. \n\nActualmente tienes "+ currentSTRW +" $STRW.");
+            let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Restaurar vidas", this, async () => {
+                localStorage.setItem("lastScene", "Establo");
+                localStorage.setItem("tmp", "restart");
+                await Near.ResetBurrito(burrito.token_id);    
+        }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
+                alert.GetComponents().destroy();
+                button1.GetComponents().destroy();
+                button2.GetComponents().destroy();
+                this.alertVisible = false;
+        }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        this.alertVisible = true;
+        }else{
+        return;
+        }
     }
     EvolveBurrito = async (burrito)=> {
         let currentSTRW = await Near.GetSTRWToken();
         if(burrito.win < 10){
-            Swal.fire({
+            /*Swal.fire({
                 icon: 'info',
                 title: 'Para subir de nivel un burrito debes tener al menos 10 victorias en combate',
                 showCancelButton: false,
                 showConfirmButton: true
-            });
+            });*/
+
+            if(this.alertVisible == false){
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres evolucionar a este burrito?\n\nAl evolucionar este burrito subira su nivel y \naumentara sus estadisticas. \n\nEl costo es de 2 NEARs y 70,000 $STRW. \n\nActualmente tienes "+currentSTRW+" $STRW.");
+                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Evolucionar", this, async () => {
+                    localStorage.setItem("lastScene", "Establo");
+                    localStorage.setItem("tmp", "evolve");
+                    await Near.EvolveBurrito(burrito.token_id)   
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
+                    alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.alertVisible = false;
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                this.alertVisible = true;
+                }else{
+                return;
+                }
+
+            if(this.alertVisible == false){
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "Para subir de nivel un burrito debes tener al \nmenos 10 victorias en combate.");
+                let button2 = new Helpers.Button(968, 820, 0.4, "buttonContainer2", "Aceptar", this, () => {
+                    alert.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.alertVisible = false;
+            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            this.alertVisible = true;
+            }else{
+            return;
+            }
         } else {
-            Swal.fire({
+            /*Swal.fire({
                 icon: 'info',
                 title: '¿Quieres evolucionar a este burrito?',
                 html: `Al evolucionar este burrito subira su nivel y aumentara sus estadisticas.<br><br>El costo es de <b>2 Near</b> y <b>70,000 $STRW.</b><br><br>Actualmente tienes <b>${currentSTRW} $STRW.</b>`,
@@ -169,7 +231,24 @@ class Establo extends Phaser.Scene{
                     localStorage.setItem("tmp", "evolve");
                     await Near.EvolveBurrito(burrito.token_id);
                     }
-              });
+              });*/
+              if(this.alertVisible == false){
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres evolucionar a este burrito?\n\nAl evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes "+currentSTRW+" $STRW.");
+                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Evolucionar", this, async () => {
+                    localStorage.setItem("lastScene", "Establo");
+                    localStorage.setItem("tmp", "evolve");
+                    await Near.EvolveBurrito(burrito.token_id)   
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
+                    alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.alertVisible = false;
+                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                this.alertVisible = true;
+                }else{
+                return;
+                }
         } /*else{
             let currentSTRW = await Near.GetSTRWToken();
             Swal.fire({
