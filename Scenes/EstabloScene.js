@@ -190,24 +190,6 @@ class Establo extends Phaser.Scene{
             });*/
 
             if(this.alertVisible == false){
-                let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres evolucionar a este burrito?\n\nAl evolucionar este burrito subira su nivel y \naumentara sus estadisticas. \n\nEl costo es de 2 NEARs y 70,000 $STRW. \n\nActualmente tienes "+currentSTRW+" $STRW.");
-                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Evolucionar", this, async () => {
-                    localStorage.setItem("lastScene", "Establo");
-                    localStorage.setItem("tmp", "evolve");
-                    await Near.EvolveBurrito(burrito.token_id)   
-                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
-                    alert.GetComponents().destroy();
-                    button1.GetComponents().destroy();
-                    button2.GetComponents().destroy();
-                    this.alertVisible = false;
-                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                this.alertVisible = true;
-                }else{
-                return;
-                }
-
-            if(this.alertVisible == false){
                 let alert = new Helpers.Alert(960, 540, this, 0.8, "Para subir de nivel un burrito debes tener al \nmenos 10 victorias en combate.");
                 let button2 = new Helpers.Button(968, 820, 0.4, "buttonContainer2", "Aceptar", this, () => {
                     alert.GetComponents().destroy();
@@ -233,7 +215,7 @@ class Establo extends Phaser.Scene{
                     }
               });*/
               if(this.alertVisible == false){
-                let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres evolucionar a este burrito?\n\nAl evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes "+currentSTRW+" $STRW.");
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres evolucionar a este burrito?\n\nAl evolucionar este burrito subira su nivel y \naumentara sus estadisticas. \n\nEl costo es de 2 NEARs y 70,000 $STRW. \n\nActualmente tienes "+currentSTRW+" $STRW.");
                 let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Evolucionar", this, async () => {
                     localStorage.setItem("lastScene", "Establo");
                     localStorage.setItem("tmp", "evolve");
