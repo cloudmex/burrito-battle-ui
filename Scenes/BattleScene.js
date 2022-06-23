@@ -3,6 +3,7 @@ import * as Helpers from "../src/Helpers/Helpers.js";
 
 export class Battle extends Phaser.Scene{
     currentBattle;
+    alertVisible = false;
     constructor(){
         super("Battle");
     }
@@ -19,6 +20,7 @@ export class Battle extends Phaser.Scene{
         this.load.image("background_Battle", "../src/images/Establo/Background.webp")
         this.load.image("burrito", "../src/images/Burrito Agua.png");
         this.load.image("buttonContainer3", "../src/images/button.png");
+        this.load.image("alert", "../src/images/Información 1.png");
         this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
     }
     async create(){
@@ -260,7 +262,7 @@ export class Battle extends Phaser.Scene{
         return result.toString();
     }
     GiveUp = async () => {
-        Swal.fire({
+        /*Swal.fire({
             icon: 'info',
             title: '¿Esta seguro de dejar la pelea?',
             html: `El huir de la pelea <b>le costara una vida</b>`,
@@ -275,7 +277,31 @@ export class Battle extends Phaser.Scene{
                 await this.loadingScreen.OnComplete();
                 this.scene.start("MainMenu");
             }
-        });
+        });*/
+        if(this.alertVisible == false){
+            let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Esta seguro de dejar la pelea?\n\nEl huir de la pelea le costara una vida.");
+            let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Huir", this, async () => {
+                this.loadingScreen = new Helpers.LoadingScreen(this);
+                alert.GetComponents().destroy();
+                button1.GetComponents().destroy();
+                button2.GetComponents().destroy();
+                this.alertVisible = false;
+                localStorage.removeItem("lastScene");
+                localStorage.removeItem("burritoCPU");
+                await Near.SurrenderCpu(); 
+                await this.loadingScreen.OnComplete();
+                this.scene.start("MainMenu");    
+        }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Cancelar", this, () => {
+                alert.GetComponents().destroy();
+                button1.GetComponents().destroy();
+                button2.GetComponents().destroy();
+                this.alertVisible = false;
+        }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        this.alertVisible = true;
+        }else{
+        return;
+        }
     }
     IsMyTurn(player) {
         return this.currentBattle.turn == player;
