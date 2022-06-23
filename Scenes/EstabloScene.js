@@ -110,8 +110,7 @@ export class Establo extends Phaser.Scene{
         }
     }
     ShowCard = (burrito, index) => {
-        if(Swal.isVisible() || !this.canSelectCard)
-            return;
+        if(Swal.isVisible() || !this.canSelectCard) return;
             
         localStorage.setItem("counter", this.counter);
         this.info_bigCard = false;
@@ -126,8 +125,8 @@ export class Establo extends Phaser.Scene{
             this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito); this.SetSelected(index);}, null, {fontSize: 28, fontFamily: "BangersRegular"});
         
         this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Subir de nivel", this, ()=>{ this.ConfirmarEvolve(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Aumentar Victorias", this, ()=>{ Near.BurritoReadyEvolve(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Quitar vidas", this, ()=>{ Near.BurritoReadyReset(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Aumentar Victorias", this, ()=>{ Near.BurritoReadyEvolve(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Quitar vidas", this, ()=>{ Near.BurritoReadyReset(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("last_burritoIndex", burrito.token_id);
     }
     ConfirmarReset = async(burrito) =>{
@@ -173,10 +172,8 @@ export class Establo extends Phaser.Scene{
             id = burrito.token_id;
             newBurrito = await Near.ResetBurrito(burrito.token_id);
             await this.loadingScreen.OnComplete();
-        } else {
-            console.log(burrito.name)
+        } else 
             id = burrito.name.split('#')[1];
-        }
         localStorage.removeItem("action");
         localStorage.removeItem("lastScene");
         this.cards.forEach((card, index) => {
@@ -280,30 +277,25 @@ export class Establo extends Phaser.Scene{
         this.cards = [];
         let burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
-            let card = new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true, true).setScale(0.3).On(() => { this.ShowCard(burrito, index); });
-            this.cards.push(card);
+            this.cards.push(new Helpers.Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true, true).setScale(0.3).On(() => { this.ShowCard(burrito, index); }));
         });
     }
     Navigate = async(nav) => {
         if(this.canNavigate){
-            let newNav = this.counter + nav;
-            if(newNav >= 0 && newNav < this.totalTokens / 6){
+            if(this.counter + nav >= 0 && this.counter + nav < this.totalTokens / 6){
                 this.canNavigate = false;
                 this.counter += nav;
                 this.cards.forEach(card => card.GetComponents().destroy());
                 this.SpawnCards();
                 this.canNavigate = true;
-            } else{
-                console.log("can't navigate: " + newNav);
             }
         }
     }
     LastBigCard = async() => {
         let burritos = await Near.NFTTokensForOwner(0, this.totalTokens);
         burritos.forEach((burrito, index) => {
-            if(burrito.token_id == localStorage.getItem("last_burritoIndex")){
+            if(burrito.token_id == localStorage.getItem("last_burritoIndex"))
                 this.ShowCard(burrito, index)
-            }
         });
     }
 }
