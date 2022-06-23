@@ -159,7 +159,9 @@ export class MinarBurrito extends Phaser.Scene{
                 this.alertVisible = false;  
                 localStorage.setItem("action", "mintBurrito");
                 localStorage.setItem("lastScene", "MinarBurrito");
+                this.loadingScreen2 = new Helpers.LoadingScreen(this);
                 let minar = await Near.NFTMint();
+                await this.loadingScreen2.OnComplete(); 
                 this.MintBurrito(minar);   
                 localStorage.removeItem("action");
                 localStorage.removeItem("lastScene");  
@@ -286,7 +288,9 @@ export class MinarBurrito extends Phaser.Scene{
                     this.alertVisible = false;
                     localStorage.setItem("action", "buyStraw");
                     localStorage.setItem("lastScene", "MinarBurrito");
+                    this.loadingScreen2 = new Helpers.LoadingScreen(this);
                     let tokens = parseInt(await Near.BuyTokens());
+                    await this.loadingScreen2.OnComplete();
                     this.GetTokens(tokens);
                     localStorage.removeItem("action");
                     localStorage.removeItem("lastScene");    
