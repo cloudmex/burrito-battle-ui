@@ -51,10 +51,10 @@ export class Button{
 export class LoadingScreen {
     constructor(scene){
         let animation = Phaser.Math.Between(1, 2);
-        this.loadingBackground = scene.add.image(0, 0, "loading_bg").setScale(120).setOrigin(0).setAlpha(0.9);
-        this.loadingScreen = scene.add.sprite(scene.sys.game.scale.gameSize.width / 2, scene.sys.game.scale.gameSize.height / 2, `loading_screen_${animation}`, 0).setOrigin(0.5);
-        this.loadingScreen.depth = 1;
-        this.loadingBackground.depth = 1;
+        this.loadingBackground = scene.add.image(0, 0, "loading_bg").setScale(120).setOrigin(0).setAlpha(0.9).setScrollFactor(0);
+        this.loadingScreen = scene.add.sprite(scene.sys.game.scale.gameSize.width / 2, scene.sys.game.scale.gameSize.height / 2, `loading_screen_${animation}`, 0).setOrigin(0.5).setScrollFactor(0);
+        this.loadingScreen.depth = 4;
+        this.loadingBackground.depth = 4;
         scene.anims.create({ key: "loading", frames: scene.anims.generateFrameNumbers(`loading_screen_${animation}`), frameRate: 24, repeat: -1 });
         this.loadingScreen.play("loading");
     }
@@ -113,6 +113,7 @@ export class Card{
     }
     RecoverHealth(newBurrito) {
         this.burritoImg.setTexture("burrito_muerto");
+        this.burritoImg.setScale(1);
         this.Heart.setFrame(0);
         this.heartText.setText(0);
         setTimeout(() => {

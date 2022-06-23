@@ -70,7 +70,7 @@ export class MinarBurrito extends Phaser.Scene{
             this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
             this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
         }
-        this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(5);
+        this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(3);
 
         //Minar http://localhost:8000/?transactionHashes=A2aBbofNJwytrY7eAXqambphUE8SjafGSc2vvRHxdxfh 
         //STRW http://localhost:8000/?transactionHashes=9teFRKRmst8y5MxiX4C48NkbmdUqFzZ2jbMh9xRZPziE
@@ -97,8 +97,7 @@ export class MinarBurrito extends Phaser.Scene{
         else if (cursors.down.isDown) this.cameras.main.scrollY += 24;
     }
     GoToEstablo = () =>{
-        if(!this.canNavigate || Swal.isVisible())
-            return;
+        if(!this.canNavigate || Swal.isVisible()) return;
         clearInterval(this.counterInterval);
         localStorage.removeItem("lastScene");
         this.scene.start("Establo");
@@ -121,6 +120,7 @@ export class MinarBurrito extends Phaser.Scene{
         } else if(this.contdown)
             location.reload();
     }
+    Delay = (ms) => new Promise(res => setTimeout(res, ms));
     ConfirmMint = async () => {
         if(!this.canNavigate || Swal.isVisible())
             return;
@@ -136,8 +136,11 @@ export class MinarBurrito extends Phaser.Scene{
                 this.canNavigate = false;
                 localStorage.setItem("action", "mintBurrito");
                 localStorage.setItem("lastScene", "MinarBurrito");
+                this.loadingScreen2 = new Helpers.LoadingScreen(this);
+                await this.Delay(5000)
                 //let minar = JSON.parse('{"attack":"8","burrito_type":"Volador","defense":"7","description":"Este es un burrito de tipo Volador","global_win":"0","hp":"5","level":"1","media":"QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6","name":"Burrito Volador #81","owner_id":"jesusrobles.testnet","speed":"5","win":"0"}')
                 let minar = await Near.NFTMint();
+                await this.loadingScreen2.OnComplete(); 
                 this.MintBurrito(minar);
                 localStorage.removeItem("action");
                 localStorage.removeItem("lastScene");
@@ -235,8 +238,11 @@ export class MinarBurrito extends Phaser.Scene{
                     this.canNavigate = false;
                     localStorage.setItem("action", "mintBurrito");
                     localStorage.setItem("lastScene", "MinarBurrito");
+                    this.loadingScreen2 = new Helpers.LoadingScreen(this);
+                    await this.Delay(5000)
                     let tokens = parseInt(await Near.BuyTokens());
                     //let tokens = 10000_000_000_000_000_000_000_000_000;
+                    await this.loadingScreen2.OnComplete();
                     this.GetTokens(tokens);
                     localStorage.removeItem("action");
                     localStorage.removeItem("lastScene");

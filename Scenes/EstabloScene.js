@@ -24,6 +24,7 @@ export class Establo extends Phaser.Scene{
         this.load.image("selected", "../src/images/Establo/selected.png")
 
         this.load.image("establo_ui", "../src/images/Establo/establo UI.png");
+        this.textures.remove("cards")
         this.load.spritesheet("cards", "../src/images/Cards/blank_cards.png", {frameWidth: 1080, frameHeight: 1080});
         this.load.spritesheet("heart", "../src/images/Establo/vida.webp", {frameWidth: 150, frameHeight: 150 });
         this.load.spritesheet("level", "../src/images/Establo/nivel.webp", {frameWidth: 150, frameHeight: 150 });
@@ -48,8 +49,12 @@ export class Establo extends Phaser.Scene{
         this.bigCard = null;
         this.info_bigCard = false;
         this.infoCard = null;
+        this.canNavigate = true;
         this.totalTokens = await Near.NFTSupplyForOwner();
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
+
+        if((localStorage.getItem("counter") != null))
+            this.counter = parseInt(localStorage.getItem("counter"));
 
         if(this.totalTokens == 0)
             this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, "No cuentas con ningun burrito", {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
@@ -60,16 +65,15 @@ export class Establo extends Phaser.Scene{
         }
         let info = await Near.GetInfoByURL();
         await this.loadingScreen.OnComplete();
+
         if(info != null){
             console.log()
             if(localStorage.getItem("action") == "evolve"){//http://localhost:8000/?transactionHashes=5F9r6M7rzH5kpSiKRqwDsdnE44sYXVuXopAyCGTSxkqp
                 let value = JSON.parse(info.receipts_outcome[5].outcome.logs[0]);
-                console.log(value);
                 this.EvolveBurrito(value, value);
             } else if(localStorage.getItem("action") == "heal") {//http://localhost:8000/?transactionHashes=L6hUXzrtwMXKUuiqMvhyvcaMk7ffm2wUjqh9UuvM4A9
-                let value = info.receipts_outcome[5].outcome.logs[1]
-                console.log(value);
-                this.ResetBurrito(value);
+                let value = JSON.parse(info.receipts_outcome[5].outcome.logs[1]);
+                this.ResetBurrito(value, value);
             }
         }
     }
@@ -95,6 +99,8 @@ export class Establo extends Phaser.Scene{
     ShowCard = (burrito, index) => {
         if(Swal.isVisible() || !this.canSelectCard)
             return;
+            
+        localStorage.setItem("counter", this.counter);
         this.info_bigCard = false;
         this.bigCard?.GetComponents().destroy();
         this.buttonBigCard?.GetComponents().destroy();
@@ -131,6 +137,7 @@ export class Establo extends Phaser.Scene{
             newBurrito = await Near.ResetBurrito(burrito.token_id);
             await this.loadingScreen.OnComplete();
         } else {
+            console.log(burrito.name)
             id = burrito.name.split('#')[1];
         }
         localStorage.removeItem("action");
@@ -170,8 +177,8 @@ export class Establo extends Phaser.Scene{
         } else{
             id = burrito.name.split('#')[1];
         }
-        //localStorage.removeItem("action");
-        //localStorage.removeItem("lastScene");
+        localStorage.removeItem("action");
+        localStorage.removeItem("lastScene");
         this.cards.forEach((card, index) => {
             if(card.Card.burrito.token_id == id) {
                 console.log("Evoluciona")
@@ -209,12 +216,15 @@ export class Establo extends Phaser.Scene{
     }
     Navigate = async(nav) => {
         if(this.canNavigate){
-            if(this.counter + nav >= 0 && this.counter + nav < this.totalTokens / 6){
+            let newNav = this.counter + nav;
+            if(newNav >= 0 && newNav < this.totalTokens / 6){
                 this.canNavigate = false;
                 this.counter += nav;
                 this.cards.forEach(card => card.GetComponents().destroy());
                 this.SpawnCards();
                 this.canNavigate = true;
+            } else{
+                console.log("can't navigate: " + newNav);
             }
         }
     }
