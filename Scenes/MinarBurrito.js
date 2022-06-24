@@ -43,6 +43,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.spritesheet("elements","../src/images/Minar Burrito/Elements/Elementos.png", {frameWidth: 290, frameHeight: 290});
         this.load.spritesheet("orbs", "../src/images/Minar Burrito/Orbs/orbs.png", {frameWidth: 218, frameHeight: 218 })
 
+        this.textures.remove("cards")
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
         this.load.once("complete", this.Start, this);
@@ -161,6 +162,7 @@ export class MinarBurrito extends Phaser.Scene{
                 localStorage.setItem("lastScene", "MinarBurrito");
                 this.loadingScreen2 = new Helpers.LoadingScreen(this);
                 let minar = await Near.NFTMint();
+                this.hudTokens.UpdateTokens();
                 await this.loadingScreen2.OnComplete(); 
                 this.MintBurrito(minar);   
                 localStorage.removeItem("action");
@@ -291,6 +293,7 @@ export class MinarBurrito extends Phaser.Scene{
                     this.loadingScreen2 = new Helpers.LoadingScreen(this);
                     let tokens = parseInt(await Near.BuyTokens());
                     await this.loadingScreen2.OnComplete();
+                    this.hudTokens.UpdateTokens();
                     this.GetTokens(tokens);
                     localStorage.removeItem("action");
                     localStorage.removeItem("lastScene");    

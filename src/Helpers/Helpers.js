@@ -1,3 +1,5 @@
+import * as Near  from "../near.js";
+
 export class Button{
     text;
     constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle, useScrollFactor = true) {
@@ -422,12 +424,18 @@ export class TokenHud{
         this.strwToken = scene.add.image(-140, -80, "tokenIcon", 0);// Icono de STRW Token
         this.hudResult.add(this.nearToken);
         this.hudResult.add(this.strwToken);
-        this.hudResult.add(scene.add.text(-56, -100, currentSTRW, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de STRW Tokens del usuario
-        this.hudResult.add(scene.add.text(-56, -171, this.disponible, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
+        this.hudResult.add(this.strwText = scene.add.text(-56, -100, currentSTRW, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de STRW Tokens del usuario
+        this.hudResult.add(this.nearText = scene.add.text(-56, -171, this.disponible, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
     }
 
     GetComponents () { 
         return this.hudResult;
+    }
+    async UpdateTokens(){
+        let nears = ((await Near.GetAccountBalance()).available / 1000000000000000000000000).toFixed(2);
+        let strw = await Near.GetSTRWToken();
+        this.strwText.setText(strw);
+        this.nearText.setText(nears)
     }
 }
 export class BattleEnd{
@@ -449,7 +457,50 @@ export class BattleEnd{
         }, 1000);
     }
 }
-
+export class Alert2{
+    static isAlert;
+    static Fire(scene, x, y, title, description, acceptBtn, cancelBtn = null){
+        return new Promise(async (result)=>{
+            this.scene = scene;
+            this.isAlert = true;
+            this.alertResult = scene.add.container(x, y).setScrollFactor(0);
+            this.alertResult.add(scene.add.image(0, 0, "alert"));
+            this.alertResult.add(scene.add.text(0, -360, title, { fontSize:90 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.5));
+            this.alertResult.add(this.descriptionText = scene.add.text(0, -60, description, { fontSize:50 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
+            
+            this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , 350, 0.6, "buttonContainer1", acceptBtn, scene, ()=> {this.Hide(); result("Aceptar");}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+            if(cancelBtn != null)
+                this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer1", cancelBtn, scene, ()=> {this.Hide(); result("Cancelar");}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+            
+            scene.tweens.timeline({
+                ease: 'Cubic',
+                tweens:[ { duration: 0, delay:0, targets: this.alertResult,
+                    y: scene.game.config.height * 1.5,
+                    offset:0
+                }, { 
+                    delay: 1,
+                    duration: 1200,
+                    targets: this.alertResult,
+                    y: y,
+                    offset:0
+                }
+            ]});
+        });
+    }
+    static Hide = () => { 
+        this.scene.tweens.timeline({
+        ease: 'Cubic',
+        tweens:[ { 
+            duration: 1200,
+            delay:1,
+            targets: this.alertResult,
+            y: this.scene.game.config.height * 1.5,
+            offset:0, 
+            onComplete: ()=>{ console.log("complete"); this.isAlert = false; }
+        }
+    ]});
+    }
+}
 export class Alert{
     Alert;
     constructor(x, y, scene, scale, text){

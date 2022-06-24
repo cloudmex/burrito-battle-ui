@@ -296,4 +296,5 @@ export async function BuyTokens(){
         300000000000000, 
         utils.format.parseNearAmount("1")
     );
+    return result;
 }

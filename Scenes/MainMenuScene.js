@@ -48,10 +48,9 @@ class MainMenu extends Phaser.Scene{
         new Helpers.Button(450, 600, 0.75, "buttonContainer1", "Minar Burrito", this, this.MinarBurrito, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer1", "Pradera", this, this.Pradera, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer1", "Establo", this, this.Establo, null, {fontSize: 60, fontFamily: "BangersRegular"});
-
         await this.loadingScreen.OnComplete();
-        
-        //    
+        //await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Titulo principal", "Hay una batallaa l{adhs ashdlais dla sdhla hsdla sdhilsa dla sdolsadh as dh } en curso y no podras hacer nada mas hasta que finalice la batalla, tambien puedes rendirte pero esto te costara una vida", "Aceptar", "Cancelar")
+        //.then((result) =>{ console.log(result)});
     }
     
     LogOut = () => {

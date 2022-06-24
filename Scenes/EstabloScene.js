@@ -171,6 +171,7 @@ export class Establo extends Phaser.Scene{
         if(newBurrito == null) {
             id = burrito.token_id;
             newBurrito = await Near.ResetBurrito(burrito.token_id);
+            this.hudTokens.UpdateTokens();
             await this.loadingScreen.OnComplete();
         } else 
             id = burrito.name.split('#')[1];
@@ -240,6 +241,7 @@ export class Establo extends Phaser.Scene{
         if(newBurrito == null){
             id = burrito.token_id;
             newBurrito = await Near.EvolveBurrito(burrito.token_id);//burrito.token_id;//
+            this.hudTokens.UpdateTokens();
             await this.loadingScreen.OnComplete();
         } else{
             id = burrito.name.split('#')[1];
