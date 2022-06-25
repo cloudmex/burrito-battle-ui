@@ -458,19 +458,19 @@ export class BattleEnd{
     }
 }
 export class Alert2{
-    static isAlert;
+    static isAlert = false;
     static Fire(scene, x, y, title, description, acceptBtn, cancelBtn = null){
         return new Promise(async (result)=>{
             this.scene = scene;
             this.isAlert = true;
-            this.alertResult = scene.add.container(x, y).setScrollFactor(0);
+            this.alertResult = scene.add.container(x, scene.game.config.height * 1.5).setScrollFactor(0);
             this.alertResult.add(scene.add.image(0, 0, "alert"));
-            this.alertResult.add(scene.add.text(0, -360, title, { fontSize:90 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }).setOrigin(0.5));
-            this.alertResult.add(this.descriptionText = scene.add.text(0, -60, description, { fontSize:50 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
+            this.alertResult.add(scene.add.text(0, -360, title, { fontSize:70 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
+            this.alertResult.add(this.descriptionText = scene.add.text(0, -240, description, { fontSize:50 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5, 0));
             
-            this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , 350, 0.6, "buttonContainer1", acceptBtn, scene, ()=> {this.Hide(); result("Aceptar");}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+            this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , 350, 0.6, "buttonContainer1", acceptBtn, scene, ()=> {this.Hide(); result(true);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
             if(cancelBtn != null)
-                this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer1", cancelBtn, scene, ()=> {this.Hide(); result("Cancelar");}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+                this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer1", cancelBtn, scene, ()=> {this.Hide(); result(false);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
             
             scene.tweens.timeline({
                 ease: 'Cubic',
@@ -496,7 +496,7 @@ export class Alert2{
             targets: this.alertResult,
             y: this.scene.game.config.height * 1.5,
             offset:0, 
-            onComplete: ()=>{ console.log("complete"); this.isAlert = false; }
+            onComplete: ()=>{ this.isAlert = false; this.alertResult.destroy(); delete this;  }
         }
     ]});
     }
