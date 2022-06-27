@@ -43,6 +43,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.spritesheet("elements","../src/images/Minar Burrito/Elements/Elementos.png", {frameWidth: 290, frameHeight: 290});
         this.load.spritesheet("orbs", "../src/images/Minar Burrito/Orbs/orbs.png", {frameWidth: 218, frameHeight: 218 })
 
+        this.textures.remove("cards")
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
         this.load.once("complete", this.Start, this);
@@ -91,22 +92,22 @@ export class MinarBurrito extends Phaser.Scene{
         }
     }
     update(){
-        if(this.clouds == null) return;
+        if(this.clouds == null || this.camera == null || this.background) return;
         let cursors = this.input.keyboard.createCursorKeys();
         this.clouds.tilePositionX += 1
-        this.camera.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
+        this.camera?.setBounds(0,0,this.background.displayWidth, this.background.displayHeight);
 
         if (cursors.up.isDown) this.cameras.main.scrollY -= 24;
         else if (cursors.down.isDown) this.cameras.main.scrollY += 24;
     }
     GoToEstablo = () =>{
-        if(!this.canNavigate || Swal.isVisible()) return;
+        if(!this.canNavigate || Helpers.Alert2.isAlert) return;
         clearInterval(this.counterInterval);
         localStorage.removeItem("lastScene");
         this.scene.start("Establo");
     }
     BackToMainMenu = () =>{
-        if(!this.canNavigate || Swal.isVisible()) return;
+        if(!this.canNavigate || Helpers.Alert2.isAlert) return;
         clearInterval(this.counterInterval);
         localStorage.removeItem("lastScene");
         this.scene.start(this.isPrevScene ? "Pradera" :"MainMenu");
@@ -125,17 +126,12 @@ export class MinarBurrito extends Phaser.Scene{
     }
     Delay = (ms) => new Promise(res => setTimeout(res, ms));
     ConfirmMint = async () => {
-        if(!this.canNavigate || this.alertVisible == true)
+        if(!this.canNavigate || Helpers.Alert2.isAlert)
             return;
         let currentSTRW = await Near.GetSTRWToken();
-        /*Swal.fire({
-            icon: 'info',
-            title: 'Información de la transaccion',
-            html: `El minar un burrito te permite luchar contra otros burritos y explorar el mapa.<br><br>El costo del burrito es de <b>5 Nears</b> y <b>50,000 $STRW</b>.<br><br>Actualmente cuentas con <b>${currentSTRW} $STRW</b>.`,
-            showCancelButton: true,
-            confirmButtonText: 'Minar',
-        }).then(async(result) => {
-            if (result.isConfirmed){
+        await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Información de la transaccion", `El minar un burrito te permite luchar contra otros burritos y explorar el mapa. El costo del burrito es de 5 Nears y 50,000 $STRW. Actualmente cuentas con ${currentSTRW} $STRW.`, "Minar", "Cancelar")
+        .then(async(result) =>{ 
+            if (result){
                 this.canNavigate = false;
                 localStorage.setItem("action", "mintBurrito");
                 localStorage.setItem("lastScene", "MinarBurrito");
@@ -148,34 +144,7 @@ export class MinarBurrito extends Phaser.Scene{
                 localStorage.removeItem("action");
                 localStorage.removeItem("lastScene");
             }
-        });*/
-        if(this.alertVisible == false){
-            let alert = new Helpers.Alert(960, 540, this, 0.8, "El minar un burrito te permite luchar contra\notros burritos y explorar el mapa.\n\nEl costo es de 5 Nears y 50,000 $STRW.\n\n Actualmente cuentas con "+currentSTRW+" $STRW.");
-            let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Minar", this, async () => {
-                this.canNavigate = false;
-                alert.GetComponents().destroy();
-                button1.GetComponents().destroy();
-                button2.GetComponents().destroy();
-                this.alertVisible = false;  
-                localStorage.setItem("action", "mintBurrito");
-                localStorage.setItem("lastScene", "MinarBurrito");
-                this.loadingScreen2 = new Helpers.LoadingScreen(this);
-                let minar = await Near.NFTMint();
-                await this.loadingScreen2.OnComplete(); 
-                this.MintBurrito(minar);   
-                localStorage.removeItem("action");
-                localStorage.removeItem("lastScene");  
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
-                alert.GetComponents().destroy();
-                button1.GetComponents().destroy();
-                button2.GetComponents().destroy();
-                this.alertVisible = false;
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            this.alertVisible = true;
-        }else{
-            return;
-        }
+        });
     }
     MintBurrito = async(minar) => {
         this.anims.create({
@@ -258,13 +227,13 @@ export class MinarBurrito extends Phaser.Scene{
         return { index: values.indexOf(max), value: max };
     }
     BuyTokens = async() => {
-        if(!this.canNavigate || this.alertVisible == true)
+        if(!this.canNavigate || Helpers.Alert2.isAlert)
             return;
         let remain = await Near.CanBuyTokens();
         if(remain == 0){
-            /*Swal.fire({icon: 'info', title: '¿Quieres comprar tokens?', html: `Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.`, showCancelButton: true, confirmButtonText: 'Comprar'})
-            .then(async(result) => {
-                if (result.isConfirmed){
+            await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres comprar tokens?", "Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.", "Comprar", "Cancelar")
+            .then(async(result) =>{ 
+                if (result){
                     this.canNavigate = false;
                     localStorage.setItem("action", "mintBurrito");
                     localStorage.setItem("lastScene", "MinarBurrito");
@@ -277,56 +246,16 @@ export class MinarBurrito extends Phaser.Scene{
                     localStorage.removeItem("action");
                     localStorage.removeItem("lastScene");
                 }
-            });*/
-            if(this.alertVisible == false){
-                let alert = new Helpers.Alert(960, 540, this, 0.8, "Los tokens paja te sirven para poder minar \nnuevos burritos, aumentarlos de nivel, restaurar \nsus vidas y entre otras cosas, por desgracia solo \npuedes comprar tokens paja cada epoca.");
-                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer2", "Comprar", this, async () => {
-                    this.canNavigate = false;
-                    alert.GetComponents().destroy();
-                    button1.GetComponents().destroy();
-                    button2.GetComponents().destroy();
-                    this.alertVisible = false;
-                    localStorage.setItem("action", "buyStraw");
-                    localStorage.setItem("lastScene", "MinarBurrito");
-                    this.loadingScreen2 = new Helpers.LoadingScreen(this);
-                    let tokens = parseInt(await Near.BuyTokens());
-                    await this.loadingScreen2.OnComplete();
-                    this.GetTokens(tokens);
-                    localStorage.removeItem("action");
-                    localStorage.removeItem("lastScene");    
-                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer2", "Cancelar", this, () => {
-                    alert.GetComponents().destroy();
-                    button1.GetComponents().destroy();
-                    button2.GetComponents().destroy();
-                    this.alertVisible = false;
-                    this.canNavigate = true;
-                }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                this.alertVisible = true;
-                }else{
-                return;
-                }
+            });
         } else{
-                //Swal.fire({icon: 'info', title: 'No puedes comprar tokens aun', html: `El comprar tokens paja tarda una epoca, asi que aun debes esperar para poder comprar tokens.`});
-                if(this.alertVisible == false){
-                    let alert = new Helpers.Alert(960, 540, this, 0.8, "El comprar tokens paja tarda una epoca, asi que \naun debes esperar para poder comprar tokens.");
-                    let button1 = new Helpers.Button(968, 820, 0.4, "buttonContainer2", "Aceptar", this, () => {
-                        alert.GetComponents().destroy();
-                        button1.GetComponents().destroy();
-                        this.alertVisible = false;
-                    }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                    this.alertVisible = true; 
-                }else{
-                    return;
-                }
-            }
+            await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes comprar tokens", "El comprar tokens paja tarda una epoca, asi que \naun debes esperar para poder comprar tokens.", "Aceptar")
+        }
     }
     async GetTokens (tokens) {
         this.canNavigate = false;
         if(this.comprarBtn != null){
-        this.comprarBtn.GetComponents().destroy();
+            this.comprarBtn.GetComponents().destroy();
         }
-        tokens = tokens / 1_000_000_000_000_000_000_000_000;
         let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
         animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
         this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });

@@ -320,3 +320,12 @@ export async function StartActiveIncursion(){
 export async function FinishActiveIncursion(){
     let result = await contract_incursion.finish_active_incursion({}, 300000000000000);
 }
+export async function NewIncursionTime(){
+    result = (await GetActiveIncursion()).finish_time;
+    if(result == 0){
+        return result;
+    } else {
+        return parseInt(result.substring(0, result.length - 6));
+    }
+    
+}
