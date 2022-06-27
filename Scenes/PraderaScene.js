@@ -9,6 +9,7 @@ export class Pradera extends Phaser.Scene{
     showAlert = false;
     alertVisible = false;
     isKeyboard = true;
+    coliseoImage;
     target = new Phaser.Math.Vector2();
     
     constructor(){
@@ -26,9 +27,15 @@ export class Pradera extends Phaser.Scene{
         this.load.image("map", "../src/images/Pradera/Mapa.png");
         this.load.image("arboles", "../src/images/Pradera/Arboles.png");
         this.load.image("edificiosSup", "../src/images/Pradera/Edificios_sup.png");
+        this.load.image("edificiosBase", "../src/images/Pradera/Edificios_base.png");
+        this.load.image("coliseoNormal", "../src/images/Pradera/Coliseo_normal.png");
+        this.load.image("coliseoReconstruccion", "../src/images/Pradera/Coliseo_reconstrucción.png");
+        this.load.image("coliseoBurrito", "../src/images/Pradera/Coliseo_jefe.png");
+        
         
         this.load.spritesheet("details", "../src/images/Pradera/Detalles.webp", {frameWidth: 1920, frameHeight: 1080});
         this.load.spritesheet("nubes", "../src/images/Pradera/Nubes.webp", {frameWidth: 1920, frameHeight: 1080});
+        this.load.spritesheet("coliseoIncursionWait", "../src/images/Pradera/Coliseo_inicio.webp", {frameWidth: 640, frameHeight: 640});
 
         //this.load.image("gloves", "../src/images/fightTest.png");
         this.load.image("buttonContainer3", "../src/images/button.png");
@@ -45,6 +52,30 @@ export class Pradera extends Phaser.Scene{
         //this.anims.create({ key: "waterLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("water", { start: 0, end: 22 }), repeat: -1 });
         //this.add.sprite(0, 0, "water").play("waterLoop").setOrigin(0);
         this.map = this.add.image(0, 0, "map").setOrigin(0).setScale(1);
+        this.add.image(0, 0, "edificiosBase").setOrigin(0).setScale(1);
+        let incursion = await Near.GetActiveIncursion();
+        switch (incursion.status) {
+            case "Null":
+                this.coliseoImage = this.add.image(1475, 25, "coliseoNormal").setOrigin(0).setScale(1);
+                console.log("Null");
+                break;
+            case "WaitingPlayers":
+                this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
+                this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);
+                console.log("WaitingPlayers");
+                break;
+            case "InProgress":
+                this.coliseoImage = this.add.image(1475, 25, "coliseoBurrito").setOrigin(0).setScale(1);
+                console.log("InProgress");
+                break;
+            case "Finished":
+                this.coliseoImage = this.add.image(1475, 25, "coliseoDestruido").setOrigin(0).setScale(1);
+                console.log("Finished");
+                break;
+            default:
+                this.coliseoImage = this.add.image(1475, 25, "coliseoNormal").setOrigin(0).setScale(1);
+                break;  
+        }
         //this.map = this.physics.add.image(960, 540, "map");
         //this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         //this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
@@ -83,6 +114,7 @@ export class Pradera extends Phaser.Scene{
         if(this.burritoPlayer.hp <= 0)
             Swal.fire({ icon: 'info', title: 'Tu burrito se ha quedado sin vida', html: `El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando`, confirmButtonText: 'Ir a establo' }).then(async (result) => { if (result.isConfirmed) this.scene.start("Establo"); });
 
+        console.log(await Near.GetActiveIncursion());
 
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1).setCollideWorldBounds(true);
         this.physics.world.enable(this.burrito);
@@ -102,9 +134,9 @@ export class Pradera extends Phaser.Scene{
 
         this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
 
-        this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
+        this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 29 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
-        this.anims.create({ key: "nubesLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("nubes", { start: 0, end: 22 }), repeat: -1 });
+        this.anims.create({ key: "nubesLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("nubes", { start: 0, end: 29 }), repeat: -1 });
         this.add.sprite(0, 0, "nubes").play("nubesLoop").setOrigin(0);
 
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
@@ -186,9 +218,23 @@ export class Pradera extends Phaser.Scene{
         this.physics.add.overlap(this.coliseo, this.burrito, ()=>{ 
             //this.ShowAlert("El colisio continua en construccion", "Esta es una nueva mecanica que se esta implementado actualmente", null )
             if(this.alertVisible == false){
-                let alert = new Helpers.Alert(960, 540, this, 0.8, "El coliseo continua en construccion.\n\nEsta es una nueva mecanica que se esta \nimplementado actualmente.");
-                let button2 = new Helpers.Button(968, 820, 0.4, "buttonContainer3", "Aceptar", this, () => {
+                let alert = new Helpers.Alert(960, 540, this, 0.8, "El coliseo esta listo para iniciar una incursión.\n\nLas incursiones son eventos que permiten a los\njugadores colaborar entre ellos en contra de un\nenemigo de mayor poder.\n\n¿Quieres iniciar una nueva incursión?");
+                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Iniciar incursion", this, async () => {
                     alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
+                    button2.GetComponents().destroy();
+                    this.loadingScreen = new Helpers.LoadingScreen(this);
+                    await Near.CreateIncursion();
+                    console.log(await Near.GetActiveIncursion());
+                    this.coliseoImage.visible = false;
+                    this.anims.create({ key: "coliseoLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
+                    this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoLoop").setOrigin(0);
+                    await this.loadingScreen.OnComplete();
+
+            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Cancelar", this, () => {
+                    alert.GetComponents().destroy();
+                    button1.GetComponents().destroy();
                     button2.GetComponents().destroy();
                     //this.alertVisible = false;
             }, null, {fontSize: 30, fontFamily: "BangersRegular"});
@@ -444,7 +490,8 @@ export class Pradera extends Phaser.Scene{
         if(this.burrito.anims.isPlaying)
             this.burrito.stop();
     }
-    BackToMainMenu = () => {
+    BackToMainMenu = async () => {
+        await Near.DeleteAllIncursions();
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
     }

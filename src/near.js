@@ -20,6 +20,7 @@ const contract_id_burritos = "dev-1652924595303-59024384289373";
 const contract_id_strw_tokens = "dev-1653415145729-47929415561597";
 const contract_id_items = "dev-1647986467816-61735125036881";
 const contract_id_PVEBattle = "dev-1652376335913-86387308955071";
+const contract_id_incursion = "dev-1655916888750-29236034652789";
 
 const provider = new providers.JsonRpcProvider(
   "https://archival-rpc.testnet.near.org"
@@ -44,7 +45,12 @@ const contract_PVEBattle = new Contract(wallet.account(), contract_id_PVEBattle,
     viewMethods: [ "is_in_battle",  ],
     changeMethods: [ "create_battle_player_cpu", "battle_player_cpu", "get_battle_active", "surrender_cpu" ],
     sender: wallet.account()
-})
+});
+const contract_incursion = new Contract(wallet.account(), contract_id_incursion, {
+    viewMethods: ["get_active_incursion"],
+    changeMethods: ["create_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion"],
+    sender: wallet.account()
+});
 
 export function Login() {
     wallet.requestSignIn(
@@ -296,4 +302,21 @@ export async function BuyTokens(){
         300000000000000, 
         utils.format.parseNearAmount("1")
     );
+}
+export async function GetActiveIncursion(){
+    let result = await contract_incursion.get_active_incursion({});
+    return result;
+}
+export async function CreateIncursion(){
+    let result = await contract_incursion.create_incursion({}, 300000000000000);
+    return result;
+}
+export async function DeleteAllIncursions(){
+    let result = await contract_incursion.delete_all_incursions({}, 300000000000000);
+}
+export async function StartActiveIncursion(){
+    let result = await contract_incursion.start_active_incursion({}, 300000000000000);
+}
+export async function FinishActiveIncursion(){
+    let result = await contract_incursion.finish_active_incursion({}, 300000000000000);
 }
