@@ -2,7 +2,7 @@
 import * as Connection  from "./Scenes/ConnectScene.js";
 import * as MainMenu from "./Scenes/MainMenuScene.js";
 import * as MinarBurrito from "./Scenes/MinarBurrito.js";
-import * as Pradera from "./Scenes/PraderaScene_1.js";
+import * as Pradera from "./Scenes/PraderaScene.js";
 import * as Battle from "./Scenes/BattleScene.js";
 import * as Establo from "./Scenes/EstabloScene.js";
 import * as Test from "./Scenes/TestScene.js";
@@ -38,9 +38,9 @@ const config = {
             gravity:{
                 y: 0
             },
-            debug: true,
-            debugShowBody: true,
-            debugShowStaticBody: true,
+            debug: false,
+            debugShowBody: false,
+            debugShowStaticBody: false,
         },
     },
     autorRound: false,
