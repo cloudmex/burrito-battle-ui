@@ -69,7 +69,6 @@ export class Establo extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
 
         if(info != null){
-            console.log()
             if(localStorage.getItem("action") == "evolve"){//http://localhost:8000/?transactionHashes=5F9r6M7rzH5kpSiKRqwDsdnE44sYXVuXopAyCGTSxkqp
                 let value = JSON.parse(info.receipts_outcome[5].outcome.logs[0]);
                 this.EvolveBurrito(value, value);
@@ -92,14 +91,14 @@ export class Establo extends Phaser.Scene{
     }
     SelectBurrito = async (burrito) =>{
         if(burrito.hp <= 0){
-            await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes seleccionarlo", `No se puede seleccionar este burrito porque no tiene vidas`, "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes seleccionarlo", `No se puede seleccionar este burrito porque no tiene vidas`, "Aceptar");
         } else{
             localStorage.setItem("burrito_selected", burrito.token_id);
-            await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Seleccionado", `El burrito se selecciono exitosamente`, "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Seleccionado", `El burrito se selecciono exitosamente`, "Aceptar");
         }
     }
     ShowCard = (burrito, index) => {
-        if(Helpers.Alert2.isAlert || !this.canSelectCard) return;
+        if(Helpers.Alert.isAlert || !this.canSelectCard) return;
             
         localStorage.setItem("counter", this.counter);
         this.info_bigCard = false;
@@ -107,7 +106,7 @@ export class Establo extends Phaser.Scene{
         this.buttonBigCard?.GetComponents().destroy();
         this.buttonEvolve?.GetComponents().destroy();
 
-        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, false, true, true).setScale(0.7).On(()=>{ this.infoBigCard(burrito);});
+        this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, false, true, true).setScale(0.7).On( ()=>{ this.infoBigCard(burrito);});
         if(burrito.hp <= 0)
             this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ConfirmarReset(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         else
@@ -120,7 +119,7 @@ export class Establo extends Phaser.Scene{
     }
     ConfirmarReset = async(burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
-        await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Restaurar vidas", `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.El costo es de 1 Near y 30,000 $STRW.Actualmente tienes${currentSTRW} $STRW.`, "Restaurar", "Cancelar")
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Restaurar vidas", `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.El costo es de 1 Near y 30,000 $STRW.Actualmente tienes${currentSTRW} $STRW.`, "Restaurar", "Cancelar")
         .then(async(result) =>{ 
             if (result) {
                 this.canSelectCard = false;
@@ -153,10 +152,10 @@ export class Establo extends Phaser.Scene{
     }
     ConfirmarEvolve = async(burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
-        if(burrito.win < 10){
-            await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes subir de nivel", `Para subir de nivel un burrito debes tener al \nmenos 10 victorias en combate.`, "Aceptar");
-        } else {
-            await Helpers.Alert2.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres evolucionar a este burrito?", `Al evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes ${currentSTRW} $STRW.`, "Restaurar", "Cancelar")
+        if(burrito.win < 10)
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes subir de nivel", `Para subir de nivel un burrito debes tener al \nmenos 10 victorias en combate.`, "Aceptar");
+        else {
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres evolucionar a este burrito?", `Al evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes ${currentSTRW} $STRW.`, "Restaurar", "Cancelar")
             .then(async(result) =>{ 
                 if(result){
                     this.loadingScreen = new Helpers.LoadingScreen(this);
@@ -172,12 +171,11 @@ export class Establo extends Phaser.Scene{
         let id;
         if(newBurrito == null){
             id = burrito.token_id;
-            newBurrito = await Near.EvolveBurrito(burrito.token_id);//burrito.token_id;//
+            newBurrito = await Near.EvolveBurrito(burrito.token_id); //burrito.token_id;
             this.hudTokens.UpdateTokens();
             await this.loadingScreen.OnComplete();
-        } else{
+        } else
             id = burrito.name.split('#')[1];
-        }
         localStorage.removeItem("action");
         localStorage.removeItem("lastScene");
         this.cards.forEach((card, index) => {

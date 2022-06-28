@@ -2,9 +2,10 @@
 import * as Connection  from "./Scenes/ConnectScene.js";
 import * as MainMenu from "./Scenes/MainMenuScene.js";
 import * as MinarBurrito from "./Scenes/MinarBurrito.js";
-import * as Pradera from "./Scenes/PraderaScene.js";
+import * as Pradera from "./Scenes/PraderaScene_1.js";
 import * as Battle from "./Scenes/BattleScene.js";
 import * as Establo from "./Scenes/EstabloScene.js";
+import * as Test from "./Scenes/TestScene.js";
 
 const connection = Connection.Connection;
 const mainMenu = MainMenu.MainMenu;
@@ -12,6 +13,7 @@ const minarBurrito = MinarBurrito.MinarBurrito;
 const pradera = Pradera.Pradera;
 const establo = Establo.Establo;
 const battle = Battle.Battle;
+const test = Test.Test;
 
 const config = {
     type: Phaser.AUTO,
@@ -36,16 +38,16 @@ const config = {
             gravity:{
                 y: 0
             },
-            debug: false,
-            debugShowBody: false,
-            debugShowStaticBody: false,
+            debug: true,
+            debugShowBody: true,
+            debugShowStaticBody: true,
         },
     },
     autorRound: false,
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu, minarBurrito, pradera, battle, establo, ]
+    scene: [connection, mainMenu, minarBurrito, pradera, battle, establo, test, ]
 };
 
 const game = new Phaser.Game(config);

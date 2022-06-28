@@ -456,10 +456,13 @@ export class BattleEnd{
         }, 1000);
     }
 }
-export class Alert2{
+
+export class Alert{
     static isAlert = false;
     static Fire(scene, x, y, title, description, acceptBtn, cancelBtn = null){
         return new Promise(async (result)=>{
+            if(this.IsDefined(this.isAlert) && this.isAlert)
+                return result(false);
             this.scene = scene;
             this.isAlert = true;
             this.alertResult = scene.add.container(x, scene.game.config.height * 1.5).setScrollFactor(0);
@@ -467,18 +470,15 @@ export class Alert2{
             this.alertResult.add(scene.add.text(0, -360, title, { fontSize:70 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
             this.alertResult.add(this.descriptionText = scene.add.text(0, -240, description, { fontSize:50 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5, 0));
             
-            this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , 350, 0.6, "buttonContainer1", acceptBtn, scene, ()=> {this.Hide(); result(true);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+            this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , 350, 0.6, "buttonContainer", acceptBtn, scene, async()=> {await this.Hide(); await result(true);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
             if(cancelBtn != null)
-                this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer1", cancelBtn, scene, ()=> {this.Hide(); result(false);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+                this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer", cancelBtn, scene, async()=> { await this.Hide(); await result(false);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
             
             scene.tweens.timeline({
                 ease: 'Cubic',
-                tweens:[ { duration: 0, delay:0, targets: this.alertResult,
-                    y: scene.game.config.height * 1.5,
-                    offset:0
-                }, { 
+                tweens:[ { 
                     delay: 1,
-                    duration: 1200,
+                    duration: 750,
                     targets: this.alertResult,
                     y: y,
                     offset:0
@@ -487,39 +487,24 @@ export class Alert2{
         });
     }
     static Hide = () => { 
-        this.scene.tweens.timeline({
-        ease: 'Cubic',
-        tweens:[ { 
-            duration: 1200,
-            delay:1,
-            targets: this.alertResult,
-            y: this.scene.game.config.height * 1.5,
-            offset:0, 
-            onComplete: ()=>{ this.isAlert = false; this.alertResult.destroy(); delete this;  }
-        }
-    ]});
+        return new Promise( (result) =>{
+            this.scene.tweens.timeline({
+                ease: 'Cubic',
+                tweens:[ { 
+                    duration: 750,
+                    delay:1,
+                    targets: this.alertResult,
+                    y: this.scene.game.config.height * 1.5,
+                    offset:0, 
+                    onComplete: ()=>{ this.alertResult.destroy(); this.isAlert = false; delete this; result(null); }
+                }
+            ]});
+            
+        });
     }
-}
-export class Alert{
-    Alert;
-    constructor(x, y, scene, scale, text){
-        this.x = x;
-        this.y = y;
-        this.scene = scene;
-        this.scale = scale;
-        this.text = text;
-
-
-        this.alertResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
-        this.alert = scene.add.image(0, 0, "alert");
-        this.alertResult.add(this.alert);
-        this.alertResult.add(this.scene.add.text(-133, -425, "Aviso", { fontSize: 100, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }));
-        this.alertResult.add(this.scene.add.text(-420, -210, this.text, { fontSize: 36, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 }));
-
-    }
-
-    GetComponents(){
-        return this.alertResult;
+    
+    static IsDefined = (obj) => {
+        return typeof obj !== "undefined";
     }
 }
 

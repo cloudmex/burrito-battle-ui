@@ -57,20 +57,15 @@ export class Pradera extends Phaser.Scene{
         switch (incursion.status) {
             case "Null":
                 this.coliseoImage = this.add.image(1475, 25, "coliseoNormal").setOrigin(0).setScale(1);
-                console.log("Null");
-                break;
             case "WaitingPlayers":
                 this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
                 this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);
-                console.log("WaitingPlayers");
                 break;
             case "InProgress":
                 this.coliseoImage = this.add.image(1475, 25, "coliseoBurrito").setOrigin(0).setScale(1);
-                console.log("InProgress");
                 break;
             case "Finished":
                 this.coliseoImage = this.add.image(1475, 25, "coliseoDestruido").setOrigin(0).setScale(1);
-                console.log("Finished");
                 break;
             default:
                 this.coliseoImage = this.add.image(1475, 25, "coliseoNormal").setOrigin(0).setScale(1);
@@ -79,31 +74,23 @@ export class Pradera extends Phaser.Scene{
         //this.map = this.physics.add.image(960, 540, "map");
         //this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 22 }), repeat: -1 });
         //this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
+        await this.loadingScreen.OnComplete();
 
         if(localStorage.getItem("burrito_selected") == null){
-            /*await this.loadingScreen.OnComplete();
-            Swal.fire({
-                icon: 'info',
-                title: 'Ningun burrito seleccionado',
-                html: `Para poder navegar por el mapa y luchar contra otros burritos necesitas seleccionar uno de tus burritos.<br><br>Ve al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.`,
-                showCancelButton: true,
-                confirmButtonText: 'Ir a establo',
-                cancelButtonText: "Ir a silo"
-            }).then((result) =>{
-                if(result.isConfirmed)
-                    this.scene.start("Establo");
-                else
-                    this.scene.start("MinarBurrito");
-            });
-            return;*/
-            new Helpers.Alert(960, 540, this, 0.8, "Para poder navegar por el mapa y luchar contra\notros burritos necesitas seleccionar uno de tus\nburritos. \n\nVe al establo para poder seleccionar algun \nburrito de los que ya tienes o al silo para minar \nun nuevo burrito.");
-            new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Ir a Establo", this, () => {this.scene.start("Establo");}, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Ir a Silo", this, () => {this.scene.start("MinarBurrito");}, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            await this.loadingScreen.OnComplete();
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Ningun burrito seleccionado", "Para poder navegar por el mapa y luchar contra otros burritos necesitas seleccionar uno de tus burritos.Ve al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.", "Ir a establo", "Ir a silo")
+                .then((result) =>{
+                    if(result){
+                        this.scene.start("Establo");
+                    } else{
+                        this.scene.start("MinarBurrito");
+                    }
+                });
         }
         this.LoadSpriteSheet();
     }
     async LoadSpriteSheet(){
+        if(localStorage.getItem("burrito_selected") == null)
+            return
         let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
         this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         this.load.once("complete", this.CreateScene, this);
@@ -112,7 +99,8 @@ export class Pradera extends Phaser.Scene{
     async CreateScene(){
         this.burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
         if(this.burritoPlayer.hp <= 0)
-            Swal.fire({ icon: 'info', title: 'Tu burrito se ha quedado sin vida', html: `El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando`, confirmButtonText: 'Ir a establo' }).then(async (result) => { if (result.isConfirmed) this.scene.start("Establo"); });
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito se ha quedado sin vida", "El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando.", "Ir a establo")
+            .then(async (result) => { if (result) this.scene.start("Establo"); });
 
         console.log(await Near.GetActiveIncursion());
 
@@ -146,7 +134,7 @@ export class Pradera extends Phaser.Scene{
         this.velocity = {x: 0, y: 0};
 
         this.input.on("pointerdown", function(pointer){
-            if(!this.burrito.anims.isPlaying){
+            if(!this.burrito.anims.isPlaying && Helpers.Alert.isAlert){
                 this.isKeyboard = false;
                 this.target.x = Number(this.input.mousePointer.worldX.toFixed(1));
                 this.target.y = Number(this.input.mousePointer.worldY.toFixed(1));
@@ -165,89 +153,51 @@ export class Pradera extends Phaser.Scene{
 
         this.silo = this.add.zone(460, 740, 155, 300).setRectangleDropZone(300, 300);
         this.physics.world.enable(this.silo);
-        this.physics.add.overlap(this.silo, this.burrito, () => {
-            if(this.alertVisible == false){
-                let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres entrar al silo? \n\nAqui puedes minar un nuevo burrito.");
-                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Entrar", this, () => {
+        this.physics.add.overlap(this.silo, this.burrito, async() => {
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres entrar al silo?", "Aqui puedes minar un nuevo burrito.", "Entrar", "Cancelar")
+            .then(async (result) => { 
+                if (result) {
                     localStorage.setItem("prevScene", "pradera");
                     this.alertVisible = false;
                     this.scene.start("MinarBurrito");
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Cancelar", this, () => {
-                    alert.GetComponents().destroy();
-                    button1.GetComponents().destroy();
-                    button2.GetComponents().destroy();
-                    //this.alertVisible = false;
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            this.alertVisible = true;
-            }else{
-            return;
-            }
+                }
+            });
             this.stopBurrito();
             this.siloAlert(this);
         }, null, this);
 
         this.establo = this.add.zone(255, 510, 140, 120).setRectangleDropZone(80, 80);
         this.physics.world.enable(this.establo);
-        this.physics.add.overlap(this.establo, this.burrito, ()=> {
-            //this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel.", "Establo") 
-            if(this.alertVisible == false){
-                let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Quieres entrar al establo?\n\nAqui podras ver tus burritos, seleccionar algun \notro burrito, curarlos y subirlos de nivel.");
-                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Entrar", this, () => {
+        this.physics.add.overlap(this.establo, this.burrito, async()=> {
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun otro burrito, curarlos y subirlos de nivel.", "Entrar", "Cancelar")
+            .then(async (result) => { 
+                if (result) {
                     localStorage.setItem("prevScene", "pradera");
                     this.alertVisible = false;
                     this.scene.start("Establo");
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Cancelar", this, () => {
-                    alert.GetComponents().destroy();
-                    button1.GetComponents().destroy();
-                    button2.GetComponents().destroy();
-                    //this.alertVisible = false;
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            this.alertVisible = true;
-            }else{
-            return;
-            }
-            this.stopBurrito();
-            this.establoAlert(this);
+                }
+            });
         }, null, this);
 
         this.coliseo = this.add.zone(1595, 135, 250, 250).setRectangleDropZone(600, 600);
         this.physics.world.enable(this.coliseo);
         //this.coliseoCollider = this.physics.add.collider(this.coliseo, this.burrito, this.stopBurrito, null, this);
-        this.physics.add.overlap(this.coliseo, this.burrito, ()=>{ 
-            //this.ShowAlert("El colisio continua en construccion", "Esta es una nueva mecanica que se esta implementado actualmente", null )
-            if(this.alertVisible == false){
-                let alert = new Helpers.Alert(960, 540, this, 0.8, "El coliseo esta listo para iniciar una incursión.\n\nLas incursiones son eventos que permiten a los\njugadores colaborar entre ellos en contra de un\nenemigo de mayor poder.\n\n¿Quieres iniciar una nueva incursión?");
-                let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Iniciar incursion", this, async () => {
-                    alert.GetComponents().destroy();
-                    button1.GetComponents().destroy();
-                    button2.GetComponents().destroy();
-                    this.loadingScreen = new Helpers.LoadingScreen(this);
+        this.physics.add.overlap(this.coliseo, this.burrito, async()=>{ 
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres entrar al silo?", "Aqui puedes minar un nuevo burrito.", "Entrar", "Cancelar")
+            .then(async (result) => {
+                if(result){
                     await Near.CreateIncursion();
-                    console.log(await Near.GetActiveIncursion());
                     this.coliseoImage.visible = false;
                     this.anims.create({ key: "coliseoLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
                     this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoLoop").setOrigin(0);
-                    await this.loadingScreen.OnComplete();
-
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-                let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Cancelar", this, () => {
-                    alert.GetComponents().destroy();
-                    button1.GetComponents().destroy();
-                    button2.GetComponents().destroy();
-                    //this.alertVisible = false;
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            this.alertVisible = true;
-            }else{
-            return;
-            }
+                    //await this.loadingScreen.OnComplete();
+                }
+             });
             this.stopBurrito();
             this.coliseoAlert(this);
         }, null, this);
-        
 
-        this.bordoIzq = this.add.zone(0, 0, 1, this.sys.game.scale.gameSize.height * 2);
+        /*this.bordoIzq = this.add.zone(0, 0, 1, this.sys.game.scale.gameSize.height * 2);
         this.physics.world.enable(this.bordoIzq);
         this.bordoIzqCollider = this.physics.add.overlap(this.bordoIzq, this.burrito, this.stopBurrito, null, this);
 
@@ -273,8 +223,21 @@ export class Pradera extends Phaser.Scene{
 
         this.buttonZone = this.add.zone(960, 58, 295, 75);
         this.physics.world.enable(this.buttonZone);
-        this.physics.add.overlap(this.burrito, this.buttonZone, this.buttonAlpha, null, this);
+        this.physics.add.overlap(this.burrito, this.buttonZone, this.buttonAlpha, null, this);*/
 
+        let collideGroup = this.physics.add.staticGroup({
+            key:"collide",
+            immovable: true
+        })
+        let children = collideGroup.getChildren();
+        //Details
+        let details = [
+            { x:456, y:810, w:93, h:1 },
+        ]
+        for (let i = 0; i < details.length; i++) {
+            children[i].setPosition(details[i].x, details[i].y);
+        }
+        /*this.physics.add.collider(this.burrito, collideGroup, ()=>{console.log("weon")})
         this.siloFront = this.add.zone(456, 810, 93, 1);
         this.physics.world.enable(this.siloFront);
         this.physics.add.collider(this.burrito, this.siloFront, this.stopBurrito, null, this);
@@ -373,21 +336,21 @@ export class Pradera extends Phaser.Scene{
 
         this.ramasFront5 = this.add.zone(1669.5, 627, 14, 1);
         this.physics.world.enable(this.ramasFront5);
-        this.physics.add.collider(this.burrito, this.ramasFront5, this.stopBurrito, null, this);
+        this.physics.add.collider(this.burrito, this.ramasFront5, this.stopBurrito, null, this);*/
 
         await this.loadingScreen.OnComplete();
     }
     update(){        
-        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.burrito.body == null || this.silo == null || Swal.isVisible() || this.touching)
+        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.burrito.body == null || this.silo == null || Helpers.Alert.isAlert || this.touching)
             return;
 
-        this.touchingHudBurritoZone();
+        /*this.touchingHudBurritoZone();
         this.touchingHudTokensZone();
         this.touchingButtonZone();
         this.touchingSiloCollaider();
         this.touchingEstabloCollaider();
         this.touchingColiseoCollaider();
-        this.immovableZones();
+        this.immovableZones();*/
         
         this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.silo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.establo.getBounds()) | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), this.coliseo.getBounds());
         let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
@@ -409,57 +372,29 @@ export class Pradera extends Phaser.Scene{
             case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
         }
     }
-    ShowAlert = (title, description, scene) => {
+    ShowAlert = async(title, description, scene) => {
         if(!this.showAlert){
             this.burrito.body.stop();
             this.burrito.stop();
-            Swal.fire({
-                icon: 'info',
-                title: title,
-                html: description,
-                showCancelButton: true,
-                showConfirmButton: scene != null,
-                confirmButtonText: 'Entrar',
-            }).then((result) => {
-                if(result.isConfirmed && scene != null) {
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, title, description, "Entrar", "Cancelar")
+            .then(async (result) => {
+                if(result && scene != null) {
                     localStorage.setItem("prevScene", "pradera");
                     this.scene.start(scene);
                 }
-            })
-            this.showAlert = true;
+            });
         }
     }
-    Battle(burrito, triggerZone){
+    async Battle(burrito, triggerZone){
         burrito.body.stop();
         this.burrito.stop();
         triggerZone.disableBody(true, true);
         triggerZone.destroy();
-        /*Swal.fire({
-            icon: 'info',
-            title: 'Burrito salvaje ha aparecido',
-            html: `Un burrito salvaje ha aparecido, ¿deseas enfrentarte a el?<br><br>Se desconoce el nivel y las estadisticas del burrito, una vez entrando en combate si huyes, se te restara una vida.`,
-            showCancelButton: true,
-            confirmButtonText: 'Pelear',
-            cancelButtonText: "Huir"
-          }).then((result) => {
-            if (result.isConfirmed) this.GoToBattle();
-          })*/
-          if(this.alertVisible == false){
-            let alert = new Helpers.Alert(960, 540, this, 0.8, "Un burrito salvaje ha aparecido. \n\n¿Deseas enfrentarte a el? Se desconoce el nivel \ny las estadisticas del burrito, una vez entrando \nen combate si huyes, se te restara una vida.");
-            let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Pelear", this, () => {
-                this.alertVisible = false;
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Burrito salvaje ha aparecido", "Un burrito salvaje ha aparecido, ¿deseas enfrentarte a el?\nSe desconoce el nivel y las estadisticas del burrito, una vez entrando en combate si huyes, se te restara una vida.", "Pelear", "Huir")
+        .then(async (result) => {
+            if (result.isConfirmed)
                 this.GoToBattle();
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Huir", this, () => {
-                alert.GetComponents().destroy();
-                button1.GetComponents().destroy();
-                button2.GetComponents().destroy();
-                this.alertVisible = false;
-            }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            this.alertVisible = true;
-            }else{
-            return;
-            }
+        });
     }
     GoToBattle(){
         this.scene.start("Battle");
@@ -537,7 +472,7 @@ export class Pradera extends Phaser.Scene{
         this.burrito.body.stop();
     }
 
-    touchingHudBurritoZone(){
+    /*touchingHudBurritoZone(){
         if(this.hudBurritoZone.body == null)
             return;
         let touching = !this.hudBurritoZone.body.touching.none || this.hudBurritoZone.body.embedded;
@@ -545,7 +480,7 @@ export class Pradera extends Phaser.Scene{
 
         if (touching && !wasTouching) this.burrito.emit("overlapHudBurritoStart");
         else if (!touching && wasTouching) this.burrito.emit("overlapHudBurritoEnd");
-    }
+    }*/
 
     hudBurritoAlpha(){
         const componentsHudBurrito = this.hudBurrito.GetComponents().list;
