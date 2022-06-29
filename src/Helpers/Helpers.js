@@ -188,7 +188,7 @@ export class Slider{
         this.sliderResult = scene.add.container(x, y).setScrollFactor(0);
         
         this.sliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
-        this.sliderResult.add(scene.add.sprite(-280, 0, "burritos", head));
+        this.sliderResult.add(scene.add.sprite(-275, 0, "burritos", head));
         this.sliderResult.add(scene.add.sprite(84, -5, "slider_fill", 2).setOrigin(0.5));
         this.sliderResult.add(this.fill = scene.add.sprite(84, -5, "slider_fill", 1));
         this.sliderResult.add(scene.add.sprite(84, -5, "slider_fill", 0));
@@ -236,12 +236,8 @@ export class Actions{
             if((this.IsMyTurn() ? battle.strong_attack_player : battle.shields_player) > 0){ 
                 this.SendAction();
                 this.actions.Action2();
-            } else {Swal.fire({
-                icon: 'error',
-                title: 'No puedes realizar esta accion',
-                showConfirmButton: false,
-                timer: 1000
-              })
+            } else {
+                Alert.Fire(this.scene, this.scene.game.config.width / 2, this.scene.game.config.height/2, null, "No puedes realizar esta accion")
             }
         });
         this.ShowActions();
@@ -459,21 +455,21 @@ export class BattleEnd{
 
 export class Alert{
     static isAlert = false;
-    static Fire(scene, x, y, title, description, acceptBtn, cancelBtn = null){
+    static Fire(scene, x, y, title, description, acceptBtn = "Aceptar", cancelBtn = null){
         return new Promise(async (result)=>{
             if(this.IsDefined(this.isAlert) && this.isAlert)
                 return result(false);
             this.scene = scene;
             this.isAlert = true;
+            let isMini = title == null;
             this.alertResult = scene.add.container(x, scene.game.config.height * 1.5).setScrollFactor(0);
-            this.alertResult.add(scene.add.image(0, 0, "alert"));
+            this.alertResult.add(scene.add.image(0, 0, isMini ? "miniAlert" : "alert"));
             this.alertResult.add(scene.add.text(0, -360, title, { fontSize:70 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
-            this.alertResult.add(this.descriptionText = scene.add.text(0, -240, description, { fontSize:50 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5, 0));
+            this.alertResult.add(this.descriptionText = scene.add.text(0, isMini ? -180 : -240, description, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5, 0));
             
-            this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , 350, 0.6, "buttonContainer", acceptBtn, scene, async()=> {await this.Hide(); await result(true);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
-            if(cancelBtn != null)
-                this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer", cancelBtn, scene, async()=> { await this.Hide(); await result(false);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
-            
+                this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , isMini ? 135 : 350, 0.6, "buttonContainer", acceptBtn, scene, async()=> {await this.Hide(); await result(true);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+                if(cancelBtn != null && !isMini)
+                    this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer", cancelBtn, scene, async()=> { await this.Hide(); await result(false);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
             scene.tweens.timeline({
                 ease: 'Cubic',
                 tweens:[ { 

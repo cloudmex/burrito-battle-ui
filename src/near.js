@@ -290,11 +290,7 @@ export async function BurritoIncrementWin(token_id){
 }
 export async function CanBuyTokens(){
     let result = await contract_strw_tokens.can_buy_tokens({account_id: GetAccountId()});
-    if(result == 0){
-        return result;
-    } else {
-        return parseInt(result.substring(0, result.length - 6));
-    }
+    return result == 0 ? result : parseInt(result.substring(0, result.length - 6));
 }
 export async function BuyTokens(){
     let result = await contract_strw_tokens.buy_tokens(
@@ -304,16 +300,17 @@ export async function BuyTokens(){
     );
     return result;
 }
-export async function GetActiveIncursion(){
-    let result = await contract_incursion.get_active_incursion({});
-    return result;
-}
 export async function CreateIncursion(){
     let result = await contract_incursion.create_incursion({}, 300000000000000);
     return result;
 }
+export async function GetActiveIncursion(){
+    let result = await contract_incursion.get_active_incursion({});
+    return result;
+}
 export async function DeleteAllIncursions(){
     let result = await contract_incursion.delete_all_incursions({}, 300000000000000);
+    return result;
 }
 export async function StartActiveIncursion(){
     let result = await contract_incursion.start_active_incursion({}, 300000000000000);
@@ -322,11 +319,6 @@ export async function FinishActiveIncursion(){
     let result = await contract_incursion.finish_active_incursion({}, 300000000000000);
 }
 export async function NewIncursionTime(){
-    result = (await GetActiveIncursion()).finish_time;
-    if(result == 0){
-        return result;
-    } else {
-        return parseInt(result.substring(0, result.length - 6));
-    }
-    
+    let result = (await GetActiveIncursion()).finish_time;
+    return result == 0 ? result : parseInt(result.substring(0, result.length - 6));
 }

@@ -31,6 +31,7 @@ export class Establo extends Phaser.Scene{
         this.load.spritesheet("level", "../src/images/Establo/nivel.webp", {frameWidth: 150, frameHeight: 150 });
         this.load.image("buttonContainer3", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
+        this.load.image("miniAlert", "../src/images/Informacion_small.png");
         this.load.image("left_arrow", "../src/images/Establo/left_arrow.png");
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
@@ -91,10 +92,10 @@ export class Establo extends Phaser.Scene{
     }
     SelectBurrito = async (burrito) =>{
         if(burrito.hp <= 0){
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes seleccionarlo", `No se puede seleccionar este burrito porque no tiene vidas`, "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, "No se puede seleccionar este burrito porque no tiene vidas");
         } else{
             localStorage.setItem("burrito_selected", burrito.token_id);
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Seleccionado", `El burrito se selecciono exitosamente`, "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, "El burrito se selecciono exitosamente");
         }
     }
     ShowCard = (burrito, index) => {
@@ -153,7 +154,7 @@ export class Establo extends Phaser.Scene{
     ConfirmarEvolve = async(burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
         if(burrito.win < 10)
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes subir de nivel", `Para subir de nivel un burrito debes tener al \nmenos 10 victorias en combate.`, "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, "Para subir de nivel un burrito debes tener al menos 10 victorias en combate.");
         else {
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres evolucionar a este burrito?", `Al evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes ${currentSTRW} $STRW.`, "Restaurar", "Cancelar")
             .then(async(result) =>{ 

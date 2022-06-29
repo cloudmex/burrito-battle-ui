@@ -18,14 +18,15 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet("slider_fill", "../src/images/Battle/slider_fill.png", { frameWidth: 512, frameHeight: 89 });
         
         this.load.image("background_Battle", "../src/images/Establo/Background.webp")
-        this.load.image("burrito", "../src/images/Burrito Agua.png");
-        this.load.image("buttonContainer3", "../src/images/button.png");
+        //this.load.image("burrito", "../src/images/Burrito Agua.png");
+        this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
+        this.load.image("alert_small", "../src/images/Informacion_small.png");
         this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
     }
     async create(){
         this.add.image(0, 0, "background_Battle").setOrigin(0);
-        new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer3", "Rendirse", this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", "Rendirse", this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
 
        await this.GetBattle().then(async () => {
@@ -262,46 +263,18 @@ export class Battle extends Phaser.Scene{
         return result.toString();
     }
     GiveUp = async () => {
-        /*Swal.fire({
-            icon: 'info',
-            title: '¿Esta seguro de dejar la pelea?',
-            html: `El huir de la pelea <b>le costara una vida</b>`,
-            showCancelButton: true,
-            confirmButtonText: 'Huir',
-            }).then(async (result) => {
-            if (result.isConfirmed) {
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Esta seguro de huir?", "El huir de la pelea le costara una vida a tu burrito", "Huir", "Seguir peleando")
+        .then(async (result) => { 
+            if (result){
                 this.loadingScreen = new Helpers.LoadingScreen(this);
                 localStorage.removeItem("lastScene");
                 localStorage.removeItem("burritoCPU");
+               
                 await Near.SurrenderCpu(); 
                 await this.loadingScreen.OnComplete();
-                this.scene.start("MainMenu");
-            }
-        });*/
-        if(this.alertVisible == false){
-            let alert = new Helpers.Alert(960, 540, this, 0.8, "¿Esta seguro de dejar la pelea?\n\nEl huir de la pelea le costara una vida.");
-            let button1 = new Helpers.Button(800, 820, 0.4, "buttonContainer3", "Huir", this, async () => {
-                this.loadingScreen = new Helpers.LoadingScreen(this);
-                alert.GetComponents().destroy();
-                button1.GetComponents().destroy();
-                button2.GetComponents().destroy();
-                this.alertVisible = false;
-                localStorage.removeItem("lastScene");
-                localStorage.removeItem("burritoCPU");
-                await Near.SurrenderCpu(); 
-                await this.loadingScreen.OnComplete();
-                this.scene.start("MainMenu");    
-        }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-            let button2 = new Helpers.Button(1130, 820, 0.4, "buttonContainer3", "Cancelar", this, () => {
-                alert.GetComponents().destroy();
-                button1.GetComponents().destroy();
-                button2.GetComponents().destroy();
-                this.alertVisible = false;
-        }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        this.alertVisible = true;
-        }else{
-        return;
-        }
+                this.scene.start("Pradera");
+            } 
+        });
     }
     IsMyTurn(player) {
         return this.currentBattle.turn == player;

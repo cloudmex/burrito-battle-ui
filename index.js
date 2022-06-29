@@ -5,7 +5,7 @@ import * as MinarBurrito from "./Scenes/MinarBurrito.js";
 import * as Pradera from "./Scenes/PraderaScene.js";
 import * as Battle from "./Scenes/BattleScene.js";
 import * as Establo from "./Scenes/EstabloScene.js";
-import * as Test from "./Scenes/TestScene.js";
+import * as Coliseo from "./Scenes/ColiseoScene.js";
 
 const connection = Connection.Connection;
 const mainMenu = MainMenu.MainMenu;
@@ -13,7 +13,7 @@ const minarBurrito = MinarBurrito.MinarBurrito;
 const pradera = Pradera.Pradera;
 const establo = Establo.Establo;
 const battle = Battle.Battle;
-const test = Test.Test;
+const coliseo = Coliseo.Coliseo;
 
 const config = {
     type: Phaser.AUTO,
@@ -47,7 +47,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [connection, mainMenu, minarBurrito, pradera, battle, establo, test, ]
+    scene: [ connection, mainMenu, minarBurrito, pradera, battle, establo, coliseo, ]
 };
 
 const game = new Phaser.Game(config);

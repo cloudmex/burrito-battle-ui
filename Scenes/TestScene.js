@@ -21,9 +21,9 @@ export class Test extends Phaser.Scene {
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("buttonContainer", "../src/images/button.png");
     }
-    async create(){
+    async createPanel(){
         this.totalTokens = await Near.NFTSupplyForOwner();
-        this.add.image(this.game.config.width / 2, this.game.config.height/2, "seleccion_panel");
+        this.add.image(this.game.config.width / 2, this.game.config.height / 2, "seleccion_panel");
         new Helpers.Button(this.game.config.width / 2 - 500, this.game.config.height / 2 + 85, 1, "left_arrow", null, this, ()=>{ this.Navigate(-1); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         new Helpers.Button(this.game.config.width / 2 + 500,  this.game.config.height / 2 + 85, 1, "right_arrow", null, this, ()=>{ this.Navigate(1); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         this.SpawnCards();
