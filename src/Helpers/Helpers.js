@@ -81,9 +81,11 @@ export class Card{
         this.Active = burrito.hp > 0;
 
         this.cardResult = scene.add.container(x, y).setScrollFactor(0);
-        this.card = scene.add.image(0, 0, "cards", this.GetIndexByType(burrito.burrito_type));
+        this.card = scene.add.image(0, 0, burrito.cards == null ? "cards" : "mega_cards", this.GetIndexByType(burrito.burrito_type));
         this.cardResult.add(this.card);
-        this.cardResult.add(this.burritoImg = scene.add.image(0, 0, this.Active ? burrito.media : "burrito_muerto"));
+        if(burrito.media != null)
+            this.cardResult.add(this.burritoImg = scene.add.image(0, 0, this.Active ? burrito.media : "burrito_muerto"));
+
         if(this.Active)
             this.burritoImg.setScale(.4);
 
@@ -110,7 +112,8 @@ export class Card{
 
         if(interactuable)
             this.card.on('pointerover', this.PointerOver).on("pointerout", this.PointerOut);
-        this.card.setTint (this.Active ? this.enabledColor : this.disabledColor);
+        if(burrito.media != null )
+        this.card.setTint (this.Active? this.enabledColor : this.disabledColor);
     }
     RecoverHealth(newBurrito) {
         this.burritoImg.setTexture("burrito_muerto");

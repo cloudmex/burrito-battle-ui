@@ -260,7 +260,6 @@ export class Pradera extends Phaser.Scene{
             this.burrito.stop();
     }
     BackToMainMenu = async () => {
-        await Near.DeleteAllIncursions();
         localStorage.removeItem("lastScene");
         this.scene.start("MainMenu");
     }

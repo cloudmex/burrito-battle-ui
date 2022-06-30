@@ -13,7 +13,17 @@ class MainMenu extends Phaser.Scene{
         this.load.image("logo1", "../src/images/Logo.png");
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
+        
+        var vida = 2;
+        vida = this.pakiman(vida);
+        console.log(vida);
     }
+    pakiman(vida)
+{
+    vida = vida + vida;
+    vida++;
+    return vida;
+}
     async create(){
         this.loadingScreen = new Helpers.LoadingScreen(this);
 

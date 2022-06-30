@@ -20,7 +20,7 @@ const contract_id_burritos = "dev-1652924595303-59024384289373";
 const contract_id_strw_tokens = "dev-1653415145729-47929415561597";
 const contract_id_items = "dev-1647986467816-61735125036881";
 const contract_id_PVEBattle = "dev-1652376335913-86387308955071";
-const contract_id_incursion = "dev-1655916888750-29236034652789";
+const contract_id_incursion = "dev-1656528009468-36867951998801";
 
 const provider = new providers.JsonRpcProvider(
   "https://archival-rpc.testnet.near.org"
@@ -28,7 +28,7 @@ const provider = new providers.JsonRpcProvider(
 
 const contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
     viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner", "nft_token" ],
-    changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint', "burrito_increment_win", "burrito_ready_reset", "burrito_ready_evolve" ],
+    changeMethods: [ "reset_burrito",  "evolve_burrito", 'nft_mint', "burrito_increment_win", "burrito_ready_reset", "burrito_ready_evolve", "nft_transfer_call" ],
     sender: wallet.account()
 });
 const contract_strw_tokens = new Contract(wallet.account(), contract_id_strw_tokens, {
@@ -47,8 +47,8 @@ const contract_PVEBattle = new Contract(wallet.account(), contract_id_PVEBattle,
     sender: wallet.account()
 });
 const contract_incursion = new Contract(wallet.account(), contract_id_incursion, {
-    viewMethods: ["get_active_incursion"],
-    changeMethods: ["create_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion"],
+    viewMethods: ["get_active_incursion", "get_player_incursion"],
+    changeMethods: ["create_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion", "withdraw_burrito_owner"],
     sender: wallet.account()
 });
 
@@ -321,4 +321,20 @@ export async function FinishActiveIncursion(){
 export async function NewIncursionTime(){
     let result = (await GetActiveIncursion()).finish_time;
     return result == 0 ? result : parseInt(result.substring(0, result.length - 6));
+}
+export async function GetPlayerIncursion(){
+    let result = await contract_incursion.get_player_incursion({}, 300000000000000);
+    return result;
+}
+export async function RegisterInIncursion(token_id, incursion_id = 1){
+    let result = await contract_burritos.nft_transfer_call(
+        {receiver_id: contract_id_incursion, token_id: token_id, msg:`{\"incursion_id\":${incursion_id}}`}, 
+        300000000000000,
+        "1" 
+    );
+    return result;
+}
+export async function WithdrawBurritoOwner(){
+    let result = await contract_incursion.withdraw_burrito_owner({}, 300000000000000, "1");
+    return result;
 }
