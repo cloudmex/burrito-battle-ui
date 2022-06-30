@@ -30,6 +30,7 @@ export class Pradera extends Phaser.Scene{
         this.load.spritesheet("details", "../src/images/Pradera/Detalles.webp", {frameWidth: 1920, frameHeight: 1080});
         this.load.spritesheet("nubes", "../src/images/Pradera/Nubes.webp", {frameWidth: 1920, frameHeight: 1080});
         this.load.spritesheet("coliseoIncursionWait", "../src/images/Pradera/Coliseo_inicio.webp", {frameWidth: 640, frameHeight: 640});
+        this.load.spritesheet("coliseo", "../src/images/Pradera/Coliseo.webp", {frameWidth: 259, frameHeight: 256});
 
         this.load.image("buttonContainer3", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
@@ -41,26 +42,27 @@ export class Pradera extends Phaser.Scene{
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
     }
     async create(){
+        let incursion = await Near.GetActiveIncursion(); console.log(incursion);
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
         this.map = this.add.image(0, 0, "map").setOrigin(0).setScale(1);
         this.add.image(0, 0, "edificiosBase").setOrigin(0).setScale(1);
         this.add.image(0, 0, "arboles").setOrigin(0).setScale(1);
         this.add.image(0, 0, "edificiosSup").setOrigin(0).setScale(1);
+        switch (incursion.status) {
+            case "WaitingPlayers":
+                this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
+                this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);
+                break;
+            case "Null": this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1); break;
+            case "InProgress": this.add.image(1475, 25, "coliseo", 1).setOrigin(0).setScale(1); break;
+            case "Finished": this.add.image(1475, 25, "coliseo", 2).setOrigin(0).setScale(1); break;
+            default: this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1); break;}
         this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 29 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
         this.anims.create({ key: "nubesLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("nubes", { start: 0, end: 29 }), repeat: -1 });
         this.add.sprite(0, 0, "nubes").play("nubesLoop").setOrigin(0);
 
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
-
-        let incursion = await Near.GetActiveIncursion(); console.log(incursion);
-
-        if(incursion.status == "WaitingPlayers"){
-            this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
-            this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);
-        } else{
-            this.coliseoImage = this.add.image(1475, 25, `coliseo${incursion.status}`).setOrigin(0).setScale(1);
-        }
 
         if(localStorage.getItem("burrito_selected") == null){
                 await this.loadingScreen.OnComplete();
