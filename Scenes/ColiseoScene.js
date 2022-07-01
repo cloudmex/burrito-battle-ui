@@ -34,6 +34,7 @@ export class Coliseo extends Phaser.Scene{
         this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", "../src/images/Burritos/Burrito Agua.png");
         this.textures.remove("cards")
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
+        this.load.image("burrito_muerto", "../src/images/Establo/gravestone.png");
         this.load.image("left_arrow", "../src/images/Establo/left_arrow.png");
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
 
@@ -44,38 +45,49 @@ export class Coliseo extends Phaser.Scene{
 
     async create(){
         this.incursion = await Near.GetActiveIncursion();
+        this.add.image(this.game.config.width / 2, this.game.config.height / 2, `coliseo_${this.incursion.status}`);
         let isIncursion = this.incursion.status == "WaitingPlayers";
-        console.log(this.incursion)
-        this.add.image(this.game.config.width / 2, this.game.config.height / 2, `coliseo_${this.incursion.status}`)
-        new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", isIncursion ? "Unirse a la incursion" : "Iniciar Incursion", this, isIncursion ? this.JoinIncursion : this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"})
+        console.log(this.incursion);
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", "Pradera", this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        //let result = await Near.WithdrawBurritoOwner();
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
+        async()=>{ 
+            this.loadingScreen = new Helpers.LoadingScreen(this);
+            await Near.WithdrawBurritoOwner(); 
+            await Near.DeleteAllIncursions(); 
+            await this.loadingScreen.OnComplete();
+            location.reload();
+        }
+        , null, {fontSize: 30, fontFamily: "BangersRegular"});
+        
+        if(!isIncursion)
+            new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"})
+        else
+            this.CreatePanelIncursion();
+        //await Near.WithdrawBurritoOwner();
         await this.loadingScreen.OnComplete();
-
-        this.CreatePanelIncursion();
     }
-    BackToPradera = () =>{
-        this.scene.start("Pradera");
+    BackToPradera = () =>{ 
+        clearInterval(this.counterInterval); 
+        this.scene.start("Pradera"); 
     }
-    
     ConfirmIncursion = async() => {
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Iniciar nueva incursion", "Una incursion en un evento donde los jugadores pueden unirse para combatir a un burrito de mayor poder y ganar recompensas.\n¿Quieres iniciar una nueva incursion?", "Iniciar Incursion", "Cancelar")
         .then(async (result) =>{ 
             if(result){
-                let incursion = await Near.CreateIncursion();
-                console.log(incursion);
-            } 
+                this.loadingScreen = new Helpers.LoadingScreen(this);
+                await Near.CreateIncursion();
+                await this.loadingScreen.OnComplete();
+                location.reload();
+            }
         });
     }
-    JoinIncursion = async()=>{
+    /*JoinIncursion = async()=>{
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Unirte a la incursion", "Una incursion en un evento donde los jugadores pueden unirse para combatir a un burrito de mayor poder y ganar recompensas.\n¿Quieres unirte a la incursion?", "Unirse", "Cancelar")
         .then(async (result) =>{ 
-            if(result){
-                //let incursion = await Near.DeleteAllIncursions();
+            if(result)
                 this.CreatePanelIncursion();
-            } 
         });
-    }
+    }*/
     async CreatePanel(){
         this.totalTokens = await Near.NFTSupplyForOwner();
         this.panelContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2);
@@ -85,11 +97,6 @@ export class Coliseo extends Phaser.Scene{
         this.SpawnCards();
     }
     SpawnCards = async() => {
-        if(this.incursion.players.filter((e) => e.burrito_owner === Near.GetAccountId()).length > 0){
-            console.log("Ya tienes un burrito en la incursion");
-        } else{
-            console.log("Si puedes participar en la incursion"); 
-        }
         this.cards = [];
         let burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
@@ -102,12 +109,11 @@ export class Coliseo extends Phaser.Scene{
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Usar este burrito", `¿Quieres usar este burrito para la incursion? `, "Seleccionar", "Cancelar")
         .then(async(result) =>{ 
             if(result){
-                //this.incursion.players.push(burrito.token_id);
-                //console.log(this.incursion);
                 let result = await Near.RegisterInIncursion(burrito.token_id);
-                let incursion = await Near.GetActiveIncursion();
+                this.incursion = await Near.GetActiveIncursion();
+                //console.log(this.incursion);
                 this.panelContainer.destroy();
-                //this.CreatePanelIncursion();
+                this.CreatePanelIncursion();
             }
         });
     }
@@ -124,37 +130,56 @@ export class Coliseo extends Phaser.Scene{
     }
     CreatePanelIncursion(){
         let mega = this.incursion.mega_burrito;
-        mega.name = "Mictlantecuhtli";
         mega.hp = mega.win = mega.attack = mega.defense = mega.level = mega.speed = "?";
         mega.cards = "mega_cards"
         console.log(mega)
         let incursionContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2);
         incursionContainer.add(this.add.image(0, 0, "informacion_incursion"));
-        new Helpers.Card(this.game.config.width / 2 - 280, this.game.config.height/2 - 100, mega, this, false, false, false, false).setScale(.45)
-        incursionContainer.add(new Helpers.Button(210, 75, 0.5, "buttonContainer", "Seleccionar un burrito", this, ()=>{ this.CreatePanel() }, null, {fontSize: 24, fontFamily: "BangersRegular"}).GetComponents())
-        incursionContainer.add(this.countDownText = this.add.text(210, -100, "", {fontSize: 40, fontFamily: "BangersRegular"}).setOrigin(0.5));
-        let result = this.incursion.start_time.toString();
-        let time = result == 0 ? result : parseInt(result.substring(0, result.length - 6));
+        incursionContainer.add(new Helpers.Card(- 280, - 100, mega, this, false, false, false, false).setScale(.45).GetComponents());
+        incursionContainer.add(this.countDownText = this.add.text(200, -200, "", {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
+        if(this.incursion.players.filter((e) => e.burrito_owner === Near.GetAccountId()).length == 0){
+            incursionContainer.add(new Helpers.Button(200, 0, 0.5, "buttonContainer", "Seleccionar un burrito", this, 
+            ()=>{
+                clearInterval(this.counterInterval); 
+                incursionContainer.destroy(); 
+                this.CreatePanel() 
+            }, null, {fontSize: 24, fontFamily: "BangersRegular"}).GetComponents());
+        } else{
+            incursionContainer.add(this.add.text(200, 0, "Ya estas registrado en la incursion\nEspera a que inicie!!", {fontSize: 30, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
+        }
 
-        let playersTest = [
-            { burrito_id: "18", burrito_owner: "algunNombre.testnet" },
-            { burrito_id: "19", burrito_owner: "algunNombre.testnet" },
-            { burrito_id: "17", burrito_owner: "algunNombre.testnet" },
-            { burrito_id: "6", burrito_owner: "algunNombre.testnet" },
-            { burrito_id: "15", burrito_owner: "algunNombre.testnet" },
-            { burrito_id: "1", burrito_owner: "algunNombre.testnet" },
-            { burrito_id: "31", burrito_owner: "algunNombre.testnet" },
-            { burrito_id: "31", burrito_owner: "algunNombre.testnet" },
-        ];
+        /*let playersTest = [
+            { burrito_id: "18", burrito_owner: "algunNombre1.testnet" },
+            { burrito_id: "19", burrito_owner: "algunNombre2.testnet" },
+            { burrito_id: "17", burrito_owner: "algunNombre3.testnet" },
+            { burrito_id: "6", burrito_owner: "algunNombre4.testnet" },
+            { burrito_id: "15", burrito_owner: "algunNombre5.testnet" },
+            { burrito_id: "1", burrito_owner: "algunNombre6.testnet" },
+            { burrito_id: "31", burrito_owner: "algunNombre7.testnet" },
+            { burrito_id: "31", burrito_owner: "algunNombre8.testnet" },
+        ];*/
+        let playersTest = this.incursion.players;
         playersTest.forEach(async(player, i) => {
             let burrito = await Near.GetNFTToken(player.burrito_id);
-            incursionContainer.add(this.add.sprite(-300+ (150 * (i % 5)), 265 + (130 * Math.floor(i / 5)), "burritos_heads", this.burritoMediaToSkinHead(burrito.media)).setOrigin(0.5).setScale(0.55).setInteractive().on("pointerdown", ()=>{this.ShowCard(burrito)}));
-        });
+            let ownerOffset = {x: 0, y:35}
+            incursionContainer.add(this.add.sprite(-300+ (150 * (i % 5)), 265 + (130 * Math.floor(i / 5)), "burritos_heads", this.burritoMediaToSkinHead(burrito.media))
+            .setOrigin(0.5).setScale(0.55).setInteractive()
+            .on("pointerdown", ()=>{this.ShowCard(burrito)})
+            .on("pointerover", (pointer)=>{ 
+                if(this.canInteract){
+                    incursionContainer.add(this.playerNameText = this.add.text((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2, player.burrito_owner, {fontSize: 18, fontFamily: "BangersRegular", align: "center", strokeThickness:5, stroke: "#000"}).setOrigin(0.5));
+                }
+            })
+            .on("pointermove", (pointer) => { this.playerNameText?.setPosition((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2)})
+            .on("pointerout", ()=>{this.playerNameText?.destroy();})
+        );});
         
-        setInterval(() => {this.Contdown(time) }, 1000);
+        let result = this.incursion.start_time.toString();
+        this.counterInterval = setInterval(() => {this.Contdown(result == 0 ? result : parseInt(result.substring(0, result.length - 6))) }, 1000);
     }
     ShowCard(burrito){
         if(this.canInteract){
+            this.playerNameText?.destroy();
             let bigCard = new Helpers.Card(this.game.config.width / 2, this.game.config.height / 2, burrito, this, false, false, false, false)
             this.cerrarBtn = this.add.image(this.game.config.width / 2 + 350, this.game.config.height / 2 - 400, "cerrar").setScale(0.25).setInteractive()
             .on("pointerdown", () =>{
@@ -173,7 +198,7 @@ export class Coliseo extends Phaser.Scene{
         let seconds = (minutes % 1) * 60;
         if(remainToBuy != 0){
             this.contdown = true;
-            this.countDownText.setText(`La incursion inicia \nen ${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+            this.countDownText?.setText(`La incursion inicia en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
         } else if(this.contdown)
             location.reload();
     }

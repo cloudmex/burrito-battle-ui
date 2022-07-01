@@ -13,17 +13,7 @@ class MainMenu extends Phaser.Scene{
         this.load.image("logo1", "../src/images/Logo.png");
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
-        
-        var vida = 2;
-        vida = this.pakiman(vida);
-        console.log(vida);
     }
-    pakiman(vida)
-{
-    vida = vida + vida;
-    vida++;
-    return vida;
-}
     async create(){
         this.loadingScreen = new Helpers.LoadingScreen(this);
 
@@ -31,18 +21,18 @@ class MainMenu extends Phaser.Scene{
             this.scene.start(localStorage.getItem("lastScene"));
         } else {
             await Near.GetInfoByURL(); 
-                let isInBattle = await Near.IsInBattle();
-                if(isInBattle){
-                    await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Existe una batalla pendiente", "Hay una batalla en curso y no podras hacer nada mas hasta que finalice la batalla, tambien puedes rendirte pero esto te costara una vida", "Seguir Peleando", "Rendirse\n(Esta desicion le costara una vida a tu burrito!!)")
-                    .then(async (result) =>{ 
-                        if (result)
-                            this.scene.start("Battle");
-                        else{
-                            localStorage.removeItem("burritoCPU");
-                            await Near.SurrenderCpu();
-                        }
-                    });
-                }
+            let isInBattle = await Near.IsInBattle();
+            if(isInBattle){
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Existe una batalla pendiente", "Hay una batalla en curso y no podras hacer nada mas hasta que finalice la batalla, tambien puedes rendirte pero esto te costara una vida", "Seguir Peleando", "Rendirse\n(Esta desicion le costara una vida a tu burrito!!)")
+                .then(async (result) =>{ 
+                    if (result)
+                        this.scene.start("Battle");
+                    else{
+                        localStorage.removeItem("burritoCPU");
+                        await Near.SurrenderCpu();
+                    }
+                });
+            }
         }
 
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
