@@ -74,7 +74,6 @@ export class Coliseo extends Phaser.Scene{
             new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"})
         else
             this.CreatePanelIncursion();
-        //await Near.WithdrawBurritoOwner();
         await Near.WithdrawBurritoOwner();
         await this.loadingScreen.OnComplete();
     }
@@ -93,19 +92,10 @@ export class Coliseo extends Phaser.Scene{
             }
         });
     }
-    /*JoinIncursion = async()=>{
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Unirte a la incursion", "Una incursion en un evento donde los jugadores pueden unirse para combatir a un burrito de mayor poder y ganar recompensas.\n¿Quieres unirte a la incursion?", "Unirse", "Cancelar")
-        .then(async (result) =>{ 
-            if(result)
-                this.CreatePanelIncursion();
-        });
-    }*/
     async CreatePanel(){
         this.totalTokens = await Near.NFTSupplyForOwner();
         this.panelContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2).setScale(0.75);
         this.panelContainer.add(this.add.image(0, 0, "seleccion_panel"));
-        this.panelContainer.add(new Helpers.Button(- 500, 85, 1, "left_arrow", null, this, ()=>{ this.Navigate(-1); }, null, {fontSize: 30, fontFamily: "BangersRegular"}).GetComponents());
-        this.panelContainer.add(new Helpers.Button(500, 85, 1, "right_arrow", null, this, ()=>{ this.Navigate(1); }, null, {fontSize: 30, fontFamily: "BangersRegular"}).GetComponents());
         this.panelContainer.add(new Helpers.Button(- 500, 85, 1, "left_arrow", null, this, ()=>{ this.Navigate(-1); }, null, null).GetComponents());
         this.panelContainer.add(new Helpers.Button(500, 85, 1, "right_arrow", null, this, ()=>{ this.Navigate(1); }, null, null).GetComponents());
         this.panelContainer.add(new Helpers.Button(600, -500, 0.25, "cerrar", null, this, ()=>{this.panelContainer.destroy(); this.CreatePanelIncursion();}).GetComponents());
@@ -130,9 +120,9 @@ export class Coliseo extends Phaser.Scene{
     
                 let result = await Near.RegisterInIncursion(burrito.token_id);
                 this.incursion = await Near.GetActiveIncursion();
-                //console.log(this.incursion);
                 this.panelContainer.destroy();
                 this.CreatePanelIncursion();
+                await this.loadingScreen.OnComplete();
             }
         });
     }
@@ -151,8 +141,6 @@ export class Coliseo extends Phaser.Scene{
         let mega = this.incursion.mega_burrito;
         mega.hp = mega.win = mega.attack = mega.defense = mega.level = mega.speed = "?";
         mega.cards = "mega_cards"
-        console.log(mega)
-        let incursionContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2);
         let incursionContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2 ).setScale(0.75);
         incursionContainer.add(this.add.image(0, 0, "informacion_incursion"));
         incursionContainer.add(new Helpers.Card(- 280, - 100, mega, this, false, false, false, false).setScale(.45).GetComponents());
@@ -165,6 +153,7 @@ export class Coliseo extends Phaser.Scene{
                 this.CreatePanel() 
             }, null, {fontSize: 24, fontFamily: "BangersRegular"}).GetComponents());
         } else{
+            incursionContainer.add(this.add.text(200, 0, "Ya estás registrado en la incursión \n¡Espera a que inicie!!", {fontSize: 30, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
         }
 
         /*let playersTest = [
