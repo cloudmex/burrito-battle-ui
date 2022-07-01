@@ -43,12 +43,25 @@ export class Pradera extends Phaser.Scene{
     }
     async create(){
         let incursion = await Near.GetActiveIncursion(); console.log(incursion);
+        console.log(parseInt(Date.now()));
+        console.log(parseInt(incursion.finish_time).toString().substring(0, 13));
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
         this.map = this.add.image(0, 0, "map").setOrigin(0).setScale(1);
         this.add.image(0, 0, "edificiosBase").setOrigin(0).setScale(1);
         this.add.image(0, 0, "arboles").setOrigin(0).setScale(1);
         this.add.image(0, 0, "edificiosSup").setOrigin(0).setScale(1);
-        switch (incursion.status) {
+        
+        if(incursion.status == "Null"){
+            this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1);    
+        }else if(parseInt(Date.now()) > parseInt(incursion.finish_time).toString().substring(0, 13)){
+            this.add.image(1475, 25, "coliseo", 2).setOrigin(0).setScale(1);   
+        }else if(parseInt(Date.now()) > parseInt(incursion.start_time).toString().substring(0, 13)){
+            this.add.image(1475, 25, "coliseo", 1).setOrigin(0).setScale(1);  
+        }else{
+            this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
+            this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);    
+        }
+        /*switch (incursion.status) {
             case "WaitingPlayers":
                 this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
                 this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);
@@ -56,13 +69,19 @@ export class Pradera extends Phaser.Scene{
             case "Null": this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1); break;
             case "InProgress": this.add.image(1475, 25, "coliseo", 1).setOrigin(0).setScale(1); break;
             case "Finished": this.add.image(1475, 25, "coliseo", 2).setOrigin(0).setScale(1); break;
-            default: this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1); break;}
+            default: this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1); break;}*/
+        
         this.anims.create({ key: "detailLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("details", { start: 0, end: 29 }), repeat: -1 });
         this.add.sprite(0, 0, "detail").play("detailLoop").setOrigin(0);
         this.anims.create({ key: "nubesLoop", frameRate: 24, frames: this.anims.generateFrameNumbers("nubes", { start: 0, end: 29 }), repeat: -1 });
         this.add.sprite(0, 0, "nubes").play("nubesLoop").setOrigin(0);
 
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
+
+        if(await Near.NFTSupplyForOwner() == 1 && localStorage.getItem("in_incursion")){
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Burrito en incursion", "Actualmente uno de tus burritos se encuentra registrado para participar en la incursion actual ¿Deseas ir al coliseo?.", "Ir a coliseo", "Cancelar")
+            .then(async (result) => { if (result) this.scene.start("Coliseo"); });
+        }
 
         if(localStorage.getItem("burrito_selected") == null){
                 await this.loadingScreen.OnComplete();
