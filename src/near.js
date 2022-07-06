@@ -47,8 +47,8 @@ const contract_PVEBattle = new Contract(wallet.account(), contract_id_PVEBattle,
     sender: wallet.account()
 });
 const contract_incursion = new Contract(wallet.account(), contract_id_incursion, {
-    viewMethods: ["get_active_incursion", "get_player_incursion"],
-    changeMethods: ["create_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion", "withdraw_burrito_owner"],
+    viewMethods: ["get_active_incursion", "get_player_incursion", "is_in_battle_incursion"],
+    changeMethods: ["create_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion", "withdraw_burrito_owner", "create_battle_room", "get_active_battle_room"],
     sender: wallet.account()
 });
 
@@ -337,4 +337,15 @@ export async function RegisterInIncursion(token_id, incursion_id = 1){
 export async function WithdrawBurritoOwner(token_id){
     let result = await contract_incursion.withdraw_burrito_owner({}, 300000000000000, "1");
     return result;
+}
+export async function CreateBattleRoom(){
+    let result = await contract_incursion.create_battle_room({}, 300000000000000);
+    return result;
+}
+export async function IsInBattleIncursion(){
+    let result = await contract_incursion.is_in_battle_incursion ({account_id: GetAccountId()});
+    return result;
+}
+export async function GetActiveBattleRoom(){
+    let result = await contract_incursion.get_active_battle_room({});
 }

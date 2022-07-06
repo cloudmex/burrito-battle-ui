@@ -215,6 +215,17 @@ export class Slider{
         return this;
     }
 }
+export class BossSlider{
+    constructor(x, y, scene, battle){
+        this.scene = scene;
+        this.SliderResult = scene.add.container(x, y).setScrollFactor(0).setAngle(270);
+
+        //this.SliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
+        this.SliderResult.add(scene.add.sprite(84, -5, "slider_fill", 2).setOrigin(0.5));
+        this.SliderResult.add(scene.add.sprite(84, -5, "slider_fill", 1).setOrigin(0.5));
+        this.SliderResult.add(scene.add.sprite(84, -5, "slider_fill", 0).setOrigin(0.5));
+    }
+}
 export class Actions{
     scene;
     outColor = 0xffffff;

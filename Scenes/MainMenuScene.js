@@ -33,6 +33,18 @@ class MainMenu extends Phaser.Scene{
                     }
                 });
             }
+            let isIncursion = await Near.IsInBattleIncursion();
+            if(isIncursion){
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Existe una incursion activa", "Tu burrito esta en una incursion activa, ¿Quieres ir al coliseo para continuar la incursion?", "Ir a la incursion", "Rendirse")
+                .then(async (result) =>{ 
+                    if (result)
+                        this.scene.start("ColiseoBattle");
+                    else{
+                        //localStorage.removeItem("burritoCPU");
+                        //await Near.SurrenderCpu();
+                    }
+                });
+            }
         }
 
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
@@ -42,6 +54,7 @@ class MainMenu extends Phaser.Scene{
         new Helpers.Button(450, 600, 0.75, "buttonContainer", "Minar Burrito", this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer", "Pradera", this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer", "Establo", this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
+        
         await this.loadingScreen.OnComplete();
     }
     
