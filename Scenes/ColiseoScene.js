@@ -62,7 +62,7 @@ export class Coliseo extends Phaser.Scene{
         let isIncursion = this.incursion.status == "WaitingPlayers";
         console.log(this.incursion);
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", "Pradera", this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
+        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
         async()=>{ 
             this.loadingScreen = new Helpers.LoadingScreen(this);
             await Near.WithdrawBurritoOwner(); 
