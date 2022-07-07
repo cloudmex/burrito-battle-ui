@@ -38,14 +38,31 @@ export class ColiseoBattle extends Phaser.Scene {
         this.load.spritesheet("burritos", "../src/images/Battle/Burritos.png", { frameWidth: 200, frameHeight: 268});
         this.load.image("slider_background", "../src/images/Battle/slider_background.png");
         this.load.spritesheet("slider_fill", "../src/images/Battle/slider_fill.png", { frameWidth: 512, frameHeight: 89 });
+        this.load.image("Coliseo_bg", "../src/images/Coliseo/Shader.png");
+        this.load.image("Coliseo_gradas", "../src/images/Coliseo/Coliseo.png");
+        this.load.image("Coliseo_ground", "../src/images/Coliseo/Base.png");
+        this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.webp", {frameWidth: 1920, frameHeight: 1080});
 
         //Test
         this.load.image("megaburrito", "../src/images/Burrito Agua.png");
     }
-    create(){
+    async create(){
+        //this.currentBattle = await Near.GetActiveBattleRoom();
+        //console.log(this.currentBattle);
+        //this.currentBattle = await Near.CreateBattleRoom();
+        this.incursion = await Near.GetActiveIncursion();
         this.currentBattle = JSON.parse('{"accesories_attack_b1":"0", "accesories_attack_b2":"0", "accesories_defense_b1":"0", "accesories_defense_b2":"0", "accesories_speed_b1":"0", "accesories_speed_b2":"0", "attack_b1":"8", "burrito_cpu_attack":"8","burrito_cpu_defense":"7","burrito_cpu_level":"1","burrito_cpu_speed":"6","burrito_cpu_type":"Planta","burrito_id":"2","defense_b1":"7","health_cpu":"11","health_player":"20","level_b1":"1","player_id":"jesus13th.testnet","shields_cpu":"3","shields_player":"3","speed_b1":"5","start_health_cpu":"11","start_health_player":"20","status":"2","strong_attack_cpu":"3","strong_attack_player":"3","turn":"CPU"}');
-        this.add.image(0, 0, "background").setOrigin(0);
+
+        this.add.image(0, 0, "Coliseo_gradas").setOrigin(0);
+        this.add.image(0, 0, "Coliseo_ground").setOrigin(0);
+        this.anims.create({ key: "sparksAnim", frameRate: 24, frames: this.anims.generateFrameNumbers("sparks", { start: 0, end: 14 }), repeat: -1 });
+        this.add.image(0, 0, "Coliseo_bg").setOrigin(0);
+        this.add.sprite(0, 0, "sparks", 0).play("sparksAnim").setOrigin(0);
+
         this.loadSpriteSheet("electrico");
+        this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
+			this.cameras.main.shake(500, 0.01)
+		})
     }
     async LoadBurrito(){
         this.CreateAnimations("Player");
@@ -60,8 +77,6 @@ export class ColiseoBattle extends Phaser.Scene {
         this.add.sprite(this.game.config.width - 200, this.game.config.height / 2, "megaburrito").setFlipX(true).setScale(1.25);
         new Helpers.BossSlider(this.game.config.width - 200, this.game.config.height / 2 + 200, this, this.currentBattle);
         
-        let result = await Near.CreateBattleRoom();
-        console.log(result);
         await this.loadingScreen.OnComplete();
     }
     CreateAnimations(player){

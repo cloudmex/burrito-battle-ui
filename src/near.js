@@ -348,4 +348,5 @@ export async function IsInBattleIncursion(){
 }
 export async function GetActiveBattleRoom(){
     let result = await contract_incursion.get_active_battle_room({});
+    return result;
 }
