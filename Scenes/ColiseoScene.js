@@ -47,38 +47,50 @@ export class Coliseo extends Phaser.Scene{
 
     async create(){
         this.incursion = await Near.GetActiveIncursion();
+        console.log(this.incursion);
+        
         //this.add.image(this.game.config.width / 2, this.game.config.height / 2, `coliseo_${this.incursion.status}`);
-        if(this.incursion.status == "Null"){
+        if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
-        }else if(parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
-            this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
+            new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
+            await this.loadingScreen.OnComplete();
+            Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "El coliseo esta en reconstruccíon", "El coliso sufrio mucho daño en la ultima incursion asi que esta en reconstruccion para la siguiente incursion", "Aceptar");
+
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
             this.add.image(0, 0, "coliseo_destruido").setOrigin(0).setScale(1);
+            let result = await Near.GetPlayerIncursion();
+            console.log(result.incursion.status);
+            
+            if(result.incursion.status !== "Null"){ //estas en alguna incursion
+                try{
+                    let battleIncursion = await Near.GetActiveBattleRoom();
+                    if(battleIncursion.room.health <= 0){
+                        console.log(battleIncursion);
+                        await this.loadingScreen.OnComplete();
+                        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito ha muerto", "Tu burrito ha muerto en la batalla asi que ya no puede continuar peleando", "Aceptar");
+                    } else
+                        this.scene.start("ColiseoBattle");
+                } catch{
+                    this.scene.start("ColiseoBattle");
+                }
+            }else
+                console.log("hay una incursion activa");
         }else{
             this.add.image(0, 0, "coliseo_inicio").setOrigin(0).setScale(1);
+            this.CreatePanelIncursion();
         }
-        let isIncursion = this.incursion.status == "WaitingPlayers";
-        console.log(this.incursion);
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", "Pradera", this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
-        /*async()=>{ 
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
+        async()=>{ 
             this.loadingScreen = new Helpers.LoadingScreen(this);
             await Near.WithdrawBurritoOwner(); 
             await Near.DeleteAllIncursions(); 
             await this.loadingScreen.OnComplete();
             location.reload();
         }
-        , null, {fontSize: 30, fontFamily: "BangersRegular"});*/
-        
-        if(!isIncursion)
-            new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"})
-        else
-            this.CreatePanelIncursion();
-        //await Near.WithdrawBurritoOwner();
-        //let result = await Near.CreateBattleRoom();
-        //console.log(result);
+        , null, {fontSize: 30, fontFamily: "BangersRegular"});
         await this.loadingScreen.OnComplete();
     }
     BackToPradera = () =>{ 
@@ -202,7 +214,7 @@ export class Coliseo extends Phaser.Scene{
             this.canInteract = false;
         }
     }
-    Contdown(remainToBuy) {
+    async Contdown(remainToBuy) {
         let timeNow = Date.now();
         let time = Math.abs(timeNow - remainToBuy) / 36e5;
         let hour = time;
@@ -211,8 +223,12 @@ export class Coliseo extends Phaser.Scene{
         if(remainToBuy != 0){
             this.contdown = true;
             this.countDownText?.setText(`La incursion inicia en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
-        } else if(this.contdown)
+        }
+
+            
+        if(remainToBuy < timeNow){
             location.reload();
+        }
     }
     burritoMediaToSkinHead(media){
         switch(media){
