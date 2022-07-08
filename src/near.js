@@ -20,7 +20,7 @@ const contract_id_burritos = "dev-1652924595303-59024384289373";
 const contract_id_strw_tokens = "dev-1653415145729-47929415561597";
 const contract_id_items = "dev-1647986467816-61735125036881";
 const contract_id_PVEBattle = "dev-1652376335913-86387308955071";
-const contract_id_incursion = "dev-1657319025362-20400432440915";
+const contract_id_incursion = "dev-1657319025362-20400432440915"; 
 
 const provider = new providers.JsonRpcProvider(
   "https://archival-rpc.testnet.near.org"
