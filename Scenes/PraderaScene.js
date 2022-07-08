@@ -40,8 +40,15 @@ export class Pradera extends Phaser.Scene{
         this.load.spritesheet("hud", "../src/images/HUD/HUD.png", {frameWidth: 390, frameHeight: 226});
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
+
+        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
+        this.load.audio("footSteps", "../src/audio/Footsteps.ogg");
     }
     async create(){
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: 1}).play();
+        this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume:0.5});
+        this.footStepsSFX.setMute(true); 
+        this.footStepsSFX.play();
         let incursion = await Near.GetActiveIncursion(); console.log(incursion);
         console.log(parseInt(Date.now()));
         console.log(parseInt(incursion.finish_time).toString().substring(0, 13));
@@ -199,11 +206,13 @@ export class Pradera extends Phaser.Scene{
         let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
         if(this.burrito.body.speed > 0){
             this.PlayAnimation();
+            this.footStepsSFX.setMute(false); 
             if(distance < 4 && !this.isKeyboard)
                 this.burrito.body.reset(this.target.x, this.target.y)
-        } else
+        } else{
             this.StopAnimation();
-            
+            this.footStepsSFX.setMute(true); 
+        }
         this.keyboardMovement();
         this.camera.setBounds(0, 0, this.background.displayWidth, this.background.displayHeight);
     }
@@ -211,6 +220,7 @@ export class Pradera extends Phaser.Scene{
     ShowAlert = async(title, description, scene) => {
         if(!this.showAlert){
             this.showAlert = true;
+            this.footStepsSFX.setMute(true); 
             this.burrito.body.stop();
             this.burrito.stop();
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, title, description, "Entrar", "Cancelar")
@@ -231,8 +241,10 @@ export class Pradera extends Phaser.Scene{
         else if (!touching && wasTouching) this.burrito.emit(overlapEnd);
     }
     async Battle(burrito, triggerZone){
+        //this.sound.stopAll();
         burrito.body.stop();
         this.burrito.stop();
+        this.footStepsSFX.setMute(true); 
         triggerZone.disableBody(true, true);
         triggerZone.destroy();
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Burrito salvaje ha aparecido", "Un burrito salvaje ha aparecido, ¿deseas enfrentarte a el?\nSe desconoce el nivel y las estadisticas del burrito, una vez entrando en combate si huyes, se te restara una vida.", "Pelear", "Huir")

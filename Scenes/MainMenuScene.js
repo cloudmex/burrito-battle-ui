@@ -33,7 +33,7 @@ class MainMenu extends Phaser.Scene{
                     }
                 });
             }
-            let isIncursion = await Near.IsInBattleIncursion();
+            /*let isIncursion = await Near.IsInBattleIncursion();
             if(isIncursion){
                 await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Existe una incursion activa", "Tu burrito esta en una incursion activa, ¿Quieres ir al coliseo para continuar la incursion?", "Ir a la incursion", "Rendirse")
                 .then(async (result) =>{ 
@@ -44,7 +44,7 @@ class MainMenu extends Phaser.Scene{
                         //await Near.SurrenderCpu();
                     }
                 });
-            }
+            }*/
         }
 
         this.add.image(0,0, "mainMenubackground").setOrigin(0);

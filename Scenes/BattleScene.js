@@ -23,8 +23,13 @@ export class Battle extends Phaser.Scene{
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("alert_small", "../src/images/Informacion_small.png");
         this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
+
+        
+        this.load.audio("battle", "../src/audio/battle.ogg");
     }
     async create(){
+        this.sound.add("battle", { loop: true, volume: 1}).play();
+        //this.bg_music.setMute(false);
         this.add.image(0, 0, "background_Battle").setOrigin(0);
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", "Rendirse", this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
@@ -326,6 +331,7 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet("derrota", "../src/images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 });
+
 
         this.load.once("complete", this.LoadBurritos, this);
         this.load.start();

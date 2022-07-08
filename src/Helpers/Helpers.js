@@ -185,9 +185,10 @@ export class Card{
     }
 }
 export class Slider{
-    constructor(x, y, scene, head, room, isCPU = false){
+    constructor(x, y, scene, head, room, isCPU = false, isIncursion = false){
         this.room = room;
         this.isCPU = isCPU;
+        this.isIncursion = isIncursion;
         this.sliderResult = scene.add.container(x, y).setScrollFactor(0);
         
         this.sliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
@@ -198,19 +199,20 @@ export class Slider{
         if(isCPU){
             this.sliderResult.setScale(-1, 1);
             this.sliderResult.add(scene.add.text(10, -105, "Nivel: "+room.burrito_cpu_level, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' , stroke: 0x000000, strokeThickness: 5}).setScale(-1, 1));
-            this.sliderResult.add(scene.add.text(108, 45, "Salud: "+parseFloat(room.health_cpu).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }).setScale(-1, 1));
+            this.sliderResult.add(scene.add.text(108, 45, "Salud: "+parseFloat(isIncursion ? room.health : room.health_cpu).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }).setScale(-1, 1));
         }else{
-            this.sliderResult.add(scene.add.text(-150, -105, "Nivel: "+room.level_b1, { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
-            this.sliderResult.add(scene.add.text(-150, 45, "Salud: "+parseFloat(room.health_player).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
+            this.sliderResult.add(scene.add.text(-150, -105, "Nivel: " + (isIncursion ? room.level : room.level_b1), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
+            this.sliderResult.add(scene.add.text(-150, 45, "Salud: "+parseFloat(isIncursion ? room.health : room.health_player).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
         }
     }
     SetValue(value){
         this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
         const components = this.sliderResult.list;
         if(this.isCPU){
-        components[6].setText("Salud: "+(value*this.room.start_health_cpu).toFixed(2));
+            components[6].setText("Salud: "+ (value*this.room.start_health_cpu).toFixed(2));
         }else{
-        components[6].setText("Salud: "+(value*this.room.start_health_player).toFixed(2));
+            console.log(this.room.health)
+            components[6].setText("Salud: " + (value * (this.isIncursion ? this.room.health : this.room.start_health_player)).toFixed(2));
         }
         return this;
     }
@@ -218,12 +220,16 @@ export class Slider{
 export class BossSlider{
     constructor(x, y, scene, battle){
         this.scene = scene;
-        this.SliderResult = scene.add.container(x, y).setScrollFactor(0).setAngle(270);
+        this.SliderResult = scene.add.container(x, y).setScrollFactor(0);
 
         //this.SliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
-        this.SliderResult.add(scene.add.sprite(84, -5, "slider_fill", 2).setOrigin(0.5));
-        this.SliderResult.add(scene.add.sprite(84, -5, "slider_fill", 1).setOrigin(0.5));
-        this.SliderResult.add(scene.add.sprite(84, -5, "slider_fill", 0).setOrigin(0.5));
+        this.SliderResult.add(scene.add.sprite(84, -5, "slider_background_mega", 0).setOrigin(0.5));
+        this.SliderResult.add(this.fill = scene.add.sprite(84, -5, "slider_background_mega", 1).setOrigin(0.5));
+        this.SliderResult.add(scene.add.sprite(84, -5, "slider_background_mega", 2).setOrigin(0.5));
+    }
+    SetValue(value){
+        this.fill.setCrop(0, 0, this.fill.width, this.fill.height * value);
+        return this;
     }
 }
 export class Actions{
