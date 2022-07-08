@@ -92,6 +92,16 @@ export class Coliseo extends Phaser.Scene{
         }
         , null, {fontSize: 30, fontFamily: "BangersRegular"});
         await this.loadingScreen.OnComplete();
+        this.playerIncursion = await Near.GetPlayerIncursion();
+        console.log(this.playerIncursion);
+        if(this.playerIncursion.player.burrito_id != null && parseInt(this.playerIncursion.incursion.finish_time).toString().substring(0,13) < parseInt(Date.now())){
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
+            .then(async (result) =>{ 
+                if(result){
+                       
+                }
+            });
+        }
     }
     BackToPradera = () =>{ 
         clearInterval(this.counterInterval); 

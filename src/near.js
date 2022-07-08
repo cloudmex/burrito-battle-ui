@@ -48,7 +48,7 @@ const contract_PVEBattle = new Contract(wallet.account(), contract_id_PVEBattle,
 });
 const contract_incursion = new Contract(wallet.account(), contract_id_incursion, {
     viewMethods: ["get_active_incursion", "is_in_battle_incursion"],
-    changeMethods: ["create_incursion", "get_player_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion", "withdraw_burrito_owner", "create_battle_room", "get_active_battle_room", "battle_player_incursion" ],
+    changeMethods: ["create_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion", "withdraw_burrito_owner", "create_battle_room", "get_active_battle_room", "get_player_incursion"],
     sender: wallet.account()
 });
 

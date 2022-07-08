@@ -196,7 +196,7 @@ export class Pradera extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
     }
     update(){        
-        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.Cursors == null || this.burrito.body == null || Helpers.Alert.isAlert || this.silo == null) return;
+        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.Cursors == null || this.burrito.body == null || Helpers.Alert.isAlert || this.silo == null || this.camera == null) return;
 
         this.TouchingZone(this.hudBurritoZone, "overlapHudBurritoStart", "overlapHudBurritoEnd");
         this.TouchingZone(this.hudTokensZone, "overlapHudTokensStart", "overlapHudTokensEnd");
