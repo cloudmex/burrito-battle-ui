@@ -50,6 +50,15 @@ class MainMenu extends Phaser.Scene{
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
         this.add.image(50, 50, "logo1").setOrigin(0).setScale(0.75);
         new Helpers.Button(this.sys.game.scale.gameSize.width -  200, 100, 0.5, "buttonContainer", Near.GetAccountId(), this, this.LogOut, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 450,  100, 0.5, "buttonContainer", "Configuracion", this, () => {
+            Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, "Configuracion", "Aqui puedes cambiar algunos aspectos de la aplicacion", "Idioma", "Sonido")
+            .then((result) => {
+                if(result) {
+                   
+            }else{
+                
+            }});
+         }, null, {fontSize: 30, fontFamily: "BangersRegular"});
 
         new Helpers.Button(450, 600, 0.75, "buttonContainer", "Minar Burrito", this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer", "Pradera", this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
