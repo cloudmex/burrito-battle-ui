@@ -13,16 +13,22 @@ export class ColiseoBattle extends Phaser.Scene{
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
 
+        this.load.spritesheet("burritos", "../src/images/Battle/Burritos.png", { frameWidth: 200, frameHeight: 268});
         this.load.image("slider_background", "../src/images/Battle/slider_background.png");
         this.load.spritesheet("slider_fill", "../src/images/Battle/slider_fill.png", { frameWidth: 512, frameHeight: 89 });
+        this.load.spritesheet("slider_background_mega", "../src/images/Coliseo/Barra_jefe.png", {frameHeight: 211, frameWidth: 799})
+        
+        this.load.image("buttonContainer", "../src/images/button.png");
+        this.load.image("alert", "../src/images/Información 1.png");
+        this.load.image("alert_small", "../src/images/Informacion_small.png");
+        this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
+
+        
         this.load.image("background", "../src/images/Coliseo/Fondo.png");
         this.load.image("Coliseo_bg", "../src/images/Coliseo/Shader.png");
         this.load.image("Coliseo_gradas", "../src/images/Coliseo/Coliseo.png");
         this.load.image("Coliseo_ground", "../src/images/Coliseo/Base.png");
         this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.webp", {frameWidth: 1920, frameHeight: 1080});
-        this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
-        this.load.spritesheet("slider_background_mega", "../src/images/Coliseo/Barra_jefe.webp", {frameWidth: 211, frameHeight: 799})
-        this.load.spritesheet("burritos", "../src/images/Battle/Burritos.png", { frameWidth: 200, frameHeight: 268});
     }
     async create(){
         this.add.image(0, 0, "background").setOrigin(0);
@@ -31,10 +37,18 @@ export class ColiseoBattle extends Phaser.Scene{
         this.anims.create({ key: "sparksAnim", frameRate: 24, frames: this.anims.generateFrameNumbers("sparks", { start: 0, end: 13 }), repeat: -1 });
         this.add.image(0, 0, "Coliseo_bg").setOrigin(0);
         this.add.sprite(0, 0, "sparks", 0).play("sparksAnim").setOrigin(0);
+        localStorage.setItem("lastScene", "ColiseoBattle");
 
-        await this.GetBattle().then(async () => {
-            this.loadSpriteSheet(this.burritoMediaToSkin(this.currentBattle.media));
-        });
+       await this.GetBattle().then(async () => {
+           if(localStorage.getItem("burritoCPU") == null)
+            localStorage.setItem("burritoCPU", this.RandomBurrito());
+            this.burritoSkinCPU = localStorage.getItem("burritoCPU");
+
+            await Near.GetNFTToken(localStorage.getItem("burrito_selected")).then(async (result)=>{
+                this.burritoSkinPlayer = result;
+                await this.loadSpriteSheet(this.burritoMediaToSkin(result.media), this.burritoSkinCPU);
+            });
+       });
     }
     
     async GetBattle(){
@@ -42,42 +56,47 @@ export class ColiseoBattle extends Phaser.Scene{
             await Near.CreateBattleRoom();
         this.incursion = await Near.GetActiveBattleRoom();
         this.currentBattle = this.incursion.room;
+        this.tmpMegaburrito = this.megaburritoData;
         this.megaburritoData = this.incursion.incursion.mega_burrito;
         console.log(this.incursion)
-        //almacenar battle in localstorage
     }
     async LoadBurritos(){
         this.CreateAnimations("Player");
         this.burritoPlayer = this.add.sprite(this.game.config.width /2 - 700, this.game.config.height - 300, "burrito_idle_player").setOrigin(0.5);
         this.burritoPlayer.play("idle_Player");
-
+        this.CreateActionsMenu();
+        
         this.CreateMegaAnimations();
-        this.burritoCPU = this.add.sprite(this.game.config.width / 2, this.game.config.height / 2, ).setFlipX(false).setScale(1.25);
+        this.burritoCPU = this.add.sprite(this.game.config.width / 2, this.game.config.height / 2, "idle_mega", 0).setOrigin(0.5);
         this.burritoCPU.play("idle_mega");
         
-        let healthPlayer = parseFloat(this.currentBattle.health) / parseFloat(this.currentBattle.start_health);
-        this.sliderPlayer = new Helpers.Slider(this.game.config.width / 2 - 550, 150, this, 1, this.currentBattle, false, true)
+        let healthPlayer = 1;
+        try{
+            healthPlayer = parseFloat(this.tmpBattle.health) / parseFloat(this.tmpBattle.start_health);
+        } catch{
+            healthPlayer = parseFloat(this.currentBattle.health) / parseFloat(this.currentBattle.start_health);
+        }
+
+        this.sliderPlayer = new Helpers.Slider(this.game.config.width / 2 - 550, 150, this, this.burritoMediaToSkinHead(this.burritoSkinPlayer.media), this.currentBattle, false, true)
         .SetValue(healthPlayer);
-        this.CreateActionsMenu();
+        this.slider_Mega = new Helpers.BossSlider(this.game.config.width / 2, this.game.config.height - 175, this, this.currentBattle).SetValue(this.megaburritoData.health / this.megaburritoData.start_health);
 
         if(this.IsDefined(this.battleAnims))
             this.Animation(this.battleAnims.animPlayer, this.battleAnims.animCPU);
-        this.slide_Mega = new Helpers.BossSlider(this.game.config.width - 200, this.game.config.height / 2 - 50, this, this.currentBattle).SetValue(this.megaburritoData.health / this.megaburritoData.start_health);
-
+        
         await this.loadingScreen.OnComplete();
     }
     Animation(animPlayer, animCPU){
-        /*this.burritoCPU.play(animCPU + "_CPU").once('animationcomplete', () => {
-            this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
-            this.AccionLog("CPU", animCPU);
+        this.burritoCPU.play(animCPU + "_mega").once('animationcomplete', () => {
+            console.log("temp: " + (this.tmpMegaburrito.health / this.tmpMegaburrito.start_health))
+            console.log("current: " + (this.megaburritoData.health / this.megaburritoData.start_health))
+            this.slider_Mega.SetValue(this.megaburritoData.health / this.megaburritoData.start_health);
+            this.AccionLog(this.megaburritoData.name, animCPU);
             if(animCPU  !== "derrota"){
-                this.burritoCPU.play("idle_CPU");
+                this.burritoCPU.play("idle_mega");
             } else
                 this.BackToPradera("Player");
-        });*/
-        this.slide_Mega.SetValue(this.megaburritoData.health / this.megaburritoData.start_health);
-
-        console.log(animPlayer + "_Player")
+        });
         this.burritoPlayer.play(animPlayer + "_Player").once('animationcomplete', () => {
             this.sliderPlayer.SetValue(parseFloat(this.currentBattle.health) / parseFloat(this.currentBattle.start_health));
             this.AccionLog("Player",  animPlayer);
@@ -94,35 +113,33 @@ export class ColiseoBattle extends Phaser.Scene{
     }
     Action = async(player, index) => {
         let tempBattle = this.currentBattle;
-        localStorage.setItem("tempBattle", JSON.stringify(tempBattle));
-        let result = await Near.BattlePlayerIncursion(this.ActionIndex(index, player));
-        
-        this.megaburritoData = result.incursion.mega_burrito;
-        this.currentBattle = result.room;
-
-        let diff = this.Diff(tempBattle, this.currentBattle);
-        console.log(tempBattle);
-        console.log(this.currentBattle)
-        console.error(diff);
+        localStorage.setItem("tempColiseoBattle", JSON.stringify(tempBattle));
+        let result = (await Near.BattlePlayerIncursion(this.ActionIndex(index, player))).room;
+        this.incursion = await Near.GetActiveBattleRoom();
+        //console.log(result);
+        this.currentBattle = result;
+        this.tmpMegaburrito = this.megaburritoData;
+        this.megaburritoData = this.incursion.incursion.mega_burrito;
+        let diff = this.Diff(this.currentBattle, tempBattle);
         this.DiffStatus(diff);
 
-        if(!this.IsDefined(diff.rewards))
-            setTimeout(() => { this.CreateActionsMenu(); } , 1000);
+        if(this.currentBattle.health > 0)
+            setTimeout(() => {this.CreateActionsMenu();} , 1000);
     }
     Loose(){
-        //this.burritoCPU.play("victoria_CPU");
+        this.burritoCPU.play("victoria_CPU");
         this.burritoPlayer.play("derrota_Player");
         this.BackToPradera("CPU");
     }
     Win(){
-        //this.burritoCPU.play("derrota_CPU");
+        this.burritoCPU.play("derrota_CPU");
         this.burritoPlayer.play("victoria_Player");
         this.BackToPradera("Player");
     }
     BackToPradera(winner){
         let isWinner = winner == "Player";
         localStorage.removeItem("burritoCPU");
-        localStorage.removeItem("tempBattle");
+        localStorage.removeItem("tempColiseoBattle");
         localStorage.removeItem("lastScene");
         new Helpers.BattleEnd(this.game.config.width / 2, this.game.config.height / 2, this, isWinner, this.currentBattle.rewards);
         setTimeout(() => {
@@ -152,20 +169,23 @@ export class ColiseoBattle extends Phaser.Scene{
             _animPlayer = "victoria";
         }
 
-        console.log("1")
         try{
             this.Animation(_animPlayer, _animCPU);
-            console.log("2");
         } catch{
-            return { "animPlayer": _animPlayer, "animCPU": _animCPU, "healthPlayer": diff.healthPlayer, "healthCPU": diff.healthCPU }
+            return { "animPlayer": _animPlayer, "animCPU": _animCPU, "healthPlayer": diff.health, "healthCPU": diff.healthCPU }
         }
     }
     AccionLog(burrito, accion){
         let result = "";
-        let currentBattle = this.currentBattle;
-        let tmpBattle = (localStorage.getItem("tempBattle") != null) ? JSON.parse(localStorage.getItem("tempBattle")) : this.tmpBattle;
-        
-        let damage = parseFloat(tmpBattle["health"]) - parseFloat(currentBattle["health"]);
+        let damage = 0;
+        if(burrito === "Player"){
+            let tmpBattle = (localStorage.getItem("tempColiseoBattle") != null) ? JSON.parse(localStorage.getItem("tempColiseoBattle")) : this.tmpBattle;
+            damage = parseFloat(tmpBattle["health"]) - parseFloat(this.currentBattle["health"]);
+        }else {
+            console.log(this.tmpMegaburrito);
+            console.log(this.megaburritoData);
+            damage = parseFloat(this.tmpMegaburrito["health"]) - parseFloat(this.megaburritoData["health"]);
+        }
         switch (accion) {
             case "Ataque1":
                 result = `${burrito}: \nHa realizado un ataque debil`; 
@@ -266,23 +286,27 @@ export class ColiseoBattle extends Phaser.Scene{
         this.load.spritesheet(`burrito_dano_Player`, `../src/images/Battle/${folderPlayer}/Dano.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_derrota_Player`, `../src/images/Battle/${folderPlayer}/Derrota.webp`, {frameWidth: 700, frameHeight: 512});
         this.load.spritesheet(`burrito_victoria_Player`, `../src/images/Battle/${folderPlayer}/Victoria.webp`, {frameWidth: 512, frameHeight: 512});
-        
+
         this.load.spritesheet("derrota", "../src/images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 });
 
         this.load.spritesheet("megaburrito_ataque1", "../src/images/Coliseo/Ataque 1.webp", { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("megaburrito_ataque2", "../src/images/Coliseo/Ataque 1.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("megaburrito_ataque2", "../src/images/Coliseo/Ataque 2.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("megaburrito_idle", "../src/images/Coliseo/Standby.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("megaburrito_defensa", "../src/images/Coliseo/Teleport.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("dano_defensa", "../src/images/Coliseo/Teleport.webp", { frameWidth: 1920, frameHeight: 1080 });
 
         this.load.once("complete", this.LoadBurritos, this);
         this.load.start();
     }
+    
     CreateMegaAnimations(){
-        this.anims.create({ key: `ataque1_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque1`, { frames: this.Range(0, 55)}), frameRate: 24, repeat: -1 });
-        this.anims.create({ key: `ataque2_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque2`, { frames: this.Range(0, 24)}), frameRate: 24, repeat: -1 });
         this.anims.create({ key: `idle_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_idle`, { frames: this.Range(0, 14)}), frameRate: 14, repeat: -1 });
-        //this.anims.create({ key: `defensa_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_defensa`, { frames: this.Range(0, 55)}), frameRate: 24, repeat: -1 });
+        this.anims.create({ key: `Ataque1_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque1`, { frames: this.Range(0, 54)}), frameRate: 24, repeat: 0 });
+        this.anims.create({ key: `Ataque2_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque2`, { frames: this.Range(0, 24)}), frameRate: 24, repeat: 0 });
+        this.anims.create({ key: `defensa_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_defensa`, { frames: this.Range(0, 19)}), frameRate: 24, repeat: 0 });
+        this.anims.create({ key: `dano_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_defensa`, { frames: this.Range(0, 19)}), frameRate: 24, repeat: 0 });
     }
     CreateAnimations(player){
         this.anims.create({ key: `idle_${player}`, frames: this.anims.generateFrameNumbers(`burrito_idle_${player}`, { frames: this.Range(0, 18)}), frameRate: 24, repeat: -1 });

@@ -73,7 +73,7 @@ export class ColiseoBattle extends Phaser.Scene {
 
         this.CreateMegaAnimations();
         this.megaburrito = this.add.sprite(this.game.config.width / 2, this.game.config.height / 2, ).setFlipX(false).setScale(1.25);
-        this.megaburrito.play("ataque2_mega");
+        this.megaburrito.play("idle_mega");
         
         let healthPlayer = parseFloat(this.currentBattle.health) / parseFloat(this.currentBattle.start_health);
         this.sliderPlayer = new Helpers.Slider(this.game.config.width / 2 - 550, 150, this, 1, this.currentBattle, false, true)
@@ -225,6 +225,7 @@ export class ColiseoBattle extends Phaser.Scene {
     CreateMegaAnimations(){
         this.anims.create({ key: `ataque1_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque1`, { frames: this.Range(0, 55)}), frameRate: 24, repeat: -1 });
         this.anims.create({ key: `ataque2_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque2`, { frames: this.Range(0, 55)}), frameRate: 24, repeat: -1 });
+        this.anims.create({ key: `idle_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_idle`, { frames: this.Range(0, 55)}), frameRate: 14, repeat: -1 });
         //this.anims.create({ key: `defensa_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_defensa`, { frames: this.Range(0, 55)}), frameRate: 24, repeat: -1 });
     }
     CreateAnimations(player){
@@ -252,6 +253,7 @@ export class ColiseoBattle extends Phaser.Scene {
         //megaburrito
         this.load.spritesheet("megaburrito_ataque1", "../src/images/Coliseo/Ataque 1.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("megaburrito_ataque2", "../src/images/Coliseo/Ataque 1.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("megaburrito_idle", "../src/images/Coliseo/Standby.webp", { frameWidth: 1920, frameHeight: 1080 });
         //this.load.spritesheet("megaburrito_ataque2", "../src/images/Coliseo/Cuerpo.webp", { frameWidth: 1920, frameHeight: 1080 });
         //this.load.spritesheet("megaburrito_defensa", "../src/images/Coliseo/Teleport.webp", { frameWidth: 1920, frameHeight: 1080 });
 

@@ -211,7 +211,6 @@ export class Slider{
         if(this.isCPU){
             components[6].setText("Salud: "+ (value*this.room.start_health_cpu).toFixed(2));
         }else{
-            console.log(this.room.health)
             components[6].setText("Salud: " + (value * (this.isIncursion ? this.room.health : this.room.start_health_player)).toFixed(2));
         }
         return this;
@@ -228,7 +227,7 @@ export class BossSlider{
         this.SliderResult.add(scene.add.sprite(84, -5, "slider_background_mega", 2).setOrigin(0.5));
     }
     SetValue(value){
-        this.fill.setCrop(0, 0, this.fill.width, this.fill.height * value);
+        this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
         return this;
     }
 }

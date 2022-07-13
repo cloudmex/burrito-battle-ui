@@ -6,7 +6,7 @@ import * as Pradera from "./Scenes/PraderaScene.js";
 import * as Battle from "./Scenes/BattleScene.js";
 import * as Establo from "./Scenes/EstabloScene.js";
 import * as Coliseo from "./Scenes/ColiseoScene.js";
-import * as ColiseoBattle from "./Scenes/ColiseoBattleScene2.js";
+import * as ColiseoBattle from "./Scenes/ColiseoBattleScene3.js";
 
 const connection = Connection.Connection;
 const mainMenu = MainMenu.MainMenu;

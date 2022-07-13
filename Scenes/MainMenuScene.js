@@ -16,6 +16,8 @@ class MainMenu extends Phaser.Scene{
     }
     async create(){
         this.loadingScreen = new Helpers.LoadingScreen(this);
+        this.add.image(0,0, "mainMenubackground").setOrigin(0);
+        this.add.image(50, 50, "logo1").setOrigin(0).setScale(0.75);
 
         if(localStorage.getItem("lastScene")) {
             this.scene.start(localStorage.getItem("lastScene"));
@@ -23,7 +25,8 @@ class MainMenu extends Phaser.Scene{
             await Near.GetInfoByURL(); 
             let isInBattle = await Near.IsInBattle();
             if(isInBattle){
-                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Existe una batalla pendiente", "Hay una batalla en curso y no podras hacer nada mas hasta que finalice la batalla, tambien puedes rendirte pero esto te costara una vida", "Seguir Peleando", "Rendirse\n(Esta desicion le costara una vida a tu burrito!!)")
+                await this.loadingScreen.OnComplete();
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Existe una batalla pendiente", "Hay una batalla en curso y no podras hacer nada mas hasta que finalice la batalla, tambien puedes rendirte pero esto te costara una vida", "Seguir Peleando", "Rendirse")
                 .then(async (result) =>{ 
                     if (result)
                         this.scene.start("Battle");
@@ -47,8 +50,6 @@ class MainMenu extends Phaser.Scene{
             }*/
         }
 
-        this.add.image(0,0, "mainMenubackground").setOrigin(0);
-        this.add.image(50, 50, "logo1").setOrigin(0).setScale(0.75);
         new Helpers.Button(this.sys.game.scale.gameSize.width -  200, 100, 0.5, "buttonContainer", Near.GetAccountId(), this, this.LogOut, null, {fontSize: 30, fontFamily: "BangersRegular"});
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 450,  100, 0.5, "buttonContainer", "Configuracion", this, () => {
             Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, "Configuracion", "Aqui puedes cambiar algunos aspectos de la aplicacion", "Idioma", "Sonido")
