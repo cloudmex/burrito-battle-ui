@@ -91,6 +91,14 @@ export class Coliseo extends Phaser.Scene{
             location.reload();
         }
         , null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, 
+        async()=>{ 
+            this.loadingScreen = new Helpers.LoadingScreen(this);
+            await Near.WithdrawBurritoOwner(); 
+            await this.loadingScreen.OnComplete();
+            location.reload();
+        }
+        , null, {fontSize: 30, fontFamily: "BangersRegular"});
         await this.loadingScreen.OnComplete();
         try{
             this.playerIncursion = await Near.GetPlayerIncursion();
@@ -139,20 +147,25 @@ export class Coliseo extends Phaser.Scene{
         });
     }
     async UseCard(burrito){
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Usar este burrito", `¿Quieres usar este burrito para la incursion? `, "Seleccionar", "Cancelar")
-        .then(async(result) =>{ 
-            if(result){
-                if(burrito.token_id == localStorage.getItem("burrito_selected"))
-                    localStorage.removeItem("burrito_selected");
-                
-                this.loadingScreen = new Helpers.LoadingScreen(this);
-                await Near.RegisterInIncursion(burrito.token_id);
-                this.incursion = await Near.GetActiveIncursion();
-                this.panelContainer.destroy();
-                this.CreatePanelIncursion();
-                await this.loadingScreen.OnComplete();
-            }
-        });
+        console.log(burrito);
+        if(burrito.hp === "0"){
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes usar este burrito", `Este burrito se ha quedado sin vida, utiliza algun otro burrito`, "Aceptar");
+        } else{
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Usar este burrito", `¿Quieres usar este burrito para la incursion? `, "Seleccionar", "Cancelar")
+            .then(async(result) =>{ 
+                if(result){
+                    if(burrito.token_id == localStorage.getItem("burrito_selected"))
+                        localStorage.removeItem("burrito_selected");
+                    
+                    this.loadingScreen = new Helpers.LoadingScreen(this);
+                    await Near.RegisterInIncursion(burrito.token_id);
+                    this.incursion = await Near.GetActiveIncursion();
+                    this.panelContainer.destroy();
+                    this.CreatePanelIncursion();
+                    await this.loadingScreen.OnComplete();
+                }
+            });
+        }
     }
     Navigate = async(nav) => {
         if(this.canNavigate){

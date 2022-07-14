@@ -87,11 +87,15 @@ export class ColiseoBattle extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
     }
     Animation(animPlayer, animCPU){
+        if(animCPU === "Ataque1" || animCPU === "Ataque2"){
+            setTimeout(()=>{
+                this.cameras.main.shake(1000, 0.02);}, 500);                
+        }
         this.burritoCPU.play(animCPU + "_mega").once('animationcomplete', () => {
-            console.log("temp: " + (this.tmpMegaburrito.health / this.tmpMegaburrito.start_health))
-            console.log("current: " + (this.megaburritoData.health / this.megaburritoData.start_health))
             this.slider_Mega.SetValue(this.megaburritoData.health / this.megaburritoData.start_health);
             this.AccionLog(this.megaburritoData.name, animCPU);
+            console.log(animCPU);
+            
             if(animCPU  !== "derrota"){
                 this.burritoCPU.play("idle_mega");
             } else
@@ -114,12 +118,12 @@ export class ColiseoBattle extends Phaser.Scene{
     Action = async(player, index) => {
         let tempBattle = this.currentBattle;
         localStorage.setItem("tempColiseoBattle", JSON.stringify(tempBattle));
-        let result = (await Near.BattlePlayerIncursion(this.ActionIndex(index, player))).room;
-        this.incursion = await Near.GetActiveBattleRoom();
-        //console.log(result);
-        this.currentBattle = result;
+        let result = (await Near.BattlePlayerIncursion(this.ActionIndex(index, player)));
+        this.incursion = result.incursion;
+        console.log(result);
+        this.currentBattle = result.room;
         this.tmpMegaburrito = this.megaburritoData;
-        this.megaburritoData = this.incursion.incursion.mega_burrito;
+        this.megaburritoData = result.incursion.mega_burrito
         let diff = this.Diff(this.currentBattle, tempBattle);
         this.DiffStatus(diff);
 
