@@ -28,7 +28,6 @@ export class ColiseoBattle extends Phaser.Scene{
         this.load.image("Coliseo_bg", "../src/images/Coliseo/Shader.png");
         this.load.image("Coliseo_gradas", "../src/images/Coliseo/Coliseo.png");
         this.load.image("Coliseo_ground", "../src/images/Coliseo/Base.png");
-        this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.webp", {frameWidth: 1920, frameHeight: 1080});
     }
     async create(){
         this.add.image(0, 0, "background").setOrigin(0);
@@ -296,6 +295,8 @@ export class ColiseoBattle extends Phaser.Scene{
     }
     loadSpriteSheet(folderPlayer, folderCPU){
         //images
+        this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.webp", {frameWidth: 1920, frameHeight: 1080});
+
         this.load.spritesheet(`burrito_idle_Player`, `../src/images/Battle/${folderPlayer}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_Player`, `../src/images/Battle/${folderPlayer}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque2_Player`, `../src/images/Battle/${folderPlayer}/Ataque_pesado.webp`, {frameWidth: 700, frameHeight: 512});

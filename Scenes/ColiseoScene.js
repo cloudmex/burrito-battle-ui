@@ -50,10 +50,8 @@ export class Coliseo extends Phaser.Scene{
         this.incursion = await Near.GetActiveIncursion();
         console.log(this.incursion);
         
-        //this.add.image(this.game.config.width / 2, this.game.config.height / 2, `coliseo_${this.incursion.status}`);
         if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
-            //new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 200, 1, "buttonContainer", "Obtener recompensas", this, this.GetRewards, null, {fontSize: 40, fontFamily: "BangersRegular"});
             new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
@@ -64,13 +62,11 @@ export class Coliseo extends Phaser.Scene{
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
             this.add.image(0, 0, "coliseo_destruido").setOrigin(0).setScale(1);
             let result = await Near.GetPlayerIncursion();
-            console.log(result.incursion.status);
             
             if(result.incursion.status !== "Null"){ //estas en alguna incursion
                 try{
                     let battleIncursion = await Near.GetActiveBattleRoom();
                     if(battleIncursion.room.health <= 0){
-                        console.log(battleIncursion);
                         await this.loadingScreen.OnComplete();
                         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito ha muerto", "Tu burrito ha muerto en la batalla asi que ya no puede continuar peleando.\nEspera a que finalice la batalla.", "Aceptar");
                     } else
