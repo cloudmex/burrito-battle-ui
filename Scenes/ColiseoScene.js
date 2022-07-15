@@ -63,7 +63,7 @@ export class Coliseo extends Phaser.Scene{
             this.add.image(0, 0, "coliseo_destruido").setOrigin(0).setScale(1);
             let result = await Near.GetPlayerIncursion();
             
-            if(result.incursion.status !== "Null"){ //estas en alguna incursion
+            if(result.player.burrito_owner !== ""){ //estas en alguna incursion
                 try{
                     let battleIncursion = await Near.GetActiveBattleRoom();
                     if(battleIncursion.room.health <= 0){
@@ -93,6 +93,7 @@ export class Coliseo extends Phaser.Scene{
         //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, async() => { this.loadingScreen = new Helpers.LoadingScreen(this); let result = await Near.WithdrawBurritoOwner(); await this.loadingScreen.OnComplete(); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         await this.loadingScreen.OnComplete();
         this.playerIncursion = await Near.GetPlayerIncursion();
+        console.log(this.playerIncursion);
         if(this.playerIncursion.player.burrito_id != null && parseInt(this.playerIncursion.incursion.finish_time).toString().substring(0,13) < parseInt(Date.now())){
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
             .then(async (result) =>{ 
