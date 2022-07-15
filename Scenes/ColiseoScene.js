@@ -41,6 +41,7 @@ export class Coliseo extends Phaser.Scene{
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
 
         this.load.spritesheet("burritos_heads", "../src/images/Battle/Burritos.png", {frameWidth: 200, frameHeight: 268});
+        this.load.spritesheet("cofre", "../src/images/Minar Burrito/Cofre_abierto.webp", {frameWidth: 1920, frameHeight: 1080})
 
         this.load.image("cerrar", "../src/images/cerrar.png");
     }
@@ -52,12 +53,14 @@ export class Coliseo extends Phaser.Scene{
         //this.add.image(this.game.config.width / 2, this.game.config.height / 2, `coliseo_${this.incursion.status}`);
         if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
+            //new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 200, 1, "buttonContainer", "Obtener recompensas", this, this.GetRewards, null, {fontSize: 40, fontFamily: "BangersRegular"});
             new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
             await this.loadingScreen.OnComplete();
-            Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "El coliseo esta en reconstruccíon", "El coliso sufrio mucho daño en la ultima incursion asi que esta en reconstruccion para la siguiente incursion", "Aceptar");
-
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "El coliseo esta en reconstruccíon", "El coliso sufrio mucho daño en la ultima incursion asi que esta en reconstruccion para la siguiente incursion", "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
+            .then(async (result) =>{ if(result) this.GetRewards(); });
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
             this.add.image(0, 0, "coliseo_destruido").setOrigin(0).setScale(1);
             let result = await Near.GetPlayerIncursion();
@@ -69,7 +72,7 @@ export class Coliseo extends Phaser.Scene{
                     if(battleIncursion.room.health <= 0){
                         console.log(battleIncursion);
                         await this.loadingScreen.OnComplete();
-                        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito ha muerto", "Tu burrito ha muerto en la batalla asi que ya no puede continuar peleando", "Aceptar");
+                        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito ha muerto", "Tu burrito ha muerto en la batalla asi que ya no puede continuar peleando.\nEspera a que finalice la batalla.", "Aceptar");
                     } else
                         this.scene.start("ColiseoBattle");
                 } catch{
@@ -91,14 +94,7 @@ export class Coliseo extends Phaser.Scene{
             location.reload();
         }
         , null, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, 
-        async()=>{ 
-            this.loadingScreen = new Helpers.LoadingScreen(this);
-            await Near.WithdrawBurritoOwner(); 
-            await this.loadingScreen.OnComplete();
-            location.reload();
-        }
-        , null, {fontSize: 30, fontFamily: "BangersRegular"});
+        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, async() => { this.loadingScreen = new Helpers.LoadingScreen(this); let result = await Near.WithdrawBurritoOwner(); await this.loadingScreen.OnComplete(); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         await this.loadingScreen.OnComplete();
         try{
             this.playerIncursion = await Near.GetPlayerIncursion();
@@ -108,11 +104,48 @@ export class Coliseo extends Phaser.Scene{
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
             .then(async (result) =>{ 
                 if(result){
-                       
+                    this.loadingScreen = new Helpers.LoadingScreen(this);
+                    this.GetRewards();
+                    await this.loadingScreen.OnComplete();
+                    //reproducir animacion de entrega de premios
                 }
             });
         }
     }
+    GetRewards = async() =>{
+        this.canNavigate = false;
+        this.loadingScreen = new Helpers.LoadingScreen(this);
+        let result = await Near.WithdrawBurritoOwner(); 
+        await this.loadingScreen.OnComplete();
+        //let result = { complete: true, win: "Players", msg: "Vencieron al mega burrito", rewards: 520000 }
+        if(result.complete){
+            if(result.win == "MegaBurrito")
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Perdedores", "El megaburrito ha ganado la incursion, suerte para la proxima", "Aceptar");
+            else if(result.win == "Players")
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Ganadores", "Los participantes han derrotado al megaburrito, presiona aceptar para reclamar tu recompensa.", "Aceptar").then((r) => { if(r) this.GetTokens(result.rewards) });
+        } else{ 
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No hay incursion activa", "No se puede realizar el proceso ya que no hay ninguna incursion activa", "Aceptar");
+        }
+    }
+    async GetTokens (tokens) {
+        let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
+        animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
+        this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });
+        this.anims.create({ key: "cofreAnim", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(39, 58) }), frameRate: 24, repeat: 8 });
+        this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
+        this.cofreAnimation.play("cofreAnimIn")
+        .once('animationcomplete', () => { 
+            animContainer.add(this.add.text(0, -350, "Obtuviste", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+            animContainer.add(this.add.text(0,  400, `${tokens} $STRW`, {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+            this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
+                this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', async () => {
+                    animContainer.destroy();
+                    this.canNavigate = true;
+                })
+            })
+        });
+    }
+    Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
     BackToPradera = () =>{ 
         clearInterval(this.counterInterval); 
         this.scene.start("Pradera"); 
@@ -121,6 +154,7 @@ export class Coliseo extends Phaser.Scene{
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Iniciar nueva incursion", "Una incursion en un evento donde los jugadores pueden unirse para combatir a un burrito de mayor poder y ganar recompensas.\n¿Quieres iniciar una nueva incursion?", "Iniciar Incursion", "Cancelar")
         .then(async (result) =>{ 
             if(result){
+                localStorage.setItem("lastScene", "Coliseo");
                 this.loadingScreen = new Helpers.LoadingScreen(this);
                 await Near.CreateIncursion();
                 await this.loadingScreen.OnComplete();
@@ -196,17 +230,6 @@ export class Coliseo extends Phaser.Scene{
         } else{
             incursionContainer.add(this.add.text(200, 0, "Ya estás registrado en la incursión \n¡Espera a que inicie!!", {fontSize: 30, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
         }
-
-        /*let playersTest = [
-            { burrito_id: "18", burrito_owner: "algunNombre1.testnet" },
-            { burrito_id: "19", burrito_owner: "algunNombre2.testnet" },
-            { burrito_id: "17", burrito_owner: "algunNombre3.testnet" },
-            { burrito_id: "6", burrito_owner: "algunNombre4.testnet" },
-            { burrito_id: "15", burrito_owner: "algunNombre5.testnet" },
-            { burrito_id: "1", burrito_owner: "algunNombre6.testnet" },
-            { burrito_id: "31", burrito_owner: "algunNombre7.testnet" },
-            { burrito_id: "31", burrito_owner: "algunNombre8.testnet" },
-        ];*/
         let playersTest = this.incursion.players;
         playersTest.forEach(async(player, i) => {
             let burrito = await Near.GetNFTToken(player.burrito_id);
@@ -252,6 +275,7 @@ export class Coliseo extends Phaser.Scene{
 
             
         if(remainToBuy < timeNow){
+            localStorage.setItem("lastScene", "Coliseo");
             location.reload();
         }
     }

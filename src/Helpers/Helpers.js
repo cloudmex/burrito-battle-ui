@@ -223,8 +223,8 @@ export class BossSlider{
 
         //this.SliderResult.add(scene.add.sprite(0, 0, "slider_background").setOrigin(0.5));
         this.SliderResult.add(scene.add.sprite(84, -5, "slider_background_mega", 0).setOrigin(0.5));
-        this.SliderResult.add(this.fill = scene.add.sprite(84, -5, "slider_background_mega", 1).setOrigin(0.5));
-        this.SliderResult.add(scene.add.sprite(84, -5, "slider_background_mega", 2).setOrigin(0.5));
+        this.SliderResult.add(this.fill = scene.add.sprite(84, -5, "slider_background_mega", 1).setOrigin(0.5).setScale(0.9));
+        this.SliderResult.add(scene.add.sprite(84, -5, "slider_background_mega", 2).setOrigin(0.5).setScale(0.9));
     }
     SetValue(value){
         this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
