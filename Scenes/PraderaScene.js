@@ -123,6 +123,7 @@ export class Pradera extends Phaser.Scene{
 
         this.physics.world.setBounds(0,0,this.background.displayWidth, this.background.displayHeight, true, true, true, true);
         this.camera = this.cameras.main;
+        this.camera.setBounds(0, 0, this.background.displayWidth, this.background.displayHeight);
 
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
@@ -196,7 +197,7 @@ export class Pradera extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
     }
     update(){        
-        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.Cursors == null || this.burrito.body == null || Helpers.Alert.isAlert || this.silo == null || this.camera == null) return;
+        if(localStorage.getItem("burrito_selected")  == null || this.burrito == null || this.Cursors == null || this.burrito.body == null || Helpers.Alert.isAlert || this.silo == null) return;
 
         this.TouchingZone(this.hudBurritoZone, "overlapHudBurritoStart", "overlapHudBurritoEnd");
         this.TouchingZone(this.hudTokensZone, "overlapHudTokensStart", "overlapHudTokensEnd");
@@ -214,7 +215,7 @@ export class Pradera extends Phaser.Scene{
             this.footStepsSFX.setMute(true); 
         }
         this.keyboardMovement();
-        this.camera.setBounds(0, 0, this.background.displayWidth, this.background.displayHeight);
+        //this.camera.setBounds(0, 0, this.background.displayWidth, this.background.displayHeight);
     }
 
     ShowAlert = async(title, description, scene) => {
