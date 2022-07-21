@@ -31,6 +31,7 @@ export class Pradera extends Phaser.Scene{
         this.load.spritesheet("nubes", "../src/images/Pradera/Nubes.webp", {frameWidth: 1920, frameHeight: 1080});
         this.load.spritesheet("coliseoIncursionWait", "../src/images/Pradera/Coliseo_inicio.webp", {frameWidth: 640, frameHeight: 640});
         this.load.spritesheet("coliseo", "../src/images/Pradera/Coliseo.webp", {frameWidth: 259, frameHeight: 256});
+        this.load.spritesheet("engrane", "../src/images/Engranajes.webp",{ frameWidth: 500, frameHeight:  468});
 
         this.load.image("buttonContainer3", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
@@ -131,6 +132,7 @@ export class Pradera extends Phaser.Scene{
         this.burrito.play("walkRight");
 
         this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
+        new Helpers.SettingsButton(1850, 60, this, 0.25, null, null);
 
         this.hudBurrito = new Helpers.BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
 

@@ -8,6 +8,7 @@ class MainMenu extends Phaser.Scene{
     preload(){
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
+        this.load.spritesheet("engrane", "../src/images/Engranajes.webp",{ frameWidth: 500, frameHeight:  468});
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("mainMenubackground", "../src/images/mainMenu_Background.png");
         this.load.image("logo1", "../src/images/Logo.png");
@@ -50,8 +51,9 @@ class MainMenu extends Phaser.Scene{
             }*/
         }
 
-        new Helpers.Button(this.sys.game.scale.gameSize.width -  200, 100, 0.5, "buttonContainer", Near.GetAccountId(), this, this.LogOut, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 450,  100, 0.5, "buttonContainer", "Configuracion", this, () => {
+        new Helpers.Button(this.sys.game.scale.gameSize.width -  290, 70, 0.5, "buttonContainer", Near.GetAccountId(), this, this.LogOut, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.SettingsButton(1850, 60, this, 0.25, null, null);
+        /*new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 450,  100, 0.5, "buttonContainer", "Configuracion", this, () => {
             Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, "Configuracion", "Aqui puedes cambiar algunos aspectos de la aplicacion", "Idioma", "Sonido")
             .then((result) => {
                 if(result) {
@@ -59,7 +61,7 @@ class MainMenu extends Phaser.Scene{
             }else{
                 
             }});
-         }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+         }, null, {fontSize: 30, fontFamily: "BangersRegular"});*/
 
         new Helpers.Button(450, 600, 0.75, "buttonContainer", "Minar Burrito", this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer", "Pradera", this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
