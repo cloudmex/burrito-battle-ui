@@ -46,7 +46,7 @@ const contract_PVEBattle = new Contract(wallet.account(), contract_id_PVEBattle,
     sender: wallet.account()
 });
 const contract_incursion = new Contract(wallet.account(), contract_id_incursion, {
-    viewMethods: ["get_active_incursion", "is_in_battle_incursion"],
+    viewMethods: ["get_active_incursion", "is_in_battle_incursion", "can_withdraw_burrito", "burritos_incursion_info"],
     changeMethods: ["create_incursion", "delete_all_incursions", "start_active_incursion", "finish_active_incursion", "withdraw_burrito_owner", "create_battle_room", "get_active_battle_room", "get_player_incursion", "battle_player_incursion"],
     sender: wallet.account()
 });
@@ -156,6 +156,7 @@ export async function NFTTokensForOwner(from, limit){
 }
 export async function GetNFTToken(index){
     let burritoJson = await NFTTokens(index);
+    console.log(burritoJson);
     let burritoPlayer = JSON.parse(burritoJson.metadata.extra.replace(/'/g, '"'));
     burritoPlayer["media"] = burritoJson.metadata.media;
     burritoPlayer["name"] = burritoJson.metadata.title;
@@ -333,6 +334,10 @@ export async function RegisterInIncursion(token_id, incursion_id = 1){
     );
     return result;
 }
+export async function CanWithdrawBurrito(){
+    let result = await contract_incursion.can_withdraw_burrito({account_id: GetAccountId()});
+    return result;
+}
 export async function WithdrawBurritoOwner(token_id){
     let result = await contract_incursion.withdraw_burrito_owner({}, 300000000000000, "1");
     return result;
@@ -352,4 +357,8 @@ export async function GetActiveBattleRoom(){
 export async function BattlePlayerIncursion(type_move){
     let result = await contract_incursion.battle_player_incursion({ type_move: type_move }, 300000000000000);
     return result;
-} 
+}
+export async function BurritosIncursionInfo(incursion_id){
+    let result = await contract_incursion.burritos_incursion_info({ incursion_id: incursion_id });
+    return result;
+}

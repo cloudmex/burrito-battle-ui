@@ -217,7 +217,7 @@ export class Slider{
     }
 }
 export class BossSlider{
-    constructor(x, y, scene, battle){
+    constructor(x, y, scene){
         this.scene = scene;
         this.SliderResult = scene.add.container(x, y).setScrollFactor(0);
 
@@ -226,9 +226,16 @@ export class BossSlider{
         this.SliderResult.add(this.fill = scene.add.sprite(84, -5, "slider_background_mega", 1).setOrigin(0.5).setScale(0.9));
         this.SliderResult.add(scene.add.sprite(84, -5, "slider_background_mega", 2).setOrigin(0.5).setScale(0.9));
     }
+    SetScale(value){
+        this.SliderResult.setScale(value);
+        return this;
+    }
     SetValue(value){
         this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
         return this;
+    }
+    GetComponent(){
+        return this.SliderResult;
     }
 }
 export class Actions{
@@ -453,7 +460,7 @@ export class TokenHud{
     }
 }
 export class BattleEnd{
-    constructor(x, y, scene, isVictoria, STRWTokens){
+    constructor(x, y, scene, isVictoria, STRWTokens, isIncursion = false){
         this.resultUI = scene.add.container(x, y);
         scene.anims.create({ key: "backgroundAnim", frames: scene.anims.generateFrameNumbers("background_animation", { frames: [0, 1, 2, 3] }), frameRate: 24, repeat: 0 });
         this.resultUI.add(this.backgroundAnimation = scene.add.sprite(0, 0));
@@ -463,9 +470,10 @@ export class BattleEnd{
         this.resultUI.add(this.animation = scene.add.sprite(0, 0));
         this.animation.play("finishAnim");
         setTimeout(() => {
-            this.resultUI.add(scene.add.text(245, 390, `+${STRWTokens}`, {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
-            this.resultUI.add(scene.add.text(-255, 390, isVictoria ? "+1" : "-1", {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
-
+            if(isIncursion){
+                this.resultUI.add(scene.add.text(245, 390, `+${STRWTokens}`, {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
+                this.resultUI.add(scene.add.text(-255, 390, isVictoria ? "+1" : "-1", {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
+            }
             this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
             this.burrito.play(isVictoria ? "victoria_Player" : "derrota_Player");
         }, 1000);

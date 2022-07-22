@@ -165,7 +165,7 @@ export class Pradera extends Phaser.Scene{
 
         this.establo = this.add.zone(255, 510, 140, 120);
         this.physics.world.enable(this.establo);
-        this.physics.add.overlap(this.establo, this.burrito, ()=> { this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel.", "MinarBurrito") });
+        this.physics.add.overlap(this.establo, this.burrito, ()=> { this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel.", "Establo") });
 
         this.hudBurritoZone = this.add.zone(0, 1080, 790, 600);
         this.physics.world.enable(this.hudBurritoZone);

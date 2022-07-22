@@ -27,7 +27,14 @@ export class Coliseo extends Phaser.Scene{
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("alert_small", "../src/images/Informacion_small.png");
-        
+
+        this.load.image("cerrar", "../src/images/cerrar.png");
+    }
+
+    create(){
+        this.loadSpritesheet();
+    }
+    loadSpritesheet(){
         this.load.image("seleccion_panel", "../src/images/Coliseo/Seleccion.png");
         this.load.image("informacion_incursion", "../src/images/Coliseo/Informacion_incursion.png");
         this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");
@@ -39,14 +46,14 @@ export class Coliseo extends Phaser.Scene{
         this.load.image("burrito_muerto", "../src/images/Establo/gravestone.png");
         this.load.image("left_arrow", "../src/images/Establo/left_arrow.png");
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
+        this.load.spritesheet("slider_background_mega", "../src/images/Coliseo/Barra_jefe.png", {frameHeight: 211, frameWidth: 799})
 
         this.load.spritesheet("burritos_heads", "../src/images/Battle/Burritos.png", {frameWidth: 200, frameHeight: 268});
         this.load.spritesheet("cofre", "../src/images/Minar Burrito/Cofre_abierto.webp", {frameWidth: 1920, frameHeight: 1080})
-
-        this.load.image("cerrar", "../src/images/cerrar.png");
+        this.load.once("complete", this.Start, this);
+        this.load.start();
     }
-
-    async create(){
+    async Start(){
         this.incursion = await Near.GetActiveIncursion();
         console.log(this.incursion);
         
@@ -57,8 +64,21 @@ export class Coliseo extends Phaser.Scene{
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
             await this.loadingScreen.OnComplete();
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "El coliseo esta en reconstruccíon", "El coliso sufrio mucho daño en la ultima incursion asi que esta en reconstruccion para la siguiente incursion", "Aceptar");
-            //await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
-            //.then(async (result) =>{ if(result) this.GetRewards(); });
+            /*esto no debe ir aqui */
+            //this.CreateIncursionInfo();
+            this.loadingScreen = new Helpers.LoadingScreen(this);
+            let playerIncursion = await Near.GetPlayerIncursion();
+            let canWithdrawBurrito = await Near.CanWithdrawBurrito();
+            await this.loadingScreen.OnComplete();
+            console.log(canWithdrawBurrito)
+            if(playerIncursion.player.burrito_id != null && parseInt(playerIncursion.incursion.finish_time).toString().substring(0,13) < parseInt(Date.now()) && canWithdrawBurrito){
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
+                .then(async (result) =>{ 
+                    if(result){
+                        this.GetRewards();
+                    }
+                });
+            }
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
             this.add.image(0, 0, "coliseo_destruido").setOrigin(0).setScale(1);
             let result = await Near.GetPlayerIncursion();
@@ -69,6 +89,8 @@ export class Coliseo extends Phaser.Scene{
                     if(battleIncursion.room.health <= 0){
                         await this.loadingScreen.OnComplete();
                         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito ha muerto", "Tu burrito ha muerto en la batalla asi que ya no puede continuar peleando.\nEspera a que finalice la batalla.", "Aceptar");
+                    
+                        this.CreateIncursionInfo();
                     } else
                         this.scene.start("ColiseoBattle");
                 } catch{
@@ -90,29 +112,16 @@ export class Coliseo extends Phaser.Scene{
             location.reload();
         }
         , null, {fontSize: 30, fontFamily: "BangersRegular"});
-        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, async() => { this.loadingScreen = new Helpers.LoadingScreen(this); let result = await Near.WithdrawBurritoOwner(); await this.loadingScreen.OnComplete(); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, async() => { this.loadingScreen = new Helpers.LoadingScreen(this); let result = await Near.WithdrawBurritoOwner(); await this.loadingScreen.OnComplete(); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         await this.loadingScreen.OnComplete();
-        this.playerIncursion = await Near.GetPlayerIncursion();
-        console.log(this.playerIncursion);
-        if(this.playerIncursion.player.burrito_id != null && parseInt(this.playerIncursion.incursion.finish_time).toString().substring(0,13) < parseInt(Date.now())){
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
-            .then(async (result) =>{ 
-                if(result){
-                    this.loadingScreen = new Helpers.LoadingScreen(this);
-                    this.GetRewards();
-                    await this.loadingScreen.OnComplete();
-                    //reproducir animacion de entrega de premios
-                }
-            });
-        }
-        
+        //this.GetRewards();
     }
     GetRewards = async() =>{
         this.canNavigate = false;
         this.loadingScreen = new Helpers.LoadingScreen(this);
         let result = await Near.WithdrawBurritoOwner(); 
-        await this.loadingScreen.OnComplete();
         //let result = { complete: true, win: "Players", msg: "Vencieron al mega burrito", rewards: 520000 }
+        await this.loadingScreen.OnComplete();
         if(result.complete){
             if(result.win == "MegaBurrito")
                 await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Perdedores", "El megaburrito ha ganado la incursion, suerte para la proxima", "Aceptar");
@@ -122,7 +131,7 @@ export class Coliseo extends Phaser.Scene{
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No hay incursion activa", "No se puede realizar el proceso ya que no hay ninguna incursion activa", "Aceptar");
         }
     }
-    async GetTokens (tokens) {
+    GetTokens (tokens) {
         let animContainer = this.add.container(this.game.config.width/2, this.game.config.height / 2).setScrollFactor(0);
         animContainer.add(this.cofreAnimation = this.add.sprite(0, 0));
         this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });
@@ -133,7 +142,7 @@ export class Coliseo extends Phaser.Scene{
             animContainer.add(this.add.text(0, -350, "Obtuviste", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
             animContainer.add(this.add.text(0,  400, `${tokens} $STRW`, {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
             this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
-                this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', async () => {
+                this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', () => {
                     animContainer.destroy();
                     this.canNavigate = true;
                 })
@@ -207,6 +216,81 @@ export class Coliseo extends Phaser.Scene{
             }
         }
     }
+    async CreateIncursionInfo(){
+        let incursion = await Near.GetPlayerIncursion();
+        console.log(incursion)
+        /*{
+            id: 1,
+            status: "WaitingPlayers",
+            create_time: 1658268241826193400,
+            start_time: 1658268301826193400,
+            finish_time: 1658268601826193400,
+            players_number: 10,
+            registered_players: 1,
+            win: "",
+            mega_burrito: {
+                name: "Cerberus",
+                burrito_type: "Fuego",
+                start_health: "100",
+                health: "77.96",
+                attack: "15",
+                defense: "15",
+                speed: "15",
+                level: "40"
+            },
+            players: [
+                {
+                    burrito_id: "118",
+                    burrito_owner: "jesusrobles.testnet"
+                }
+            ],
+            rewards: 120000
+        }*/
+        let mega = incursion.incursion.mega_burrito;
+        console.log(mega)
+        let info = await Near.BurritosIncursionInfo(incursion.incursion.id);
+        console.log(info)
+        /*[
+            {
+                "player_name": "jesusrobles.testnet",
+                "media": "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk",
+                "is_alive": false
+            },
+            {
+                "player_name": "pepeP2.testnet",
+                "media": "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D",
+                "is_alive": false
+            },
+            {
+                "player_name": "benitoCamela.testnet",
+                "media": "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq",
+                "is_alive": true
+            },
+            {
+                "player_name": "juanchoTalarga.testnet",
+                "media": "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6",
+                "is_alive": true
+            }
+        ]*/
+        mega.hp = mega.win /*= mega.attack = mega.defense = mega.level = mega.speed*/ = "?";
+        mega.cards = "mega_cards"
+        let incursionContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2 ).setScale(0.75);
+        incursionContainer.add(this.add.image(0, 0, "informacion_incursion"));
+        incursionContainer.add(new Helpers.Card(- 280, - 100, mega, this, false, false, false, false).setScale(.45).GetComponents());
+        incursionContainer.add(this.countDownInfoText = this.add.text(200, -200, "La incursion finaliza en\n00:00:00", {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
+        incursionContainer.add(new Helpers.BossSlider(175, 70, this).SetValue(mega.health / mega.start_health).SetScale(0.6).GetComponent());
+        info.forEach(async(player, i) => {
+            let ownerOffset = {x: 0, y:35}
+            incursionContainer.add(this.add.sprite(-300+ (150 * (i % 5)), 265 + (130 * Math.floor(i / 5)), player.is_alive ? "burritos_heads" : "burrito_muerto", this.burritoMediaToSkinHead(player.media))
+            .setOrigin(0.5).setScale(player.is_alive ? 0.55 : 0.2).setInteractive()
+            .on("pointerover", (pointer)=>{ incursionContainer.add(this.playerNameText = this.add.text((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2, player.player_name, {fontSize: 18, fontFamily: "BangersRegular", align: "center", strokeThickness:5, stroke: "#000"}).setOrigin(0.5).setDepth(2)); })
+            .on("pointermove", (pointer) => { this.playerNameText?.setPosition((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2)})
+            .on("pointerout", ()=>{this.playerNameText?.destroy();})
+        );});
+        
+        let result = incursion.incursion.finish_time.toString();
+        this.counterInterval = setInterval(() => {this.ContdownInfo(result == 0 ? result : parseInt(result.substring(0, result.length - 6))) }, 1000);
+    }
     CreatePanelIncursion(){
         let mega = this.incursion.mega_burrito;
         mega.hp = mega.win = mega.attack = mega.defense = mega.level = mega.speed = "?";
@@ -268,7 +352,20 @@ export class Coliseo extends Phaser.Scene{
             this.countDownText?.setText(`La incursion inicia en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
         }
 
-            
+        if(remainToBuy < timeNow){
+            localStorage.setItem("lastScene", "Coliseo");
+            location.reload();
+        }
+    }
+    async ContdownInfo(remainToBuy) {
+        let timeNow = Date.now();
+        let time = Math.abs(timeNow - remainToBuy) / 36e5;
+        let hour = time;
+        let minutes = (hour % 1) * 60;
+        let seconds = (minutes % 1) * 60;
+        if(remainToBuy != 0)
+            this.countDownInfoText?.setText(`La incursion inicia en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+        
         if(remainToBuy < timeNow){
             localStorage.setItem("lastScene", "Coliseo");
             location.reload();
