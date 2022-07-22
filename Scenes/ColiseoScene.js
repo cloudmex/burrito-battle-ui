@@ -56,7 +56,6 @@ export class Coliseo extends Phaser.Scene{
     async Start(){
         this.incursion = await Near.GetActiveIncursion();
         console.log(this.incursion);
-        console.log(this.incursion.mega_burrito.health);
         if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
             new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"});
@@ -70,7 +69,6 @@ export class Coliseo extends Phaser.Scene{
             let playerIncursion = await Near.GetPlayerIncursion();
             let canWithdrawBurrito = await Near.CanWithdrawBurrito();
             await this.loadingScreen.OnComplete();
-            console.log(canWithdrawBurrito)
             if(playerIncursion.player.burrito_id != null && parseInt(playerIncursion.incursion.finish_time).toString().substring(0,13) < parseInt(Date.now()) && canWithdrawBurrito){
                 await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
                 .then(async (result) =>{ 
@@ -187,7 +185,6 @@ export class Coliseo extends Phaser.Scene{
         });
     }
     async UseCard(burrito){
-        console.log(burrito);
         if(burrito.hp === "0"){
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes usar este burrito", `Este burrito se ha quedado sin vida, utiliza algun otro burrito`, "Aceptar");
         } else{
@@ -249,9 +246,7 @@ export class Coliseo extends Phaser.Scene{
             rewards: 120000
         }*/
         let mega = incursion.incursion.mega_burrito;
-        console.log(mega)
         let info = await Near.BurritosIncursionInfo(incursion.incursion.id);
-        console.log(info)
         /*[
             {
                 "player_name": "jesusrobles.testnet",
@@ -366,7 +361,7 @@ export class Coliseo extends Phaser.Scene{
         let minutes = (hour % 1) * 60;
         let seconds = (minutes % 1) * 60;
         if(remainToBuy != 0)
-            this.countDownInfoText?.setText(`La incursion inicia en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+            this.countDownInfoText?.setText(`La incursion finaliza en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
         
         if(remainToBuy < timeNow){
             localStorage.setItem("lastScene", "Coliseo");
