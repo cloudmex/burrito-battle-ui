@@ -466,11 +466,13 @@ export class BattleEnd{
         this.resultUI.add(this.backgroundAnimation = scene.add.sprite(0, 0));
         this.backgroundAnimation.play("backgroundAnim");
 
-        scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers( isVictoria ? "victoria" : "derrota", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
-        this.resultUI.add(this.animation = scene.add.sprite(0, 0));
-        this.animation.play("finishAnim");
+        if(isVictoria){
+            scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers( isVictoria ? "victoria" : "derrota", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
+            this.resultUI.add(this.animation = scene.add.sprite(0, 0));
+            this.animation.play("finishAnim");
+        }
         setTimeout(() => {
-            if(isIncursion){
+            if(!isIncursion){
                 this.resultUI.add(scene.add.text(245, 390, `+${STRWTokens}`, {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
                 this.resultUI.add(scene.add.text(-255, 390, isVictoria ? "+1" : "-1", {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
             }

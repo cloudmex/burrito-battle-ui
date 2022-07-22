@@ -52,7 +52,6 @@ export class ColiseoBattle extends Phaser.Scene{
         if(!(await Near.IsInBattleIncursion()))
             await Near.CreateBattleRoom();
         this.incursion = await Near.GetActiveBattleRoom();
-        console.log(this.incursion)
         this.currentBattle = this.incursion.room;
         this.tmpMegaburrito = this.megaburritoData;
         this.megaburritoData = this.incursion.incursion.mega_burrito;
@@ -157,7 +156,6 @@ export class ColiseoBattle extends Phaser.Scene{
         localStorage.setItem("tempColiseoBattle", JSON.stringify(tempBattle));
         let result = (await Near.BattlePlayerIncursion(this.ActionIndex(index, player)));
         this.incursion = result.incursion;
-        console.log(result);
         this.currentBattle = result.room;
         this.tmpMegaburrito = this.megaburritoData;
         this.megaburritoData = result.incursion.mega_burrito
@@ -222,11 +220,13 @@ export class ColiseoBattle extends Phaser.Scene{
         let result = "";
         let damage = 0;
         if(burrito === "Player"){
-            let tmpBattle = (localStorage.getItem("tempColiseoBattle") != null) ? JSON.parse(localStorage.getItem("tempColiseoBattle")) : this.tmpBattle;
-            damage = parseFloat(tmpBattle["health"]) - parseFloat(this.currentBattle["health"]);
+            try{
+                let tmpBattle = (localStorage.getItem("tempColiseoBattle") != null) ? JSON.parse(localStorage.getItem("tempColiseoBattle")) : this.tmpBattle;
+                damage = parseFloat(tmpBattle["health"]) - parseFloat(this.currentBattle["health"]);
+            } catch{
+                console.log("No se puede obtener la batalla");
+            }
         }else {
-            console.log(this.tmpMegaburrito);
-            console.log(this.megaburritoData);
             damage = parseFloat(this.tmpMegaburrito["health"]) - parseFloat(this.megaburritoData["health"]);
         }
         switch (accion) {
