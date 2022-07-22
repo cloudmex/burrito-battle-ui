@@ -540,3 +540,39 @@ export class Incursion{
         this.incursionResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
     }
 }
+
+export class SettingsButton{
+    constructor(x, y, scene, scale, downCallback, upCallback){
+        this.x = x;
+        this.y = y;
+        this.scene = scene;
+        this.scale = scale;
+        this.settingsButtonResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
+        this.button = scene.add.image(0, 0 ,"engrane", 0).setInteractive()
+        .on("pointerdown", ()=>{ this.PointerDown(downCallback);})
+        .on("pointerup", () => { this.PointerUp(upCallback); })
+        .on('pointerover', this.PointerOver)
+        .on("pointerout", this.PointerOut);
+        this.settingsButtonResult.add(this.button);
+    }
+
+    GetComponents(){
+        return this.buttonResult;
+    }
+    PointerDown(downCallback){
+        if(downCallback !== null){
+            downCallback();
+        }
+    }
+    PointerUp(upCallback){
+        if(upCallback !== null){
+            upCallback();
+        }
+    }
+   PointerOver = () => {
+        this.button.setTint (0xaaaaaa);
+    }
+    PointerOut = () => {
+        this.button.setTint (0xffffff);
+    }
+}
