@@ -78,6 +78,7 @@ export class Coliseo extends Phaser.Scene{
                         this.GetRewards();
                     }
                 });
+            } else {
             }
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
             this.add.image(0, 0, "coliseo_destruido").setOrigin(0).setScale(1);
@@ -96,8 +97,9 @@ export class Coliseo extends Phaser.Scene{
                 } catch{
                     this.scene.start("ColiseoBattle");
                 }
+
             }else
-                console.log("hay una incursion activa");
+                this.CreateIncursionInfo();
         }else{
             this.add.image(0, 0, "coliseo_inicio").setOrigin(0).setScale(1);
             this.CreatePanelIncursion();
