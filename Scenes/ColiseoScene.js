@@ -102,7 +102,7 @@ export class Coliseo extends Phaser.Scene{
             this.add.image(0, 0, "coliseo_inicio").setOrigin(0).setScale(1);
             this.CreatePanelIncursion();
         }
-        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", "Pradera", this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", "Pradera", this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
         //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
         /*async()=>{ 
             this.loadingScreen = new Helpers.LoadingScreen(this);
@@ -112,7 +112,7 @@ export class Coliseo extends Phaser.Scene{
             location.reload();
         }
         , null, {fontSize: 30, fontFamily: "BangersRegular"});*/
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, async() => { this.loadingScreen = new Helpers.LoadingScreen(this); let result = await Near.WithdrawBurritoOwner(); await this.loadingScreen.OnComplete(); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, async() => { this.loadingScreen = new Helpers.LoadingScreen(this); let result = await Near.WithdrawBurritoOwner(); await this.loadingScreen.OnComplete(); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         await this.loadingScreen.OnComplete();
         //this.GetRewards();
     }
