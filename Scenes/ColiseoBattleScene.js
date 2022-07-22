@@ -333,8 +333,8 @@ export class ColiseoBattle extends Phaser.Scene{
         this.load.spritesheet(`burrito_derrota_Player`, `../src/images/Battle/${folderPlayer}/Derrota.webp`, {frameWidth: 700, frameHeight: 512});
         this.load.spritesheet(`burrito_victoria_Player`, `../src/images/Battle/${folderPlayer}/Victoria.webp`, {frameWidth: 512, frameHeight: 512});
 
-        this.load.spritesheet("derrota", "../src/images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("derrota", "../src/images/Coliseo/Derrota incursion.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("victoria", "../src/images/Coliseo/Victoria Incursión.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 });
 
         this.load.spritesheet("megaburrito_ataque1", "../src/images/Coliseo/Ataque 1.webp", { frameWidth: 1920, frameHeight: 1080 });
