@@ -56,7 +56,7 @@ export class Coliseo extends Phaser.Scene{
     async Start(){
         this.incursion = await Near.GetActiveIncursion();
         console.log(this.incursion);
-        
+        console.log(this.incursion.mega_burrito.health);
         if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
             new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"});
@@ -83,7 +83,7 @@ export class Coliseo extends Phaser.Scene{
             this.add.image(0, 0, "coliseo_destruido").setOrigin(0).setScale(1);
             let result = await Near.GetPlayerIncursion();
             
-            if(result.player.burrito_owner !== ""){ //estas en alguna incursion
+            if(result.player.burrito_owner !== "" && this.incursion.mega_burrito.health > 0){ //estas en alguna incursion
                 try{
                     let battleIncursion = await Near.GetActiveBattleRoom();
                     if(battleIncursion.room.health <= 0){

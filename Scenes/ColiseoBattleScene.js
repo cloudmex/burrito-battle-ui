@@ -66,8 +66,8 @@ export class ColiseoBattle extends Phaser.Scene{
         this.burritoCPU = this.add.sprite(this.game.config.width / 2, this.game.config.height / 2, "idle_mega", 0).setOrigin(0.5);
         this.burritoCPU.play("idle_mega");
 
-        //this.anims.create({ key: "sparksAnim", frameRate: 24, frames: this.anims.generateFrameNumbers("sparks", { start: 0, end: 13 }), repeat: -1 });
-        //this.add.sprite(0, 0, "sparks", 0).play("sparksAnim").setOrigin(0);
+        this.anims.create({ key: "sparksAnim", frameRate: 24, frames: this.anims.generateFrameNumbers("sparks", { start: 0, end: 13 }), repeat: -1 });
+        this.add.sprite(0, 0, "sparks", 0).play("sparksAnim").setOrigin(0);
         
         this.CreateActionsMenu();
         
@@ -323,7 +323,7 @@ export class ColiseoBattle extends Phaser.Scene{
     }
     loadSpriteSheet(folderPlayer, folderCPU){
         //images
-        //this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.png", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.png"), { frameWidth: 1920, frameHeight: 1080 };
 
         this.load.spritesheet(`burrito_idle_Player`, `../src/images/Battle/${folderPlayer}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_Player`, `../src/images/Battle/${folderPlayer}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
