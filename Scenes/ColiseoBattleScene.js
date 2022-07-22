@@ -323,7 +323,7 @@ export class ColiseoBattle extends Phaser.Scene{
     }
     loadSpriteSheet(folderPlayer, folderCPU){
         //images
-        this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.png", { frameWidth: 1920, frameHeight: 1080 });
 
         this.load.spritesheet(`burrito_idle_Player`, `../src/images/Battle/${folderPlayer}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_Player`, `../src/images/Battle/${folderPlayer}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
