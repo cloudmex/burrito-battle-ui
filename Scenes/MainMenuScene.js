@@ -9,10 +9,16 @@ class MainMenu extends Phaser.Scene{
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.spritesheet("engrane", "../src/images/Engranajes.webp",{ frameWidth: 500, frameHeight:  468});
+        this.load.image("options", "../src/images/Opciones.png");
+        this.load.image("volume_on", "../src/images/volume_on.png");
+        this.load.image("volume_off", "../src/images/volume_off.png");
+        this.load.image("volume_handler", "../src/images/volume_handler.png");
+        this.load.image("volume", "../src/images/volume.png");
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("mainMenubackground", "../src/images/mainMenu_Background.png");
         this.load.image("logo1", "../src/images/Logo.png");
         this.load.image("buttonContainer", "../src/images/button.png");
+        this.load.spritesheet("languages", "../src/images/languages.png", {frameWidth:302, frameHeight: 245});
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
     }
     async create(){

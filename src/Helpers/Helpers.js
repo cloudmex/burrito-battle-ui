@@ -551,25 +551,60 @@ export class SettingsButton{
         this.scale = scale;
         this.settingsButtonResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
         this.button = scene.add.image(0, 0 ,"engrane", 0).setInteractive()
-        .on("pointerdown", ()=>{ this.PointerDown(downCallback);})
-        .on("pointerup", () => { this.PointerUp(upCallback); })
+        .on("pointerdown", ()=>{ this.ShowOptionsPanel();})
+        //.on("pointerup", () => { this.PointerUp(upCallback); })
         .on('pointerover', this.PointerOver)
         .on("pointerout", this.PointerOut);
         this.settingsButtonResult.add(this.button);
     }
+    ShowOptionsPanel(){
+        this.volume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
+        this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
+        this.configContainer.add(this.scene.add.image(0, 0, "options"));
+        
+        this.configContainer.add(this.scene.add.text(0, -150, "Idioma", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -30, "languages", 2).setInteractive().on("pointerdown", this.SetEng));
+        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages", 1).setInteractive().on("pointerdown", this.SetEsp));
 
+        this.configContainer.add(this.scene.add.text(0, 75, "Volume", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.scene.add.image(0, 150, "volume"));
+        this.configContainer.add(new Button(-360, 150, 1, "volume_off", null, this.scene, this.DecreaseVolume, null, null, false).GetComponents());
+        this.configContainer.add(this.volumeHandler = this.scene.add.image(-310 + (620 * this.volume), 150, "volume_handler"));
+        this.configContainer.add(new Button(360, 150, 1, "volume_on", null, this.scene, this.IncreaseVolume, null, null, false).GetComponents());
+        this.configContainer.add(new Button(0, 250, 0.5, "buttonContainer", "Aplicar", this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
+    }
+    SetEsp = ()=>{
+        this.language = "esp";
+        this.espImg.setTexture("languages", 1);
+        this.engImg.setTexture("languages", 2);
+    }
+    
+    SetEng = ()=>{
+        this.language = "eng";
+        this.engImg.setTexture("languages", 0);
+        this.espImg.setTexture("languages", 3);
+    }
+    IncreaseVolume = () => {
+        console.log(typeof(this.volume));
+        if(this.volume + 0.1 < 1){
+            this.volume += 0.1;
+            this.volumeHandler.setX(-310 + (620 * this.volume));
+            console.log(this.volume);
+        }
+    }
+    DecreaseVolume = () => {
+        if(this.volume - 0.1 >= 0){
+            this.volume -= 0.1;
+            this.volumeHandler.setX(-310 + (620 * this.volume));
+        }
+    }
+    ApplyChanges = () => {
+        localStorage.setItem("language", this.language);
+        localStorage.setItem("volume", this.volume.toFixed(1));
+        this.configContainer.destroy();
+    }
     GetComponents(){
         return this.buttonResult;
-    }
-    PointerDown(downCallback){
-        if(downCallback !== null){
-            downCallback();
-        }
-    }
-    PointerUp(upCallback){
-        if(upCallback !== null){
-            upCallback();
-        }
     }
    PointerOver = () => {
         this.button.setTint (0xaaaaaa);
