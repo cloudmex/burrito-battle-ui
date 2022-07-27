@@ -549,6 +549,14 @@ export class SettingsButton{
         this.y = y;
         this.scene = scene;
         this.scale = scale;
+        if(Alert.IsDefined(localStorage.getItem("volume"))){
+            localStorage.setItem("volume", 0.5);
+        }
+        
+        if(!Alert.IsDefined(localStorage.getItem("language"))){
+            console.log("easdsa");
+            localStorage.setItem("language", "eng");
+        }
         this.settingsButtonResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
         this.button = scene.add.image(0, 0 ,"engrane", 0).setInteractive()
         .on("pointerdown", ()=>{ this.ShowOptionsPanel();})
@@ -559,12 +567,13 @@ export class SettingsButton{
     }
     ShowOptionsPanel(){
         this.volume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
+        this.language = localStorage.getItem("language");
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
         this.configContainer.add(this.scene.add.text(0, -150, "Idioma", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -30, "languages", 2).setInteractive().on("pointerdown", this.SetEng));
-        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages", 1).setInteractive().on("pointerdown", this.SetEsp));
+        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "esp" ? 0 : 1).setInteractive().on("pointerdown", this.SetEng).setScale(0.2));
+        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "esp" ? 3 : 2).setInteractive().on("pointerdown", this.SetEsp).setScale(0.2));
 
         this.configContainer.add(this.scene.add.text(0, 75, "Volume", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.scene.add.image(0, 150, "volume"));
@@ -575,14 +584,14 @@ export class SettingsButton{
     }
     SetEsp = ()=>{
         this.language = "esp";
-        this.espImg.setTexture("languages", 1);
-        this.engImg.setTexture("languages", 2);
+        this.espImg.setTexture("languages", 3);
+        this.engImg.setTexture("languages", 0);
     }
     
     SetEng = ()=>{
         this.language = "eng";
-        this.engImg.setTexture("languages", 0);
-        this.espImg.setTexture("languages", 3);
+        this.engImg.setTexture("languages", 1);
+        this.espImg.setTexture("languages", 2);
     }
     IncreaseVolume = () => {
         console.log(typeof(this.volume));

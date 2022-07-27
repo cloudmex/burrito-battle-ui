@@ -15,11 +15,11 @@ const config = {
 const near = await connect(config);
 const wallet = new WalletConnection(near, 'ncd-ii');
 
-const contract_id_burritos = "dev-1652924595303-59024384289373";
-const contract_id_strw_tokens = "dev-1653415145729-47929415561597";
-const contract_id_items = "dev-1647986467816-61735125036881";
-const contract_id_PVEBattle = "dev-1652376335913-86387308955071";
-const contract_id_incursion = "dev-1657319025362-20400432440915"; 
+const contract_id_burritos = "dev-1658782895877-69588517075427";
+const contract_id_strw_tokens = "dev-1658783405088-89841290785619";
+const contract_id_items = "dev-1658783054298-86132432658126";
+const contract_id_PVEBattle = "dev-1658783223235-51241818548332";
+const contract_id_incursion = "dev-1658783969558-31203087752506"; 
 
 const provider = new providers.JsonRpcProvider(
   "https://archival-rpc.testnet.near.org"
@@ -62,7 +62,22 @@ export function Login() {
 export function LogOut() {
     wallet.signOut();
 }
+export async function GetAccountDetails(){
+    const account = await near.account(GetAccountId());
+    let details = await account.getAccountDetails();
+    console.log(details);
+}
+export async function GetStateInfo(){
+    const account = await near.account(GetAccountId());
+    const response = await account.state();
+    console.log(response);
+}
 
+export async function GetAllAccessKeys(){
+    const account = await near.account(GetAccountId());
+    const response = await account.getAccessKeys();
+    console.log(response);
+}
 export function IsConnected() {
     return wallet.isSignedIn();
 }

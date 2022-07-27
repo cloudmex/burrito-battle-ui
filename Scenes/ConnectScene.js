@@ -25,6 +25,7 @@ export class Connection extends Phaser.Scene{
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Acceder en modo seguro", "Al conectar tu cuenta en el modo seguro se \nrequirira confirmacion en ciertas partes del juego.", "Conectar", "Cancelar")
             .then((result) =>{ 
                 if (result)
+                    localStorage.setItem("accessType", "safeMode");
                     this.Login(); 
             });
         }, null, { fontSize: 56, fontFamily: "BangersRegular" });
@@ -32,6 +33,7 @@ export class Connection extends Phaser.Scene{
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Acceder en Full Access", "Al conectar tu cuenta con el modo Full Access el juego no te enviara a la wallet al confirmar las transacciones, esto con la finalidad de ofrecer una mejor experiencia de juego.", "Conectar", "Cancelar")
             .then((result) =>{
                 if (result)
+                localStorage.setItem("accessType", "fullMode");
                     this.LoginFullAccess(); 
             });
         }, null, { fontSize: 56, fontFamily: "BangersRegular" });

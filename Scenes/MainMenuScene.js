@@ -18,7 +18,7 @@ class MainMenu extends Phaser.Scene{
         this.load.image("mainMenubackground", "../src/images/mainMenu_Background.png");
         this.load.image("logo1", "../src/images/Logo.png");
         this.load.image("buttonContainer", "../src/images/button.png");
-        this.load.spritesheet("languages", "../src/images/languages.png", {frameWidth:302, frameHeight: 245});
+        this.load.spritesheet("languages", "../src/images/Idiomas.webp", {frameWidth:1128, frameHeight: 455});
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
     }
     async create(){

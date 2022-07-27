@@ -160,7 +160,20 @@ export class Pradera extends Phaser.Scene{
         //this.coliseoCollider = this.physics.add.collider(this.coliseo, this.burrito, this.stopBurrito, null, this);
         this.coliseo = this.add.zone(1595, 135, 250, 250).setRectangleDropZone(600, 600);
         this.physics.world.enable(this.coliseo);
-        this.physics.add.overlap(this.coliseo, this.burrito,()=>{ this.ShowAlert("¿Quieres entrar al Coliseo?", "Aqui puedes participar en incursiones.", "Coliseo") });
+        this.physics.add.overlap(this.coliseo, this.burrito,()=>{ 
+            if(localStorage.getItem("accessType") == "safeMode"){
+                    Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "\"Full Access\"\nrequerido", "Para participar en la incursion necesitas ingresar en modo \"Full Access\" sino tendras gran desventaja.", "Login con\n\"Full Access\"", "Cancelar")
+                    .then((result) =>{
+                        if(result){
+                            localStorage.setItem("accessType", "fullMode");
+                            Near.LoginFullAccess();
+                        }
+                    });
+            } else {
+                this.ShowAlert("¿Quieres entrar al Coliseo?", "Aqui puedes participar en incursiones.", "Coliseo");
+            }
+        
+        });
 
         this.silo = this.add.zone(460, 740, 155, 300);
         this.physics.world.enable(this.silo);
