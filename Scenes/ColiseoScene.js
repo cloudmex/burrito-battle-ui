@@ -32,6 +32,7 @@ export class Coliseo extends Phaser.Scene{
     }
 
     create(){
+        Helpers.Alert.isAlert = false;
         this.loadSpritesheet();
     }
     loadSpritesheet(){

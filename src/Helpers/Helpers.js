@@ -7,7 +7,7 @@ export class Button{
         this.scene = scene;
         this.button = scene.add.sprite(0,0, img)
         .setScale(scale)
-        .setInteractive()
+        .setInteractive(scene.input.makePixelPerfect())
         .on("pointerdown", ()=>{ this.PointerDown(downCallback);})
         .on("pointerup", () => { this.PointerUp(upCallback); })
         .on('pointerover', this.PointerOver)
@@ -155,7 +155,7 @@ export class Card{
         this.card.setTint (this.Active ? this.enabledColor : this.disabledColor);
     }
     On(event){
-        this.card.setInteractive().on("pointerdown", event);
+        this.card.setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", event);
         return this;
     }
     GetIndexByType(type){
@@ -254,11 +254,11 @@ export class Actions{
         this.actionContainer.add(this.action2 = scene.add.sprite(0, 0, "actions", this.IsMyTurn() ? 3 : 1).setAlpha(0));//strong
         this.actionContainer.add(this.text = scene.add.text(10, 0, this.IsMyTurn() ? battle.strong_attack_player : battle.shields_player, {fontSize: 60, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}).setAlpha(0));
 
-        this.action1.setInteractive().on("pointerdown", ()=> { 
+        this.action1.setInteractive(scene.input.makePixelPerfect()).on("pointerdown", ()=> { 
             this.SendAction();
             this.actions.Action1(); 
         });
-        this.action2.setInteractive().on("pointerdown", ()=> {
+        this.action2.setInteractive(scene.input.makePixelPerfect()).on("pointerdown", ()=> {
             if((this.IsMyTurn() ? battle.strong_attack_player : battle.shields_player) > 0){ 
                 this.SendAction();
                 this.actions.Action2();
@@ -545,20 +545,20 @@ export class Incursion{
 
 export class SettingsButton{
     constructor(x, y, scene, scale, downCallback, upCallback){
+        this.isPanel = false;
+        this.scene = scene;
         this.x = x;
         this.y = y;
-        this.scene = scene;
         this.scale = scale;
-        if(Alert.IsDefined(localStorage.getItem("volume"))){
+        if(Alert.IsDefined(localStorage.getItem("volume")))
             localStorage.setItem("volume", 0.5);
-        }
-        
-        if(!Alert.IsDefined(localStorage.getItem("language"))){
-            console.log("easdsa");
+        if(!Alert.IsDefined(localStorage.getItem("language")))
             localStorage.setItem("language", "eng");
-        }
-        this.settingsButtonResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
-        this.button = scene.add.image(0, 0 ,"engrane", 0).setInteractive()
+
+        this.settingsButtonResult = scene.add.container(x, y)
+        this.button = scene.add.sprite(0, 0 ,"engrane")
+        .setInteractive(scene.input.makePixelPerfect())
+        .setScale(scale)
         .on("pointerdown", ()=>{ this.ShowOptionsPanel();})
         //.on("pointerup", () => { this.PointerUp(upCallback); })
         .on('pointerover', this.PointerOver)
@@ -566,14 +566,17 @@ export class SettingsButton{
         this.settingsButtonResult.add(this.button);
     }
     ShowOptionsPanel(){
+        if(this.isPanel)
+            return;
+        this.isPanel = true;
         this.volume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
         this.language = localStorage.getItem("language");
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
         this.configContainer.add(this.scene.add.text(0, -150, "Idioma", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "esp" ? 0 : 1).setInteractive().on("pointerdown", this.SetEng).setScale(0.2));
-        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "esp" ? 3 : 2).setInteractive().on("pointerdown", this.SetEsp).setScale(0.2));
+        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "esp" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
+        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "esp" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
 
         this.configContainer.add(this.scene.add.text(0, 75, "Volume", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.scene.add.image(0, 150, "volume"));
@@ -611,6 +614,7 @@ export class SettingsButton{
         localStorage.setItem("language", this.language);
         localStorage.setItem("volume", this.volume.toFixed(1));
         this.configContainer.destroy();
+        this.isPanel = false;
     }
     GetComponents(){
         return this.buttonResult;

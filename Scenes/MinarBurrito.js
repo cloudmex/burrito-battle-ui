@@ -22,6 +22,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.loadingScreen = new Helpers.LoadingScreen(this);
     }
     create(){
+        Helpers.Alert.isAlert = false;
         this.LoadSpritesheet();   
     }
     LoadSpritesheet(){

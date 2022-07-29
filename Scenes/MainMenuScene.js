@@ -9,19 +9,22 @@ class MainMenu extends Phaser.Scene{
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.spritesheet("engrane", "../src/images/Engranajes.webp",{ frameWidth: 500, frameHeight:  468});
+        
         this.load.image("options", "../src/images/Opciones.png");
         this.load.image("volume_on", "../src/images/volume_on.png");
         this.load.image("volume_off", "../src/images/volume_off.png");
         this.load.image("volume_handler", "../src/images/volume_handler.png");
         this.load.image("volume", "../src/images/volume.png");
+        this.load.spritesheet("languages", "../src/images/Idiomas.webp", {frameWidth:1128, frameHeight: 455});
+        
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("mainMenubackground", "../src/images/mainMenu_Background.png");
         this.load.image("logo1", "../src/images/Logo.png");
         this.load.image("buttonContainer", "../src/images/button.png");
-        this.load.spritesheet("languages", "../src/images/Idiomas.webp", {frameWidth:1128, frameHeight: 455});
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
     }
     async create(){
+        Helpers.Alert.isAlert = false;
         this.loadingScreen = new Helpers.LoadingScreen(this);
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
         this.add.image(50, 50, "logo1").setOrigin(0).setScale(0.75);
@@ -77,7 +80,7 @@ class MainMenu extends Phaser.Scene{
     }
     
     LogOut = () => {
-        Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, "Desconectar cuenta", "¿Quieres desconectar tu cuenta de burrito battle?", "Desconectar", "Cancelar")
+        Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.heigdht/2, "Desconectar cuenta", "¿Quieres desconectar tu cuenta de burrito battle?", "Desconectar", "Cancelar")
         .then((result) => {
             if(result) {
                 localStorage.clear();

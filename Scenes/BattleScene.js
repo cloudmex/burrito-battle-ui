@@ -28,6 +28,7 @@ export class Battle extends Phaser.Scene{
         this.load.audio("battle", "../src/audio/battle.ogg");
     }
     async create(){
+        Helpers.Alert.isAlert = false;
         this.sound.add("battle", { loop: true, volume: 1}).play();
         //this.bg_music.setMute(false);
         this.add.image(0, 0, "background_Battle").setOrigin(0);

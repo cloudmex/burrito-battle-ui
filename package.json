@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koreez/phaser3-i18n": "^2.0.6",
     "es-dev-server": "^2.1.0",
     "near-api-js": "^0.44.2",
     "phaser": "^3.55.2"

@@ -30,6 +30,7 @@ export class ColiseoBattle extends Phaser.Scene{
         this.load.image("Coliseo_ground", "../src/images/Coliseo/Base.png");
     }
     async create(){
+        Helpers.Alert.isAlert = false;
         this.add.image(0, 0, "background").setOrigin(0);
         this.add.image(0, 0, "Coliseo_gradas").setOrigin(0);
         this.add.image(0, 0, "Coliseo_ground").setOrigin(0);

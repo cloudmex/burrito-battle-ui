@@ -1,4 +1,5 @@
 // npx es-dev-server --node-resolve --watch
+
 import * as Connection  from "./Scenes/ConnectScene.js";
 import * as MainMenu from "./Scenes/MainMenuScene.js";
 import * as MinarBurrito from "./Scenes/MinarBurrito.js";
@@ -37,6 +38,15 @@ const config = {
         },
         zoom: 1
     },
+    /*plugins: {
+        scene: [
+          {
+            key: 'i18nPlugin',
+            mapping: 'i18n',
+            plugin: I18nPlugin,
+          },
+        ],
+    },*/
     physics:{
         default: "arcade",
         arcade:{
