@@ -1,7 +1,8 @@
 import * as Helpers from "../src/Helpers/Helpers.js";
 import * as Near  from "../src/near.js";
+import { Translate } from "../src/Translate.js";
 
-class MainMenu extends Phaser.Scene{
+export class MainMenu extends Phaser.Scene{
     constructor(){
         super("MainMenu");
     }
@@ -22,6 +23,7 @@ class MainMenu extends Phaser.Scene{
         this.load.image("logo1", "../src/images/Logo.png");
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
+        
     }
     async create(){
         Helpers.Alert.isAlert = false;
@@ -72,9 +74,10 @@ class MainMenu extends Phaser.Scene{
             }});
          }, null, {fontSize: 30, fontFamily: "BangersRegular"});*/
 
-        new Helpers.Button(450, 600, 0.75, "buttonContainer", "Minar Burrito", this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
-        new Helpers.Button(450, 750, 0.75, "buttonContainer", "Pradera", this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
-        new Helpers.Button(450, 900, 0.75, "buttonContainer", "Establo", this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
+         await Translate.LoadJson();
+        new Helpers.Button(450, 600, 0.75, "buttonContainer", Translate.Translate("BtnGoMintBurrito"), this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
+        new Helpers.Button(450, 750, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
+        new Helpers.Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         
         await this.loadingScreen.OnComplete();
     }
@@ -91,4 +94,3 @@ class MainMenu extends Phaser.Scene{
     }
     ChangeScene = (scene) => { if(!Helpers.Alert.isAlert) this.scene.start(scene)}
 }
-export{ MainMenu };

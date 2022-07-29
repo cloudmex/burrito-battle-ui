@@ -575,8 +575,8 @@ export class SettingsButton{
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
         this.configContainer.add(this.scene.add.text(0, -150, "Idioma", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "esp" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
-        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "esp" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
+        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
+        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
 
         this.configContainer.add(this.scene.add.text(0, 75, "Volume", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.scene.add.image(0, 150, "volume"));
@@ -586,13 +586,13 @@ export class SettingsButton{
         this.configContainer.add(new Button(0, 250, 0.5, "buttonContainer", "Aplicar", this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
     }
     SetEsp = ()=>{
-        this.language = "esp";
+        this.language = "es";
         this.espImg.setTexture("languages", 3);
         this.engImg.setTexture("languages", 0);
     }
     
     SetEng = ()=>{
-        this.language = "eng";
+        this.language = "en";
         this.engImg.setTexture("languages", 1);
         this.espImg.setTexture("languages", 2);
     }
@@ -615,6 +615,7 @@ export class SettingsButton{
         localStorage.setItem("volume", this.volume.toFixed(1));
         this.configContainer.destroy();
         this.isPanel = false;
+        location.reload();
     }
     GetComponents(){
         return this.buttonResult;
