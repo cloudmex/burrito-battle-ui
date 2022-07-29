@@ -3,7 +3,11 @@ export class Translate{
     #result = "";
 
     static async LoadJson(){
-        this.#json = await fetch(`src/Languages/${localStorage.getItem("language")}.json`).then(response => {
+        let language = localStorage.getItem("language");
+        if(localStorage.getItem("language") == null)
+            language = "en";
+
+        this.#json = await fetch(`src/Languages/${ language }.json`).then(response => {
             return response.json();
         });
     }

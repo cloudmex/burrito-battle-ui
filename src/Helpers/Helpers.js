@@ -570,7 +570,7 @@ export class SettingsButton{
             return;
         this.isPanel = true;
         this.volume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
-        this.language = localStorage.getItem("language");
+        this.language = localStorage.getItem("language") != null ? localStorage.getItem("language") : "en";
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         

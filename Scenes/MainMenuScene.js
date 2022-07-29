@@ -74,7 +74,7 @@ export class MainMenu extends Phaser.Scene{
             }});
          }, null, {fontSize: 30, fontFamily: "BangersRegular"});*/
 
-         await Translate.LoadJson();
+        await Translate.LoadJson();
         new Helpers.Button(450, 600, 0.75, "buttonContainer", Translate.Translate("BtnGoMintBurrito"), this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
