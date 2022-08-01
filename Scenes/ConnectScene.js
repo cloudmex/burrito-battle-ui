@@ -1,5 +1,7 @@
 import * as Helpers from "../src/Helpers/Helpers.js";
 import * as Near  from "../src/near.js";
+import { Translate } from "../src/Translate.js";
+
 
 export class Connection extends Phaser.Scene{
     alertVisible = false;
@@ -19,18 +21,19 @@ export class Connection extends Phaser.Scene{
     }
 
     async create () {
+        await Translate.LoadJson();
         this.add.image(0,0, "backgroud_Connection").setOrigin(0,0);
         this.add.image(0,0, "logo").setScale(0.75).setPosition(this.sys.game.scale.gameSize.width / 2, 150);
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", "Connect Wallet", this, async () => {
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Acceder en modo seguro", "Al conectar tu cuenta en el modo seguro se \nrequirira confirmacion en ciertas partes del juego.", "Conectar", "Cancelar")
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", Translate.Translate("BtnConnect"), this, async () => {
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleConnectAlert"), Translate.Translate("MsgConnectAlert"), Translate.Translate("BtnConnectAlert"), Translate.Translate("BtnCancelAlert"))
             .then((result) =>{ 
                 if (result)
                     localStorage.setItem("accessType", "safeMode");
                     this.Login(); 
             });
         }, null, { fontSize: 56, fontFamily: "BangersRegular" });
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", "Connect Wallet \n(Full Access)", this, async () => {
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Acceder en Full Access", "Al conectar tu cuenta con el modo Full Access el juego no te enviara a la wallet al confirmar las transacciones, esto con la finalidad de ofrecer una mejor experiencia de juego.", "Conectar", "Cancelar")
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", Translate.Translate("BtnConnectFullAccess"), this, async () => {
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleConnectFullAccessAlert"), Translate.Translate("MsgConnectFullAccessAlert"), Translate.Translate("BtnConnectAlert"), Translate.Translate("BtnCancelAlert"))
             .then((result) =>{
                 if (result)
                 localStorage.setItem("accessType", "fullMode");

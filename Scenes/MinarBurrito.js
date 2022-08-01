@@ -1,5 +1,6 @@
 import * as Helpers from "../src/Helpers/Helpers.js";
 import * as Near  from "../src/near.js";
+import { Translate } from "../src/Translate.js";
 
 export class MinarBurrito extends Phaser.Scene{
     sprites = [];
@@ -23,7 +24,7 @@ export class MinarBurrito extends Phaser.Scene{
     }
     create(){
         Helpers.Alert.isAlert = false;
-        this.LoadSpritesheet();   
+        this.LoadSpritesheet();  
     }
     LoadSpritesheet(){
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
@@ -58,10 +59,10 @@ export class MinarBurrito extends Phaser.Scene{
         this.silo = this.add.sprite(this.sys.game.scale.gameSize.width/2, this.sys.game.scale.gameSize.height/2 + 1500, "silo");
         this.isPrevScene = localStorage.getItem("prevScene") != null;
         localStorage.removeItem("prevScene");
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? "Volver a pradera" : "Menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? Translate.Translate("BtnBackToMeadow") : Translate.Translate("BtnMainMenu"), this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Obtener nuevo burrito", this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"})
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", "Ir al Establo", this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"})
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
         
         let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
@@ -69,7 +70,7 @@ export class MinarBurrito extends Phaser.Scene{
         if(remainToBuy == 0){
             this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
             this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda1").setOrigin(0);
-            this.comprarBtn = new Helpers.Button(360,  this.sys.game.scale.gameSize.height + 2350, 0.25, "buttonContainer2", "Comprar", this, this.BuyTokens, null, {fontSize: 20, fontFamily: "BangersRegular"}, false)
+            this.comprarBtn = new Helpers.Button(360,  this.sys.game.scale.gameSize.height + 2350, 0.25, "buttonContainer2", Translate.Translate("BtnBuyStrw"), this, this.BuyTokens, null, {fontSize: 20, fontFamily: "BangersRegular"}, false)
         } else {
             this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
             this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
@@ -121,7 +122,7 @@ export class MinarBurrito extends Phaser.Scene{
         let seconds = (minutes % 1) * 60;
         if(remainToBuy != 0){
             this.contdown = true;
-            this.timeToBuy.setText(`Volvemos en\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+            this.timeToBuy.setText( Translate.Translate("SignAfterBuyStrw")+`\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
         } else if(this.contdown)
             location.reload();
     }
@@ -130,7 +131,7 @@ export class MinarBurrito extends Phaser.Scene{
         if(!this.canNavigate || Helpers.Alert.isAlert)
             return;
         let currentSTRW = await Near.GetSTRWToken();
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Información de la transaccion", `El minar un burrito te permite luchar contra otros burritos y explorar el mapa. El costo del burrito es de 5 Nears y 50,000 $STRW. Actualmente cuentas con ${currentSTRW} $STRW.`, "Minar", "Cancelar")
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleMintBurritoAlert"), Translate.Translate("MsgMintBurritoAlert") +currentSTRW + " $STRW.", Translate.Translate("BtnMintBurritoAlert"), Translate.Translate("BtnCancelAlert"))
         .then(async(result) =>{ 
             if (result){
                 this.canNavigate = false;
@@ -232,7 +233,7 @@ export class MinarBurrito extends Phaser.Scene{
             return;
         let remain = await Near.CanBuyTokens();
         if(remain == 0){
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres comprar tokens?", "Los tokens paja te sirven para poder minar nuevos burritos, aumentarlos de nivel, restaurar sus vidas y entre otras cosas, por desgracia solo puedes comprar tokens paja cada epoca.", "Comprar", "Cancelar")
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBuyStrwAlert"), Translate.Translate("MsgBuyStrwAlert"), Translate.Translate("BtnBuyStrw"), Translate.Translate("BtnCancelAlert"))
             .then(async(result) =>{ 
                 if (result){
                     this.canNavigate = false;
@@ -249,7 +250,7 @@ export class MinarBurrito extends Phaser.Scene{
                 }
             });
         } else{
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes comprar tokens", "El comprar tokens paja tarda una epoca, asi que \naun debes esperar para poder comprar tokens.", "Aceptar")
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleNoBuyStrwAlert"), Translate.Translate("MsgNoBuyStrwAlert"), Translate.Translate("BtnAccept"))
         }
     }
     async GetTokens (tokens) {
@@ -264,7 +265,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
         this.cofreAnimation.play("cofreAnimIn")
         .once('animationcomplete', () => { 
-            animContainer.add(this.add.text(0, -350, "Obtuviste", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+            animContainer.add(this.add.text(0, -350, Translate.Translate("MsgBuyStrwCard"), {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
             animContainer.add(this.add.text(0,  400, `${tokens} $STRW`, {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
             this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
                 this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', async () => {

@@ -1,5 +1,7 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
+import { Translate } from "../src/Translate.js";
+
 
 export class Pradera extends Phaser.Scene{
     speed = 200;
@@ -54,6 +56,7 @@ export class Pradera extends Phaser.Scene{
     }
     async create(){
         Helpers.Alert.isAlert = false;
+        await Translate.LoadJson();
         this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: 1}).play();
         this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume:0.5});
         this.footStepsSFX.setMute(true); 
@@ -89,13 +92,13 @@ export class Pradera extends Phaser.Scene{
         
 
         if(await Near.NFTSupplyForOwner() == 1 && localStorage.getItem("in_incursion")){
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Burrito en incursion", "Actualmente uno de tus burritos se encuentra registrado para participar en la incursion actual ¿Deseas ir al coliseo?.", "Ir a coliseo", "Cancelar")
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBurritoInIncursion"), Translate.Translate("MsgBurritoInIncursion"), Translate.Translate("BtnGoColiseum"), Translate.Translate("BtnCancelAlert"))
             .then(async (result) => { if (result) this.scene.start("Coliseo"); });
         }
 
         if(localStorage.getItem("burrito_selected") == null){
                 await this.loadingScreen.OnComplete();
-                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Ningun burrito seleccionado", "Para poder navegar por el mapa y luchar contra otros burritos necesitas seleccionar uno de tus burritos.Ve al establo para poder seleccionar algun burrito de los que ya tienes o al silo para minar un nuevo burrito.", "Ir a establo", "Ir a silo")
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleSelectedBurritoAlert"), Translate.Translate("MsgSelectedBurritoAlert"), Translate.Translate("BtnGoBarn"), Translate.Translate("BtnGoSilo"))
                 .then((result) =>{ this.scene.start(result ? "Establo": "MinarBurrito"); });
         }
         this.LoadSpriteSheet();
@@ -112,7 +115,7 @@ export class Pradera extends Phaser.Scene{
         this.burritoPlayer = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
         if(this.burritoPlayer.hp <= 0){
             await this.loadingScreen.OnComplete();
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito se ha quedado sin vida", "El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando.", "Ir a establo")
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleDeadBurritoAlert"), Translate.Translate("MsgDeadBurritoAlert"), Translate.Translate("BtnGoBarn"))
             .then(async (result) => { if (result) this.scene.start("Establo"); });
         }
 
@@ -139,8 +142,7 @@ export class Pradera extends Phaser.Scene{
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
         this.burrito.play("walkRight");
 
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
-        new Helpers.SettingsButton(this.game.config.width - 100, this.game.config.height/2, this, 0.25, null, null);
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", Translate.Translate("BtnGoMainMenu"), this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
 
         this.hudBurrito = new Helpers.BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
 
@@ -170,7 +172,7 @@ export class Pradera extends Phaser.Scene{
         this.physics.world.enable(this.coliseo);
         this.physics.add.overlap(this.coliseo, this.burrito,()=>{ 
             if(localStorage.getItem("accessType") == "safeMode"){
-                    Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "\"Full Access\"\nrequerido", "Para participar en la incursion necesitas ingresar en modo \"Full Access\" sino tendras gran desventaja.", "Login con\n\"Full Access\"", "Cancelar")
+                    Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleColiseumFullAccess"), Translate.Translate("MsgColiseumFullAccess"), Translate.Translate("BtnColiseumFullAccess"), Translate.Translate("BtnCancelAlert"))
                     .then((result) =>{
                         if(result){
                             localStorage.setItem("accessType", "fullMode");
@@ -178,18 +180,18 @@ export class Pradera extends Phaser.Scene{
                         }
                     });
             } else {
-                this.ShowAlert("¿Quieres entrar al Coliseo?", "Aqui puedes participar en incursiones.", "Coliseo");
+                this.ShowAlert(Translate.Translate("TleGoColiseumAlert"), Translate.Translate("MsgGoColiseumAlert"), "Coliseo");
             }
         
         });
 
         this.silo = this.add.zone(460, 740, 155, 300);
         this.physics.world.enable(this.silo);
-        this.physics.add.overlap(this.burrito, this.silo, ()=>{ this.ShowAlert("¿Quieres entrar al silo?", "Aqui puedes minar un nuevo burrito.", "MinarBurrito") });
+        this.physics.add.overlap(this.burrito, this.silo, ()=>{ this.ShowAlert(Translate.Translate("TleGoSiloAlert"), Translate.Translate("MsgGoSiloAlert"), "MinarBurrito") });
 
         this.establo = this.add.zone(255, 510, 140, 120);
         this.physics.world.enable(this.establo);
-        this.physics.add.overlap(this.establo, this.burrito, ()=> { this.ShowAlert("¿Quieres entrar al establo?", "Aqui podras ver tus burritos, seleccionar algun burrito, curarlos y subirlos de nivel.", "Establo") });
+        this.physics.add.overlap(this.establo, this.burrito, ()=> { this.ShowAlert(Translate.Translate("TleGoBarnAlert"), Translate.Translate("MsgGoBarnAlert"), "Establo") });
 
         this.hudBurritoZone = this.add.zone(0, 1080, 790, 600);
         this.physics.world.enable(this.hudBurritoZone);
@@ -247,7 +249,7 @@ export class Pradera extends Phaser.Scene{
             this.footStepsSFX.setMute(true); 
             this.burrito.body.stop();
             this.burrito.stop();
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, title, description, "Entrar", "Cancelar")
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, title, description, Translate.Translate("BtnGoSiteAlert"), Translate.Translate("BtnCancelAlert"))
             .then(async (result) => {
                 if(result && scene != null) {
                     localStorage.setItem("prevScene", "pradera");
@@ -271,7 +273,7 @@ export class Pradera extends Phaser.Scene{
         this.footStepsSFX.setMute(true); 
         triggerZone.disableBody(true, true);
         triggerZone.destroy();
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Burrito salvaje ha aparecido", "Un burrito salvaje ha aparecido, ¿deseas enfrentarte a el?\nSe desconoce el nivel y las estadisticas del burrito, una vez entrando en combate si huyes, se te restara una vida.", "Pelear", "Huir")
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleWildBurritoAlert"), Translate.Translate("MsgWildBurritoAlert"), Translate.Translate("BtnWildBurritoAlertFight"), Translate.Translate("BtnWildBurrtitoAlertEscape"))
         .then(async (result) => {
             if (result)
                 this.scene.start("Battle");

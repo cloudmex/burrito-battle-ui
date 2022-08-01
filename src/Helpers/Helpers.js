@@ -1,4 +1,8 @@
 import * as Near  from "../near.js";
+import { Translate } from "../Translate.js";
+
+await Translate.LoadJson();
+
 export class Button{
     text;
     constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle, useScrollFactor = true) {
@@ -198,20 +202,20 @@ export class Slider{
         this.sliderResult.add(scene.add.sprite(84, -5, "slider_fill", 0));
         if(isCPU){
             this.sliderResult.setScale(-1, 1);
-            this.sliderResult.add(scene.add.text(10, -105, "Nivel: "+room.burrito_cpu_level, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' , stroke: 0x000000, strokeThickness: 5}).setScale(-1, 1));
-            this.sliderResult.add(scene.add.text(108, 45, "Salud: "+parseFloat(isIncursion ? room.health : room.health_cpu).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }).setScale(-1, 1));
+            this.sliderResult.add(scene.add.text(10, -105, Translate.Translate("MsgLevel") + ": " + room.burrito_cpu_level, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' , stroke: 0x000000, strokeThickness: 5}).setScale(-1, 1));
+            this.sliderResult.add(scene.add.text(108, 45, Translate.Translate("MsgHealth") + ": " + parseFloat(isIncursion ? room.health : room.health_cpu).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }).setScale(-1, 1));
         }else{
-            this.sliderResult.add(scene.add.text(-150, -105, "Nivel: " + (isIncursion ? room.level : room.level_b1), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
-            this.sliderResult.add(scene.add.text(-150, 45, "Salud: "+parseFloat(isIncursion ? room.health : room.health_player).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
+            this.sliderResult.add(scene.add.text(-150, -105, Translate.Translate("MsgLevel") + ": " + (isIncursion ? room.level : room.level_b1), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
+            this.sliderResult.add(scene.add.text(-150, 45, Translate.Translate("MsgHealth") + ": " + parseFloat(isIncursion ? room.health : room.health_player).toFixed(2), { fontSize: 45, fontFamily: "BangersRegular", color: 'white', stroke: 0x000000, strokeThickness: 5 }))
         }
     }
     SetValue(value){
         this.fill.setCrop(0, 0, this.fill.width * value, this.fill.height);
         const components = this.sliderResult.list;
         if(this.isCPU){
-            components[6].setText("Salud: "+ (value*this.room.start_health_cpu).toFixed(2));
+            components[6].setText(Translate.Translate("MsgHealth") + ": " + (value*this.room.start_health_cpu).toFixed(2));
         }else{
-            components[6].setText("Salud: " + (value * (this.isIncursion ? this.room.health : this.room.start_health_player)).toFixed(2));
+            components[6].setText(Translate.Translate("MsgHealth") + ": " + (value * (this.isIncursion ? this.room.health : this.room.start_health_player)).toFixed(2));
         }
         return this;
     }
@@ -263,7 +267,7 @@ export class Actions{
                 this.SendAction();
                 this.actions.Action2();
             } else {
-                Alert.Fire(this.scene, this.scene.game.config.width / 2, this.scene.game.config.height/2, null, "No puedes realizar esta accion")
+                Alert.Fire(this.scene, this.scene.game.config.width / 2, this.scene.game.config.height/2, null, Translate.Translate("MsgNotAccion"))
             }
         });
         this.ShowActions();
@@ -271,7 +275,7 @@ export class Actions{
         this.action1
             .on('pointerover', () => {
                 this.action1.setTint (this.overColor);
-                this.actionsResult.add(this.text1 = scene.add.text(this.IsMyTurn() ? -55 : -38, this.IsMyTurn() ? -272 : -290, this.IsMyTurn() ? "Ataque" : "Pasar\nTurno", {fontSize: 30, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}));
+                this.actionsResult.add(this.text1 = scene.add.text(this.IsMyTurn() ? -55 : -38, this.IsMyTurn() ? -272 : -290, this.IsMyTurn() ? Translate.Translate("MsgAttack") : Translate.Translate("MsgPassTurn"), {fontSize: 30, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}));
             })
             .on("pointerout", () => {
                 this.action1.setTint (this.outColor);
@@ -281,7 +285,7 @@ export class Actions{
             .on('pointerover', () => {
                 this.action2.setTint (this.overColor);
                 this.text.visible = false;
-                this.actionsResult.add(this.text2 = scene.add.text(this.IsMyTurn() ? 185 : 175, this.IsMyTurn() ? -130: -102, this.IsMyTurn() ? "Ataque\nPesado" : "Defensa", {fontSize: 28, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}));
+                this.actionsResult.add(this.text2 = scene.add.text(this.IsMyTurn() ? 185 : 175, this.IsMyTurn() ? -130: -102, this.IsMyTurn() ? Translate.Translate("MsgHeavyAttack") : Translate.Translate("MsgDefense"), {fontSize: 28, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5}));
             })
             .on("pointerout", () => {
                 this.action2.setTint(this.outColor);
@@ -484,7 +488,7 @@ export class BattleEnd{
 
 export class Alert{
     static isAlert = false;
-    static Fire(scene, x, y, title, description, acceptBtn = "Aceptar", cancelBtn = null){
+    static Fire(scene, x, y, title, description, acceptBtn = Translate.Translate("BtnAccept"), cancelBtn = null){
         return new Promise(async (result)=>{
             if(this.IsDefined(this.isAlert) && this.isAlert)
                 return result(false);
@@ -574,16 +578,16 @@ export class SettingsButton{
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
-        this.configContainer.add(this.scene.add.text(0, -150, "Idioma", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.scene.add.text(0, -150, Translate.Translate("Language"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
         this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
 
-        this.configContainer.add(this.scene.add.text(0, 75, "Volume", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.scene.add.text(0, 75, Translate.Translate("Volume"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.scene.add.image(0, 150, "volume"));
         this.configContainer.add(new Button(-360, 150, 1, "volume_off", null, this.scene, this.DecreaseVolume, null, null, false).GetComponents());
         this.configContainer.add(this.volumeHandler = this.scene.add.image(-310 + (620 * this.volume), 150, "volume_handler"));
         this.configContainer.add(new Button(360, 150, 1, "volume_on", null, this.scene, this.IncreaseVolume, null, null, false).GetComponents());
-        this.configContainer.add(new Button(0, 250, 0.5, "buttonContainer", "Aplicar", this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
+        this.configContainer.add(new Button(0, 250, 0.5, "buttonContainer", Translate.Translate("Apply"), this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
     }
     SetEsp = ()=>{
         this.language = "es";
