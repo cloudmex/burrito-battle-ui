@@ -30,7 +30,6 @@ export class MainMenu extends Phaser.Scene{
     }
     async create(){
         Helpers.Alert.isAlert = false;
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         await Translate.LoadJson();
         this.loadingScreen = new Helpers.LoadingScreen(this);
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
@@ -69,6 +68,7 @@ export class MainMenu extends Phaser.Scene{
 
         new Helpers.Button(this.sys.game.scale.gameSize.width -  290, 70, 0.5, "buttonContainer", Near.GetAccountId(), this,this.LogOut, null, {fontSize: 30, fontFamily: "BangersRegular"});
         new Helpers.SettingsButton(1850, 60, this, 0.25, ()=>{this.sound.setVolume(Helpers.SettingsButton.GetVolume());});
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         /*new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 450,  100, 0.5, "buttonContainer", "Configuracion", this, () => {
             Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, "Configuracion", "Aqui puedes cambiar algunos aspectos de la aplicacion", "Idioma", "Sonido")
             .then((result) => {

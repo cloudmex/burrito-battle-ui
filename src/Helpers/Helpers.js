@@ -557,7 +557,12 @@ export class Incursion{
 
 export class SettingsButton{
     static GetVolume = () => {
-        return parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0.5)
+        if(localStorage.getItem("volume") === 'null') {
+            return parseFloat(localStorage.getItem("volume"));
+        } else {
+            localStorage.setItem("volume", 0.5);
+            return 0.5;
+        }
     }
     constructor(x, y, scene, scale, Callback){
         this.isPanel = false;
@@ -601,7 +606,7 @@ export class SettingsButton{
         this.configContainer.add(new Button(360, 150, 1, "volume_on", null, this.scene, this.IncreaseVolume, null, null, false, false).GetComponents());
         this.configContainer.add(new Button(0, 250, 0.5, "buttonContainer", Translate.Translate("Apply"), this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
 }
-    SetEsp = ()=>{
+    SetEsp = () => {
         this.language = "es";
         this.espImg.setTexture("languages", 3);
         this.engImg.setTexture("languages", 0);
