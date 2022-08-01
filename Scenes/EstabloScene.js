@@ -10,6 +10,8 @@ export class Establo extends Phaser.Scene{
         super("Establo");
     }
     preload(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -36,9 +38,11 @@ export class Establo extends Phaser.Scene{
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
+        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
     }
     async create(){
         Helpers.Alert.isAlert = false;
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
         this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 - 350, "Establo", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5);

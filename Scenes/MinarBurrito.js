@@ -11,6 +11,8 @@ export class MinarBurrito extends Phaser.Scene{
         super("MinarBurrito");
     }
     preload(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
         
@@ -19,6 +21,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("buttonContainer2", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
+        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
         this.loadingScreen = new Helpers.LoadingScreen(this);
     }
     create(){
@@ -26,6 +29,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.LoadSpritesheet();   
     }
     LoadSpritesheet(){
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
         this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
         this.load.spritesheet("Silo_start", "../src/images/Minar Burrito/Silo animación.webp", {frameWidth: 1920, frameHeight: 4000});

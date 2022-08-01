@@ -1,18 +1,23 @@
 import * as Near  from "../near.js";
 export class Button{
     text;
-    constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle, useScrollFactor = true) {
+    constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle, useScrollFactor = true, setPixelPerfect = true) {
         this.buttonResult = scene.add.container(x, y);
         
         this.scene = scene;
         this.button = scene.add.sprite(0,0, img)
         .setScale(scale)
-        .setInteractive(scene.input.makePixelPerfect())
+        //.setInteractive(setPixelPerfect ? scene.input.makePixelPerfect() : null)
         .on("pointerdown", ()=>{ this.PointerDown(downCallback);})
         .on("pointerup", () => { this.PointerUp(upCallback); })
         .on('pointerover', this.PointerOver)
         .on("pointerout", this.PointerOut);
         
+        if(setPixelPerfect)
+            this.button.setInteractive(scene.input.makePixelPerfect())
+        else 
+            this.button.setInteractive()
+            
         this.buttonResult.add(this.button)
 
         if(label !== null){
@@ -486,19 +491,22 @@ export class Alert{
     static isAlert = false;
     static Fire(scene, x, y, title, description, acceptBtn = "Aceptar", cancelBtn = null){
         return new Promise(async (result)=>{
-            if(this.IsDefined(this.isAlert) && this.isAlert)
+            if(this.IsDefined(this.isAlert) && this.isAlert){
                 return result(false);
+            }
             this.scene = scene;
             this.isAlert = true;
             let isMini = title == null;
-            this.alertResult = scene.add.container(x, scene.game.config.height * 1.5).setScrollFactor(0);
+            this.alertResult = scene.add.container(x, scene.game.config.height * 1.5);
             this.alertResult.add(scene.add.image(0, 0, isMini ? "miniAlert" : "alert"));
             this.alertResult.add(scene.add.text(0, -360, title, { fontSize:70 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
             this.alertResult.add(this.descriptionText = scene.add.text(0, isMini ? -180 : -240, description, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5, 0));
             
-                this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , isMini ? 135 : 350, 0.6, "buttonContainer", acceptBtn, scene, async()=> {await this.Hide(); await result(true);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
-                if(cancelBtn != null && !isMini)
-                    this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer", cancelBtn, scene, async()=> { await this.Hide(); await result(false);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+            this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , isMini ? 135 : 350, 0.6, "buttonContainer", acceptBtn, scene, async()=> {await this.Hide(); await result(true);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+            if(cancelBtn != null && !isMini){
+                this.alertResult.add(new Button(220 , 350, 0.6, "buttonContainer", cancelBtn, scene, async()=> { await this.Hide(); await result(false);}, null, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
+            }
+            
             scene.tweens.timeline({
                 ease: 'Cubic',
                 tweens:[ { 
@@ -544,13 +552,17 @@ export class Incursion{
 }
 
 export class SettingsButton{
-    constructor(x, y, scene, scale, downCallback, upCallback){
+    static GetVolume = () => {
+        return parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0.5)
+    }
+    constructor(x, y, scene, scale, Callback){
         this.isPanel = false;
         this.scene = scene;
         this.x = x;
         this.y = y;
         this.scale = scale;
-        if(Alert.IsDefined(localStorage.getItem("volume")))
+        this.Callback = Callback;
+        if(!Alert.IsDefined(localStorage.getItem("volume")))
             localStorage.setItem("volume", 0.5);
         if(!Alert.IsDefined(localStorage.getItem("language")))
             localStorage.setItem("language", "eng");
@@ -568,9 +580,9 @@ export class SettingsButton{
     ShowOptionsPanel(){
         if(this.isPanel)
             return;
-        this.isPanel = true;
+        Alert.isAlert = this.isPanel = true;
         this.volume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
-        this.language = localStorage.getItem("language") != null ? localStorage.getItem("language") : "en";
+        this.prevLang = this.language = localStorage.getItem("language") != null ? localStorage.getItem("language") : "en";
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
@@ -580,9 +592,9 @@ export class SettingsButton{
 
         this.configContainer.add(this.scene.add.text(0, 75, "Volume", { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.scene.add.image(0, 150, "volume"));
-        this.configContainer.add(new Button(-360, 150, 1, "volume_off", null, this.scene, this.DecreaseVolume, null, null, false).GetComponents());
+        this.configContainer.add(new Button(-360, 150, 1, "volume_off", null, this.scene, this.DecreaseVolume, null, null, false, false).GetComponents());
         this.configContainer.add(this.volumeHandler = this.scene.add.image(-310 + (620 * this.volume), 150, "volume_handler"));
-        this.configContainer.add(new Button(360, 150, 1, "volume_on", null, this.scene, this.IncreaseVolume, null, null, false).GetComponents());
+        this.configContainer.add(new Button(360, 150, 1, "volume_on", null, this.scene, this.IncreaseVolume, null, null, false, false).GetComponents());
         this.configContainer.add(new Button(0, 250, 0.5, "buttonContainer", "Aplicar", this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
     }
     SetEsp = ()=>{
@@ -597,25 +609,27 @@ export class SettingsButton{
         this.espImg.setTexture("languages", 2);
     }
     IncreaseVolume = () => {
-        console.log(typeof(this.volume));
-        if(this.volume + 0.1 < 1){
+        if(this.volume + 0.1 <= 1){
             this.volume += 0.1;
             this.volumeHandler.setX(-310 + (620 * this.volume));
-            console.log(this.volume);
+            this.scene.sound.setVolume(this.volume)
         }
     }
     DecreaseVolume = () => {
         if(this.volume - 0.1 >= 0){
             this.volume -= 0.1;
             this.volumeHandler.setX(-310 + (620 * this.volume));
+            this.scene.sound.setVolume(this.volume)
         }
     }
     ApplyChanges = () => {
         localStorage.setItem("language", this.language);
         localStorage.setItem("volume", this.volume.toFixed(1));
         this.configContainer.destroy();
-        this.isPanel = false;
-        location.reload();
+        Alert.isAlert = this.isPanel = false;
+        this.scene.sound.setVolume(this.volume.toFixed(1));
+        if(this.language != this.prevLang)
+            location.reload();
     }
     GetComponents(){
         return this.buttonResult;

@@ -8,6 +8,8 @@ export class Battle extends Phaser.Scene{
         super("Battle");
     }
     preload(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -29,7 +31,7 @@ export class Battle extends Phaser.Scene{
     }
     async create(){
         Helpers.Alert.isAlert = false;
-        this.sound.add("battle", { loop: true, volume: 1}).play();
+        this.sound.add("battle", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         //this.bg_music.setMute(false);
         this.add.image(0, 0, "background_Battle").setOrigin(0);
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", "Rendirse", this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});

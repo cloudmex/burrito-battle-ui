@@ -9,6 +9,8 @@ export class ColiseoBattle extends Phaser.Scene{
         super("ColiseoBattle");
     }
     preload(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");

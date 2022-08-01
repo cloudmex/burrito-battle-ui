@@ -10,6 +10,8 @@ export class Coliseo extends Phaser.Scene{
     }
 
     preload(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -29,6 +31,7 @@ export class Coliseo extends Phaser.Scene{
         this.load.image("alert_small", "../src/images/Informacion_small.png");
 
         this.load.image("cerrar", "../src/images/cerrar.png");
+        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
     }
 
     create(){
@@ -36,6 +39,7 @@ export class Coliseo extends Phaser.Scene{
         this.loadSpritesheet();
     }
     loadSpritesheet(){
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.load.image("seleccion_panel", "../src/images/Coliseo/Seleccion.png");
         this.load.image("informacion_incursion", "../src/images/Coliseo/Informacion_incursion.png");
         this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");

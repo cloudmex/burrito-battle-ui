@@ -13,6 +13,8 @@ export class Pradera extends Phaser.Scene{
     }
     
     async preload(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -54,8 +56,8 @@ export class Pradera extends Phaser.Scene{
     }
     async create(){
         Helpers.Alert.isAlert = false;
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: 1}).play();
-        this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume:0.5});
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume: Helpers.SettingsButton.GetVolume() * 0.5});
         this.footStepsSFX.setMute(true); 
         this.footStepsSFX.play();
         let incursion = await Near.GetActiveIncursion(); console.log(incursion);
@@ -140,7 +142,7 @@ export class Pradera extends Phaser.Scene{
         this.burrito.play("walkRight");
 
         this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer3", "Volver a menu principal", this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
-        new Helpers.SettingsButton(this.game.config.width - 100, this.game.config.height/2, this, 0.25, null, null);
+        //new Helpers.SettingsButton(this.game.config.width - 100, this.game.config.height/2, this, 0.25, null, null);
 
         this.hudBurrito = new Helpers.BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
 
