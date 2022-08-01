@@ -557,12 +557,7 @@ export class Incursion{
 
 export class SettingsButton{
     static GetVolume = () => {
-        if(localStorage.getItem("volume") === 'null') {
-            return parseFloat(localStorage.getItem("volume"));
-        } else {
-            localStorage.setItem("volume", 0.5);
-            return 0.5;
-        }
+        return localStorage.setItem("volume", 0.5);
     }
     constructor(x, y, scene, scale, Callback){
         this.isPanel = false;
@@ -571,10 +566,12 @@ export class SettingsButton{
         this.y = y;
         this.scale = scale;
         this.Callback = Callback;
-        if(!Alert.IsDefined(localStorage.getItem("volume")))
+
+        if(localStorage.getItem("volume") === null)
             localStorage.setItem("volume", 0.5);
-        if(!Alert.IsDefined(localStorage.getItem("language")))
-            localStorage.setItem("language", "eng");
+        if(localStorage.getItem("language") === null){
+            localStorage.setItem("language", "en");
+        }
 
         this.settingsButtonResult = scene.add.container(x, y)
         this.button = scene.add.sprite(0, 0 ,"engrane")
@@ -591,7 +588,7 @@ export class SettingsButton{
             return;
         Alert.isAlert = this.isPanel = true;
         this.volume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
-        this.prevLang = this.language = localStorage.getItem("language") != null ? localStorage.getItem("language") : "en";
+        this.prevLang = this.language = localStorage.getItem("language") !== 'null' ? localStorage.getItem("language") : "en";
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
