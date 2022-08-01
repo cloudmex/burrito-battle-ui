@@ -61,6 +61,7 @@ export class Pradera extends Phaser.Scene{
         Helpers.Alert.isAlert = false;
         this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume: Helpers.SettingsButton.GetVolume() * 0.5});
+        
         this.footStepsSFX.setMute(true); 
         this.footStepsSFX.play();
         let incursion = await Near.GetActiveIncursion(); console.log(incursion);

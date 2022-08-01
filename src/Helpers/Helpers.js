@@ -557,7 +557,7 @@ export class Incursion{
 
 export class SettingsButton{
     static GetVolume = () => {
-        return localStorage.setItem("volume", 0.5);
+        return localStorage.getItem("volume", 0.5);
     }
     constructor(x, y, scene, scale, Callback){
         this.isPanel = false;
@@ -578,7 +578,6 @@ export class SettingsButton{
         .setInteractive(scene.input.makePixelPerfect())
         .setScale(scale)
         .on("pointerdown", ()=>{ this.ShowOptionsPanel();})
-        //.on("pointerup", () => { this.PointerUp(upCallback); })
         .on('pointerover', this.PointerOver)
         .on("pointerout", this.PointerOut);
         this.settingsButtonResult.add(this.button);
