@@ -52,6 +52,11 @@ export class MinarBurrito extends Phaser.Scene{
         this.textures.remove("cards")
         this.load.spritesheet("cards", "../src/images/Cards/cards.png", {frameWidth: 1080, frameHeight: 1080});
 
+        
+        this.load.image("buttonContainer3", "../src/images/button.png");
+        this.load.image("alert", "../src/images/Información 1.png");
+        this.load.image("alert_small", "../src/images/Informacion_small.png");
+
         this.load.once("complete", this.Start, this);
         this.load.start();
     }
@@ -135,23 +140,29 @@ export class MinarBurrito extends Phaser.Scene{
         if(!this.canNavigate || Helpers.Alert.isAlert)
             return;
         let currentSTRW = await Near.GetSTRWToken();
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleMintBurritoAlert"), Translate.Translate("MsgMintBurritoAlert") +currentSTRW + " $STRW.", Translate.Translate("BtnMintBurritoAlert"), Translate.Translate("BtnCancelAlert"))
-        .then(async(result) =>{ 
-            if (result){
-                this.canNavigate = false;
-                localStorage.setItem("action", "mintBurrito");
-                localStorage.setItem("lastScene", "MinarBurrito");
-                this.loadingScreen2 = new Helpers.LoadingScreen(this);
-                await this.Delay(5000)
-                //let minar = JSON.parse('{"attack":"8","burrito_type":"Volador","defense":"7","description":"Este es un burrito de tipo Volador","global_win":"0","hp":"5","level":"1","media":"QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6","name":"Burrito Volador #81","owner_id":"jesusrobles.testnet","speed":"5","win":"0"}')
-                let minar = await Near.NFTMint();
-                await this.loadingScreen2.OnComplete(); 
-                this.MintBurrito(minar);
-                localStorage.removeItem("action");
-                localStorage.removeItem("lastScene");
+        console.log()
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleMintBurritoAlert"), (Translate.Translate("MsgMintBurritoAlert") + currentSTRW + " $STRW."), Translate.Translate("BtnMintBurritoAlert"), Translate.Translate("BtnCancelAlert"))
+        .then(async(result) => { 
+            if(currentSTRW > 50_000) {
+                if (result){
+                    this.canNavigate = false;
+                    localStorage.setItem("action", "mintBurrito");
+                    localStorage.setItem("lastScene", "MinarBurrito");
+                    this.loadingScreen2 = new Helpers.LoadingScreen(this);
+                    await this.Delay(5000)
+                    //let minar = JSON.parse('{"attack":"8","burrito_type":"Volador","defense":"7","description":"Este es un burrito de tipo Volador","global_win":"0","hp":"5","level":"1","media":"QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6","name":"Burrito Volador #81","owner_id":"jesusrobles.testnet","speed":"5","win":"0"}')
+                    let minar = await Near.NFTMint();
+                    await this.loadingScreen2.OnComplete(); 
+                    this.MintBurrito(minar);
+                    localStorage.removeItem("action");
+                    localStorage.removeItem("lastScene");
+                }
+            } else{
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No tienes suficientes $STRW", "No tienes suficientes $STRW para minuar un nuevo burrito", Translate.Translate("BtnCancelAlert"));
             }
         });
     }
+    
     MintBurrito = async(minar) => {
         this.anims.create({
             key: "loop1",
@@ -239,18 +250,22 @@ export class MinarBurrito extends Phaser.Scene{
         if(remain == 0){
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBuyStrwAlert"), Translate.Translate("MsgBuyStrwAlert"), Translate.Translate("BtnBuyStrw"), Translate.Translate("BtnCancelAlert"))
             .then(async(result) =>{ 
-                if (result){
-                    this.canNavigate = false;
-                    localStorage.setItem("action", "mintBurrito");
-                    localStorage.setItem("lastScene", "MinarBurrito");
-                    this.loadingScreen2 = new Helpers.LoadingScreen(this);
-                    await this.Delay(5000)
-                    let tokens = parseInt(await Near.BuyTokens());
-                    //let tokens = 10000_000_000_000_000_000_000_000_000;
-                    await this.loadingScreen2.OnComplete();
-                    this.GetTokens(tokens);
-                    localStorage.removeItem("action");
-                    localStorage.removeItem("lastScene");
+                if(currentSTRW > 50_000) {
+                    if (result){
+                        this.canNavigate = false;
+                        localStorage.setItem("action", "mintBurrito");
+                        localStorage.setItem("lastScene", "MinarBurrito");
+                        this.loadingScreen2 = new Helpers.LoadingScreen(this);
+                        await this.Delay(5000)
+                        let tokens = parseInt(await Near.BuyTokens());
+                        //let tokens = 10000_000_000_000_000_000_000_000_000;
+                        await this.loadingScreen2.OnComplete();
+                        this.GetTokens(tokens);
+                        localStorage.removeItem("action");
+                        localStorage.removeItem("lastScene");
+                    }
+                } else {
+                    await Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height / 2, "No tienes suficientes $STRW", "no tienes suficientes $STRW", "Aceptar");
                 }
             });
         } else{
