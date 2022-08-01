@@ -31,6 +31,7 @@ export class MainMenu extends Phaser.Scene{
     async create(){
         Helpers.Alert.isAlert = false;
         this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        await Translate.LoadJson();
         this.loadingScreen = new Helpers.LoadingScreen(this);
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
         this.add.image(50, 50, "logo1").setOrigin(0).setScale(0.75);
@@ -42,7 +43,7 @@ export class MainMenu extends Phaser.Scene{
             let isInBattle = await Near.IsInBattle();
             if(isInBattle){
                 await this.loadingScreen.OnComplete();
-                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Existe una batalla pendiente", "Hay una batalla en curso y no podras hacer nada mas hasta que finalice la batalla, tambien puedes rendirte pero esto te costara una vida", "Seguir Peleando", "Rendirse")
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBattleAlert"), Translate.Translate("MsgBattleAlert"), Translate.Translate("BtnKeepFighting"), Translate.Translate("BtnSurrender"))
                 .then(async (result) =>{ 
                     if (result)
                         this.scene.start("Battle");
@@ -78,7 +79,6 @@ export class MainMenu extends Phaser.Scene{
             }});
          }, null, {fontSize: 30, fontFamily: "BangersRegular"});*/
 
-        await Translate.LoadJson();
         new Helpers.Button(450, 600, 0.75, "buttonContainer", Translate.Translate("BtnGoMintBurrito"), this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
@@ -87,7 +87,7 @@ export class MainMenu extends Phaser.Scene{
     }
     
     LogOut = () => {
-        Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, "Desconectar cuenta", "¿Quieres desconectar tu cuenta de burrito battle?", "Desconectar", "Cancelar")
+        Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, Translate.Translate("TleAccountAlert"), Translate.Translate("MsgAccountAlert"), Translate.Translate("BtnAccountAlert"), Translate.Translate("BtnCancelAlert"))
         .then((result) => {
             if(result) {
                 localStorage.clear();

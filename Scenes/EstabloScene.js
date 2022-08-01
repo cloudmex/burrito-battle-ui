@@ -1,5 +1,6 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
+import { Translate } from "../src/Translate.js";
 
 export class Establo extends Phaser.Scene{
     counter = 0;
@@ -43,15 +44,16 @@ export class Establo extends Phaser.Scene{
     async create(){
         Helpers.Alert.isAlert = false;
         this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        await Translate.LoadJson();
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
-        this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 - 350, "Establo", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5);
+        this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 - 350, Translate.Translate("BtnBarn"), {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5);
         this.isPrevScene = localStorage.getItem("prevScene") != null;
         localStorage.removeItem("prevScene");
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer3", this.isPrevScene ? "Volver a pradera" : "Menu principal", this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer3", this.isPrevScene ? Translate.Translate("BtnBackToMeadow") : Translate.Translate("BtnMainMenu"), this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 845, this.sys.game.scale.gameSize.height / 2 + 100, 1, "left_arrow", null, this, ()=>{ this.Navigate(-1); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 55,  this.sys.game.scale.gameSize.height / 2 + 100, 1, "right_arrow", null, this, ()=>{ this.Navigate(1); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 385,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Adquirir nuevo burrito", this, this.GoToSilo, null, {fontSize: 24, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 385,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", Translate.Translate("BtnAcquireNewBurrito"), this, this.GoToSilo, null, {fontSize: 24, fontFamily: "BangersRegular"});
     
         this.cards = [];
         this.bigCard = null;
@@ -65,7 +67,7 @@ export class Establo extends Phaser.Scene{
             this.counter = parseInt(localStorage.getItem("counter"));
 
         if(this.totalTokens == 0)
-            this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, "No cuentas con ningun burrito", {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
+            this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, Translate.Translate("MsgNotBurritos"), {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
         else {
             this.SpawnCards();
             if(localStorage.getItem("last_burritoIndex") !== null)
@@ -97,10 +99,10 @@ export class Establo extends Phaser.Scene{
     }
     SelectBurrito = async (burrito) =>{
         if(burrito.hp <= 0){
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, "No se puede seleccionar este burrito porque no tiene vidas");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("MsgNotLives"));
         } else{
             localStorage.setItem("burrito_selected", burrito.token_id);
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, "El burrito se selecciono exitosamente");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("MsgSelectBurrito"));
         }
     }
     ShowCard = (burrito, index) => {
@@ -114,18 +116,18 @@ export class Establo extends Phaser.Scene{
 
         this.bigCard = new Helpers.Card(this.sys.game.scale.gameSize.width / 2 + 500, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this, false, false, true, true).setScale(0.7).On( ()=>{ this.infoBigCard(burrito);});
         if(burrito.hp <= 0)
-            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Restaurar vidas", this, ()=>{ this.ConfirmarReset(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", Translate.Translate("BtnRestoreLives"), this, ()=>{ this.ConfirmarReset(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         else
-            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Seleccionar Burrito", this, ()=>{ this.SelectBurrito(burrito); this.SetSelected(index);}, null, {fontSize: 28, fontFamily: "BangersRegular"});
+            this.buttonBigCard = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", Translate.Translate("BtnSelectBurrito"), this, ()=>{ this.SelectBurrito(burrito); this.SetSelected(index);}, null, {fontSize: 28, fontFamily: "BangersRegular"});
         
-        this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", "Subir de nivel", this, ()=>{ this.ConfirmarEvolve(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        this.buttonEvolve = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 130, 0.5, "buttonContainer3", Translate.Translate("BtnLevelUp"), this, ()=>{ this.ConfirmarEvolve(burrito) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 350,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Aumentar Victorias", this, ()=>{ Near.BurritoReadyEvolve(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 680,  this.sys.game.scale.gameSize.height - 50, 0.5, "buttonContainer3", "Quitar vidas", this, ()=>{ Near.BurritoReadyReset(burrito.token_id) }, null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("last_burritoIndex", burrito.token_id);
     }
     ConfirmarReset = async(burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Restaurar vidas", `El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.El costo es de 1 Near y 30,000 $STRW.Actualmente tienes${currentSTRW} $STRW.`, "Restaurar", "Cancelar")
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("BtnRestoreLives"), Translate.Translate("MsgRestoreLivesAlert") + currentSTRW +" $STRW.", Translate.Translate("BtnRestore"), Translate.Translate("BtnCancelAlert"))
         .then(async(result) =>{ 
             if (result) {
                 this.canSelectCard = false;
@@ -159,9 +161,9 @@ export class Establo extends Phaser.Scene{
     ConfirmarEvolve = async(burrito) =>{
         let currentSTRW = await Near.GetSTRWToken();
         if(burrito.win < 10)
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, "Para subir de nivel un burrito debes tener al menos 10 victorias en combate.");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("MsgLevelUp"));
         else {
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Quieres evolucionar a este burrito?", `Al evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes ${currentSTRW} $STRW.`, "Restaurar", "Cancelar")
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleEvolveAlert"), Translate.Translate("MsgEvolveAlert") + currentSTRW + " $STRW.", Translate.Translate("BtnEvolve"), Translate.Translate("BtnCancelAlert"))
             .then(async(result) =>{ 
                 if(result){
                     this.loadingScreen = new Helpers.LoadingScreen(this);

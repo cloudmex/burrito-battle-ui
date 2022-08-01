@@ -1,5 +1,5 @@
 {
-    "BtnConnectFullAccess": "Conectar billetera (Acceso completo)",
+    "BtnConnectFullAccess": "Conectar billetera\n (Acceso completo)",
     "BtnConnect": "Conectar billetera",
     "TleConnectFullAccessAlert": "Acceder en acceso completo",
     "MsgConnectFullAccessAlert": "Al conectar tu cuanta con el modo de acceso completo el juego no te enviara a confirmal las transacciones, esto con la finalidad de ofrecer una mejor experiencia de juego.",
@@ -7,6 +7,7 @@
     "MsgConnectAlert": "Al conectar tu cuanta en modo seguro se requerira confirmacion en ciertas partes del juego.",
     "BtnConnectAlert": "Conectar",
     "BtnCancelAlert": "Cancelar",
+
     "BtnGoMintBurrito": "Minar Burrito",
     "BtnMeadow": "Pradera",
     "BtnBarn": "Establo",
@@ -14,6 +15,11 @@
     "TleAccountAlert": "Desconectar cuenta",
     "MsgAccountAlert": "¿Quieres desconectar tu cuanta de Burrito Battle?",
     "BtnAccountAlert": "Desconectar",
+    "TleBattleAlert": "Existe una batalla pendiente",
+    "MsgBattleAlert": "Hay una batalla en curso y no podras hacer nada mas hasta que finalice la batalla, tambien puedes rendirte pero esto te costara una vida",
+    "BtnKeepFighting": "Seguir peleando",
+    "BtnSurrender": "Rendirse",
+
     "BtnBuyStrw": "Comprar",    
     "SignBuyStrw": "VENTA DE STRW",
     "TleBuyStrwAlert": "¿Quieres comprar tokens?",
@@ -32,6 +38,14 @@
     "FlyType": "Volador",
     "PlantType": "Planta",
     "FireType": "Fuego",
+    "BtnBackToMeadow": "Volver a pradera",
+    "TleNoBuyStrwAlert": "No puedes comprar tokens",
+    "MsgNoBuyStrwAlert": "El comprar tokens paja tarda una epoca, asi que \naun debes esperar para poder comprar tokens.",
+
+    "Language": "Idioma",
+    "Volume": "Volumen",
+    "Apply": "Aplicar",
+
     "TleSelectedBurritoAlert": "Ningun burrito seleccionado",
     "MsgSelectedBurritoAlert": "Para poder luchar contra otros burritos necesitas seleccionar uno de tus burritos. Ve al establo para poder seleccionar algun burrito o bien al silo para minar un nuevo burrito.",
     "BtnGoSilo": "Ir al Silo",
@@ -48,6 +62,15 @@
     "MsgGoColiseumAlert": "Aqui puedes participar en incursiones.",
     "BtnGoMainMenu": "Volver al menu principal",
     "SignBarn": "Establo",
+    "TleBurritoInIncursion": "Burrito en incursion",
+    "MsgBurritoInIncursion": "Actualmente uno de tus burritos se encuentra registrado para participar en la incursion actual ¿Deseas ir al coliseo?",
+    "BtnGoColiseum": "Ir a coliseo",
+    "TleDeadBurritoAlert": "Tu burrito se ha quedado sin vida",
+    "MsgDeadBurritoAlert": "El burrito seleccionado no cuenta suficiente vida, para continuar selecciona un burrito diferente para poder seguir navegando en el mapa o luchando.",
+    "TleColiseumFullAccess": "\"Acceso completo\"\nrequerido",
+    "MsgColiseumFullAccess": "Para participar en la incursion necesitas ingresar en modo \"Acceso completo\" sino tendras gran desventaja.",
+    "BtnColiseumFullAccess": "Login con\n\"Acceso completo\"",
+
     "BtnAcquireNewBurrito":	"Adquirir nuevo burrito",
     "BtnLevelUp": "Subir de nivel",
     "BtnSelectBurrito": "Seleccionar burrito",
@@ -61,6 +84,23 @@
     "MsgSelectBurrito": "El burrtio se selecciono exitosamente.",
     "MsgLevelUp": "Para subir de nivel un burrito debes tener al menos 10 victorias en combate.",
     "BtnAccept": "Aceptar",
+    "MsgNotBurritos": "No cuentas con ningun burrito",
+    "MsgNotLives": "No se puede seleccionar este burrito porque no tiene vidas",
+    "BtnRestoreLives": "Restaurar vidas",
+    "MsgRestoreLivesAlert": "El restaurar las vidas del burrito te permitira volver a utilizar este burrito para explorar la pradera y luchar en batallas.El costo es de 1 Near y 30,000 $STRW.Actualmente tienes ",
+    "BtnRestore": "Restaurar",
+    "TleEvolveAlert": "¿Quieres evolucionar a este burrito?",
+    "MsgEvolveAlert": "Al evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes ",
+    "BtnEvolve": "Evolucionar",
+    
     "TleColiseumDestroyAlert": "El coliseo esta en recontrucción",
-    "MsgColiseumDestroyAlert":	"El coliseo sufrio mucho daño en la ultima incursion asi que esta en reconstruccion para la siguiente incursion."
+    "MsgColiseumDestroyAlert":	"El coliseo sufrio mucho daño en la ultima incursion asi que esta en reconstruccion para la siguiente incursion.",
+
+    "MsgLevel": "Nivel",
+    "MsgHealth": "Salud",
+    "MsgNotAccion": "No puedes realizar esta accion.",
+    "MsgAttack": "Ataque",
+    "MsgPassTurn": "Pasar\nTurno",
+    "MsgHeavyAttack": "Ataque\nPesado",
+    "MsgDefense": "Defensa"
 }
