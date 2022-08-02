@@ -15,11 +15,12 @@ const config = {
 const near = await connect(config);
 const wallet = new WalletConnection(near, 'ncd-ii');
 
-const contract_id_burritos = "dev-1658782895877-69588517075427";
-const contract_id_strw_tokens = "dev-1658783405088-89841290785619";
-const contract_id_items = "dev-1658783054298-86132432658126";
-const contract_id_PVEBattle = "dev-1658783223235-51241818548332";
-const contract_id_incursion = "dev-1658783969558-31203087752506"; 
+const contract_id_burritos = "bb-burritos.testnet";
+const contract_id_strw_tokens = "bb-strw.testnet";
+const contract_id_items = "bb-items.testnet";
+const contract_id_PVEBattle = "bb-pve.testnet";
+const contract_id_incursion = "bb-incursions.testnet"; 
+const contract_id_hospital = "bb-hospital.testnet"; 
 
 const provider = new providers.JsonRpcProvider(
   "https://archival-rpc.testnet.near.org"
