@@ -249,8 +249,8 @@ export class MinarBurrito extends Phaser.Scene{
         let remain = await Near.CanBuyTokens();
         if(remain == 0){
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBuyStrwAlert"), Translate.Translate("MsgBuyStrwAlert"), Translate.Translate("BtnBuyStrw"), Translate.Translate("BtnCancelAlert"))
-            .then(async(result) =>{ 
-                if(currentSTRW > 50_000) {
+            .then(async(result) =>{
+                if(await Near.GetSTRWToken() > 50_000) {
                     if (result){
                         this.canNavigate = false;
                         localStorage.setItem("action", "mintBurrito");
