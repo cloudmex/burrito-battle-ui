@@ -250,22 +250,18 @@ export class MinarBurrito extends Phaser.Scene{
         if(remain == 0){
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBuyStrwAlert"), Translate.Translate("MsgBuyStrwAlert"), Translate.Translate("BtnBuyStrw"), Translate.Translate("BtnCancelAlert"))
             .then(async(result) =>{
-                if(await Near.GetSTRWToken() > 50_000) {
-                    if (result){
-                        this.canNavigate = false;
-                        localStorage.setItem("action", "mintBurrito");
-                        localStorage.setItem("lastScene", "MinarBurrito");
-                        this.loadingScreen2 = new Helpers.LoadingScreen(this);
-                        await this.Delay(5000)
-                        let tokens = parseInt(await Near.BuyTokens());
-                        //let tokens = 10000_000_000_000_000_000_000_000_000;
-                        await this.loadingScreen2.OnComplete();
-                        this.GetTokens(tokens);
-                        localStorage.removeItem("action");
-                        localStorage.removeItem("lastScene");
-                    }
-                } else {
-                    await Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height / 2, "No tienes suficientes $STRW", "no tienes suficientes $STRW", "Aceptar");
+                if (result){
+                    this.canNavigate = false;
+                    localStorage.setItem("action", "mintBurrito");
+                    localStorage.setItem("lastScene", "MinarBurrito");
+                    this.loadingScreen2 = new Helpers.LoadingScreen(this);
+                    await this.Delay(5000)
+                    let tokens = parseInt(await Near.BuyTokens());
+                    //let tokens = 10000_000_000_000_000_000_000_000_000;
+                    await this.loadingScreen2.OnComplete();
+                    this.GetTokens(tokens);
+                    localStorage.removeItem("action");
+                    localStorage.removeItem("lastScene");
                 }
             });
         } else{
