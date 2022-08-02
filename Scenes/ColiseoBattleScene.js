@@ -1,5 +1,6 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
+import { Translate } from "../src/Translate.js";
 
 export class ColiseoBattle extends Phaser.Scene{
     currentBattle;
@@ -104,7 +105,7 @@ export class ColiseoBattle extends Phaser.Scene{
         let seconds = (minutes % 1) * 60;
         if(remainToBuy != 0){
             this.contdown = true;
-            this.countDownText?.setText(`La batalla finaliza en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+            this.countDownText?.setText(Translate.Translate("MsgFinishBattle") + parseInt(hour).toString().padStart(2, '0') + ":" + parseInt(minutes).toString().padStart(2, '0') +":" + parseInt(seconds).toString().padStart(2, '0'));
         }
 
         if(remainToBuy < timeNow){
@@ -234,16 +235,16 @@ export class ColiseoBattle extends Phaser.Scene{
         }
         switch (accion) {
             case "Ataque1":
-                result = `${burrito}: \nHa realizado un ataque debil`; 
+                result = burrito + ":" + Translate.Translate("MsgWeakAttack"); 
                 break;
             case "Ataque2":
-                result = `${burrito}: \nHa realizado un ataque fuerte`; 
+                result = burrito + ":" + Translate.Translate("MsgStrongAttack"); 
                 break;
             case "dano":
-                result = `${burrito}: \nHa recibido un daño de ${damage.toFixed(2)}`; 
+                result = burrito + ":" + Translate.toString("MsgDamage") + damage.toFixed(2); 
                 break;
             case "defensa":
-                result = `${burrito}: \nHa utilizado escudo`; 
+                result = burrito + ":" + Translate.Translate("MsgShield"); 
                 break;
             default:
                 result = "undefined";
