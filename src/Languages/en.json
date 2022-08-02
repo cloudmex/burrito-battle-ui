@@ -8,7 +8,7 @@
     "BtnConnectAlert": "Connect",
     "BtnCancelAlert": "Cancel",
 
-    "BtnGoMintBurrito": "Mint",
+    "BtnGoMintBurrito": "Silo",
     "BtnMeadow": "Meadow",
     "BtnBarn": "Barn",
     "BtnSettings": "Settings",
@@ -125,6 +125,7 @@
     "MsgRegisteredIncursion": "You are already registered in the incursion\nWait for it to start!",
     "MsgStartIncursion": "The Incursion starts at:\n",
     "MsgFinishIncursion": "The Incursion ends at:\n",
+    "MsgFinishBattle": "The battle ends at:\n",
 
     "MsgSurrender": "Surrender",
     "MsgWeakAttack":" \nHas made a weak attack",
