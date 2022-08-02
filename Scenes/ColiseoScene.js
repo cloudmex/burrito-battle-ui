@@ -1,5 +1,7 @@
 import * as Helpers from "../src/Helpers/Helpers.js";
 import * as Near from "../src/near.js"
+import { Translate } from "../src/Translate.js";
+
 export class Coliseo extends Phaser.Scene{
     counter = 0;
     canNavigate = true;
@@ -36,10 +38,12 @@ export class Coliseo extends Phaser.Scene{
 
     create(){
         Helpers.Alert.isAlert = false;
+        //await Translate.LoadJson();
         this.loadSpritesheet();
     }
     loadSpritesheet(){
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        this.sound.stopAll();
+        this.sound.removeAll();
         this.load.image("seleccion_panel", "../src/images/Coliseo/Seleccion.png");
         this.load.image("informacion_incursion", "../src/images/Coliseo/Informacion_incursion.png");
         this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", "../src/images/Burritos/Burrito Relampago.png");
@@ -63,11 +67,11 @@ export class Coliseo extends Phaser.Scene{
         console.log(this.incursion);
         if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
-            new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", "Iniciar Incursion", this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"});
+            new Helpers.Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", Translate.Translate("BtnStartIncursion"), this, this.ConfirmIncursion, null, {fontSize: 40, fontFamily: "BangersRegular"});
         }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
             await this.loadingScreen.OnComplete();
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "El coliseo esta en reconstruccíon", "El coliso sufrio mucho daño en la ultima incursion asi que esta en reconstruccion para la siguiente incursion", "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleColiseumDestroyAlert"), Translate.Translate("MsgColiseumDestroyAlert"), Translate.Translate("BtnAccept"));
             /*esto no debe ir aqui */
             //this.CreateIncursionInfo();
             this.loadingScreen = new Helpers.LoadingScreen(this);
@@ -75,7 +79,7 @@ export class Coliseo extends Phaser.Scene{
             let canWithdrawBurrito = await Near.CanWithdrawBurrito();
             await this.loadingScreen.OnComplete();
             if(playerIncursion.player.burrito_id != null && parseInt(playerIncursion.incursion.finish_time).toString().substring(0,13) < parseInt(Date.now()) && canWithdrawBurrito){
-                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Recupera tu burrito", "La incursion en la cual te registraste a finalizado, da en aceptar para recupera tu burrito y puedas participar en siguientes incursiones.", "Aceptar")
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleTakeBackBurritoAlert"), Translate.Translate("MsgTakeBackBurritoAlert"), Translate.Translate("BtnAccept"))
                 .then(async (result) =>{ 
                     if(result){
                         this.GetRewards();
@@ -92,7 +96,7 @@ export class Coliseo extends Phaser.Scene{
                     let battleIncursion = await Near.GetActiveBattleRoom();
                     if(battleIncursion.room.health <= 0){
                         await this.loadingScreen.OnComplete();
-                        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Tu burrito ha muerto", "Tu burrito ha muerto en la batalla asi que ya no puede continuar peleando.\nEspera a que finalice la batalla.", "Aceptar");
+                        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleDeadBurrito"), Translate.Translate("MsgDeadBurrito"), Translate.Translate("BtnAccept"));
                     
                         this.CreateIncursionInfo();
                     } else
@@ -107,7 +111,7 @@ export class Coliseo extends Phaser.Scene{
             this.add.image(0, 0, "coliseo_inicio").setOrigin(0).setScale(1);
             this.CreatePanelIncursion();
         }
-        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", "Pradera", this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", Translate.Translate("BtnMeadow"), this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
         //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
         /*async()=>{ 
             this.loadingScreen = new Helpers.LoadingScreen(this);
@@ -129,11 +133,11 @@ export class Coliseo extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
         if(result.complete){
             if(result.win == "MegaBurrito")
-                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Perdedores", "El megaburrito ha ganado la incursion, suerte para la proxima", "Aceptar");
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleLosersAlert"), Translate.Translate("MsgLosersAlert"), Translate.Translate("BtnAccept"));
             else if(result.win == "Players")
-                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Ganadores", "Los participantes han derrotado al megaburrito, presiona aceptar para reclamar tu recompensa.", "Aceptar").then((r) => { if(r) this.GetTokens(result.rewards) });
+                await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleWinnersAlert"), Translate.Translate("MsgWinnersAlert"), Translate.Translate("BtnAccept")).then((r) => { if(r) this.GetTokens(result.rewards) });
         } else{ 
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No hay incursion activa", "No se puede realizar el proceso ya que no hay ninguna incursion activa", "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleNoIncursionAlert"), Translate.Translate("MsgNoIncursionAlert"), Translate.Translate("BtnAccept"));
         }
     }
     GetTokens (tokens) {
@@ -144,7 +148,7 @@ export class Coliseo extends Phaser.Scene{
         this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
         this.cofreAnimation.play("cofreAnimIn")
         .once('animationcomplete', () => { 
-            animContainer.add(this.add.text(0, -350, "Obtuviste", {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
+            animContainer.add(this.add.text(0, -350, Translate.Translate("MsgBuyStrwCard"), {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
             animContainer.add(this.add.text(0,  400, `${tokens} $STRW`, {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
             this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
                 this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', () => {
@@ -160,7 +164,7 @@ export class Coliseo extends Phaser.Scene{
         this.scene.start("Pradera"); 
     }
     ConfirmIncursion = async() => {
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Iniciar nueva incursion", "Una incursion en un evento donde los jugadores pueden unirse para combatir a un burrito de mayor poder y ganar recompensas.\n¿Quieres iniciar una nueva incursion?", "Iniciar Incursion", "Cancelar")
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleStartIncursionAlert"), Translate.Translate("MsgStartIncursionAlert"), Translate.Translate("BtnStartIncursion"), Translate.Translate("BtnCancelAlert"))
         .then(async (result) =>{ 
             if(result){
                 localStorage.setItem("lastScene", "Coliseo");
@@ -191,9 +195,9 @@ export class Coliseo extends Phaser.Scene{
     }
     async UseCard(burrito){
         if(burrito.hp === "0"){
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "No puedes usar este burrito", `Este burrito se ha quedado sin vida, utiliza algun otro burrito`, "Aceptar");
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleNoUseBurritoAlert"), Translate.Translate("MsgNoUseBurritoAlert"), Translate.Translate("BtnAccept"));
         } else{
-            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "Usar este burrito", `¿Quieres usar este burrito para la incursion? `, "Seleccionar", "Cancelar")
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleUseBurritoAlert"), Translate.Translate("MsgUseBurritoAlert"), Translate.Translate("BtnSelect"), Translate.Translate("BtnCancelAlert"))
             .then(async(result) =>{ 
                 if(result){
                     if(burrito.token_id == localStorage.getItem("burrito_selected"))
@@ -279,7 +283,7 @@ export class Coliseo extends Phaser.Scene{
         let incursionContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2 ).setScale(0.75);
         incursionContainer.add(this.add.image(0, 0, "informacion_incursion"));
         incursionContainer.add(new Helpers.Card(- 280, - 100, mega, this, false, false, false, false).setScale(.45).GetComponents());
-        incursionContainer.add(this.countDownInfoText = this.add.text(200, -200, "La incursion finaliza en\n00:00:00", {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
+        incursionContainer.add(this.countDownInfoText = this.add.text(200, -200, Translate.Translate("MsgFinishIncursion0"), {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
         incursionContainer.add(new Helpers.BossSlider(175, 70, this).SetValue(mega.health / mega.start_health).SetScale(0.6).GetComponent());
         info.forEach(async(player, i) => {
             let ownerOffset = {x: 0, y:35}
@@ -302,14 +306,14 @@ export class Coliseo extends Phaser.Scene{
         incursionContainer.add(new Helpers.Card(- 280, - 100, mega, this, false, false, false, false).setScale(.45).GetComponents());
         incursionContainer.add(this.countDownText = this.add.text(200, -200, "", {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
         if(this.incursion.players.filter((e) => e.burrito_owner === Near.GetAccountId()).length == 0){
-            incursionContainer.add(new Helpers.Button(200, 0, 0.5, "buttonContainer", "Seleccionar un burrito", this, 
+            incursionContainer.add(new Helpers.Button(200, 0, 0.5, "buttonContainer", Translate.Translate("BtnSelectBurrito"), this, 
             ()=>{
                 clearInterval(this.counterInterval); 
                 incursionContainer.destroy(); 
                 this.CreatePanel() 
             }, null, {fontSize: 24, fontFamily: "BangersRegular"}).GetComponents());
         } else{
-            incursionContainer.add(this.add.text(200, 0, "Ya estás registrado en la incursión \n¡Espera a que inicie!!", {fontSize: 30, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
+            incursionContainer.add(this.add.text(200, 0, Translate.Translate("MsgRegisteredIncursion"), {fontSize: 30, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
         }
         let playersTest = this.incursion.players;
         playersTest.forEach(async(player, i) => {
@@ -351,7 +355,7 @@ export class Coliseo extends Phaser.Scene{
         let seconds = (minutes % 1) * 60;
         if(remainToBuy != 0){
             this.contdown = true;
-            this.countDownText?.setText(`La incursion inicia en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+            this.countDownText?.setText(Translate.Translate("MsgStartIncursion") + parseInt(hour).toString().padStart(2, '0') + ":" + parseInt(minutes).toString().padStart(2, '0') + ":" + parseInt(seconds).toString().padStart(2, '0'));
         }
 
         if(remainToBuy < timeNow){
@@ -366,7 +370,7 @@ export class Coliseo extends Phaser.Scene{
         let minutes = (hour % 1) * 60;
         let seconds = (minutes % 1) * 60;
         if(remainToBuy != 0)
-            this.countDownInfoText?.setText(`La incursion finaliza en:\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
+            this.countDownInfoText?.setText(Translate.Translate("MsgFinishIncursion") + parseInt(hour).toString().padStart(2, '0') + ":" + parseInt(minutes).toString().padStart(2, '0') + ":" + parseInt(seconds).toString().padStart(2, '0'));
         
         if(remainToBuy < timeNow){
             localStorage.setItem("lastScene", "Coliseo");

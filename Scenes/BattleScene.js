@@ -1,5 +1,6 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
+import { Translate } from "../src/Translate.js";
 
 export class Battle extends Phaser.Scene{
     currentBattle;
@@ -31,10 +32,11 @@ export class Battle extends Phaser.Scene{
     }
     async create(){
         Helpers.Alert.isAlert = false;
+        await Translate.LoadJson();
         this.sound.add("battle", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         //this.bg_music.setMute(false);
         this.add.image(0, 0, "background_Battle").setOrigin(0);
-        new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", "Rendirse", this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", Translate.Translate("MsgSurrender"), this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
 
        await this.GetBattle().then(async () => {
@@ -210,16 +212,16 @@ export class Battle extends Phaser.Scene{
         let damage = parseFloat(tmpBattle["health_" + burrito.toLowerCase()]) - parseFloat(currentBattle["health_" + burrito.toLowerCase()]);
         switch (accion) {
             case "Ataque1":
-                result = `${burrito}: \nHa realizado un ataque debil`; 
+                result = burrito + ":" + Translate.Translate("MsgWeakAttack"); 
                 break;
             case "Ataque2":
-                result = `${burrito}: \nHa realizado un ataque fuerte`; 
+                result = burrito + ":" + Translate.Translate("MsgStrongAttack"); 
                 break;
             case "dano":
-                result = `${burrito}: \nHa recibido un daño de ${damage.toFixed(2)}`; 
+                result = burrito + ":" + Translate.toString("MsgDamage") + damage.toFixed(2); 
                 break;
             case "defensa":
-                result = `${burrito}: \nHa utilizado escudo`; 
+                result = burrito + ":" + Translate.Translate("MsgShield"); 
                 break;
             default:
                 result = "undefined";
@@ -271,7 +273,7 @@ export class Battle extends Phaser.Scene{
         return result.toString();
     }
     GiveUp = async () => {
-        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, "¿Esta seguro de huir?", "El huir de la pelea le costara una vida a tu burrito", "Huir", "Seguir peleando")
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleSurrenderAlert"), Translate.Translate("MsgSurrenderAlert"), Translate.Translate("BtnWildBurrtitoAlertEscape"), Translate.Translate("BtnKeepFighting"))
         .then(async (result) => { 
             if (result){
                 this.loadingScreen = new Helpers.LoadingScreen(this);
