@@ -41,6 +41,9 @@
     "BtnBackToMeadow": "Back to meadow",
     "TleNoBuyStrwAlert": "You can't buy tokens",
     "MsgNoBuyStrwAlert": "Buying straw tokens takes a epoch, \nso you still have to wait to buy tokens.",
+    "DontHaveEnoughSTRWForMint": "You dont have enough $STRAW Tokens for buy a burrito, you need 50000 $STRW.",
+    "DontHaveEnoughNearForMint": "You dont have enough $Nears for buy a burrito, you need 5 $Near.",
+    "DontHaveEnoughNearForBuyStraw": "You dont have enough $Nears for buy Straw tokens, you need 1 $Near.",
 
     "Language": "Language",
     "Volume": "Volume",

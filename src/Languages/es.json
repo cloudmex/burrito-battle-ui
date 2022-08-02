@@ -41,6 +41,9 @@
     "BtnBackToMeadow": "Volver a pradera",
     "TleNoBuyStrwAlert": "No puedes comprar tokens",
     "MsgNoBuyStrwAlert": "El comprar tokens paja tarda una epoca, asi que \naun debes esperar para poder comprar tokens.",
+    "DontHaveEnoughSTRWForMint": "No tienes suficientes $STRAW Tokens para comprar un burrito, Necesitas 50000 $STRW.",
+    "DontHaveEnoughNearForMint": "No tienes suficientes $Nears para comprar un burrito, Necesitas 5 $Nears",
+    "DontHaveEnoughNearForBuyStraw": "No tienes suficientes $Nears para comprar $Straw Tokens, Necesitas 1 $Near.",
 
     "Language": "Idioma",
     "Volume": "Volumen",
