@@ -106,6 +106,7 @@ export async function LoginFullAccess(){
 export async function GetAccountBalance(){
     const cuenta = await near.account(GetAccountId());
     const balance = await cuenta.getAccountBalance();
+    console.log(balance)
     return balance;
 }
 export async function GetSTRWToken(){

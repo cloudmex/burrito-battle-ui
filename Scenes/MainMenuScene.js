@@ -83,6 +83,7 @@ export class MainMenu extends Phaser.Scene{
             }else{
                 
             }});
+            
          }, null, {fontSize: 30, fontFamily: "BangersRegular"});*/
 
         new Helpers.Button(450, 600, 0.75, "buttonContainer", Translate.Translate("BtnGoMintBurrito"), this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
