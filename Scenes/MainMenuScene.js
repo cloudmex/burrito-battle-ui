@@ -26,8 +26,14 @@ export class MainMenu extends Phaser.Scene{
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
 
-        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");      
+        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");     
+
+        this.load.spritesheet("derrota", "../src/images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 }); 
     }
+    
+    Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
     async create(){
         Helpers.Alert.isAlert = false;
         await Translate.LoadJson();
