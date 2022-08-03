@@ -91,6 +91,8 @@ export class MainMenu extends Phaser.Scene{
         new Helpers.Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         
         await this.loadingScreen.OnComplete();
+        let result = await Near.GetCurrentNears();
+        console.log(result);
     }
     
     LogOut = () => {

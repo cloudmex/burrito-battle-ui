@@ -69,7 +69,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.isPrevScene = localStorage.getItem("prevScene") != null;
         localStorage.removeItem("prevScene");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? Translate.Translate("BtnBackToMeadow") : Translate.Translate("BtnMainMenu"), this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
+        this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
         this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"})
         this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
         
@@ -140,12 +140,11 @@ export class MinarBurrito extends Phaser.Scene{
         if(!this.canNavigate || Helpers.Alert.isAlert)
             return;
         let currentSTRW = await Near.GetSTRWToken();
-        console.log()
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleMintBurritoAlert"), (Translate.Translate("MsgMintBurritoAlert") + currentSTRW + " $STRW."), Translate.Translate("BtnMintBurritoAlert"), Translate.Translate("BtnCancelAlert"))
         .then(async(result) => { 
             if (result){
                 if(currentSTRW >= 50_000) {
-                    if(((await Near.GetAccountBalance()).available / 1000000000000000000000000).toFixed(1) >= 5){
+                    if((await Near.GetCurrentNears()) >= 5){
                         this.canNavigate = false;
                         localStorage.setItem("action", "mintBurrito");
                         localStorage.setItem("lastScene", "MinarBurrito");
@@ -256,7 +255,7 @@ export class MinarBurrito extends Phaser.Scene{
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBuyStrwAlert"), Translate.Translate("MsgBuyStrwAlert"), Translate.Translate("BtnBuyStrw"), Translate.Translate("BtnCancelAlert"))
             .then(async(result) =>{
                 if (result){
-                    if(((await Near.GetAccountBalance()).available / 1000000000000000000000000).toFixed(1) >= 1){
+                    if((await Near.GetCurrentNears()) >= 1){
                         this.canNavigate = false;
                         localStorage.setItem("action", "mintBurrito");
                         localStorage.setItem("lastScene", "MinarBurrito");
@@ -269,7 +268,7 @@ export class MinarBurrito extends Phaser.Scene{
                         localStorage.removeItem("action");
                         localStorage.removeItem("lastScene");
                     } else {
-                        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate("DontHaveEnoughNearForBuyStraw"), Translate.Translate("BtnCancelAlert"));
+                        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("DontHaveEnoughNearForBuyStraw"), Translate.Translate("BtnCancelAlert"));
                     }
                 }
             });

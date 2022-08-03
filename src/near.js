@@ -106,8 +106,10 @@ export async function LoginFullAccess(){
 export async function GetAccountBalance(){
     const cuenta = await near.account(GetAccountId());
     const balance = await cuenta.getAccountBalance();
-    console.log(balance)
     return balance;
+}
+export async function GetCurrentNears(){
+    return Math.trunc((((await (await near.account(GetAccountId())).getAccountBalance()).available / 1000000000000000000000000) - 0.05)* Math.pow(10, 2)) / Math.pow(10, 2);
 }
 export async function GetSTRWToken(){
     let currentSTRW = parseInt(utils.format.formatNearAmount(await contract_strw_tokens.ft_balance_of({ account_id: GetAccountId()})).replace(/\,/g,''));

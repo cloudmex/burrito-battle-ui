@@ -441,10 +441,6 @@ export class TokenHud{
     constructor(x, y, scene, currentNEAR, currentSTRW){
         this.TokenHud = {x, y, scene};
 
-        this.cantidad = (currentNEAR.available/1000000000000000000000000)+"";
-        this.decimales = this.cantidad.split(".");
-        this.disponible = this.decimales[0]+"."+(this.decimales[1].substring(0, 2));
-
         this.hudResult = scene.add.container(x, y).setScrollFactor(0);
         this.nearHud = scene.add.image(-40, -150, "tokenHud");
         this.strwHud = scene.add.image(-40, -80, "tokenHud");
@@ -455,14 +451,14 @@ export class TokenHud{
         this.hudResult.add(this.nearToken);
         this.hudResult.add(this.strwToken);
         this.hudResult.add(this.strwText = scene.add.text(-56, -100, currentSTRW, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de STRW Tokens del usuario
-        this.hudResult.add(this.nearText = scene.add.text(-56, -171, this.disponible, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
+        this.hudResult.add(this.nearText = scene.add.text(-56, -171, currentNEAR, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
     }
 
     GetComponents () { 
         return this.hudResult;
     }
     async UpdateTokens(){
-        let nears = ((await Near.GetAccountBalance()).available / 1000000000000000000000000).toFixed(2);
+        let nears = await Near.GetCurrentNears();
         let strw = await Near.GetSTRWToken();
         this.strwText.setText(strw);
         this.nearText.setText(nears)

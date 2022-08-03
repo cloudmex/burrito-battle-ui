@@ -61,7 +61,7 @@ export class Establo extends Phaser.Scene{
         this.infoCard = null;
         this.canNavigate = true;
         this.totalTokens = await Near.NFTSupplyForOwner();
-        this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetAccountBalance(), await Near.GetSTRWToken());
+        this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
 
         if((localStorage.getItem("counter") != null))
             this.counter = parseInt(localStorage.getItem("counter"));

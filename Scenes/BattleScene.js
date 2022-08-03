@@ -28,12 +28,14 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
 
         
-        this.load.audio("battle", "../src/audio/battle.ogg");
     }
     async create(){
         Helpers.Alert.isAlert = false;
         await Translate.LoadJson();
         this.sound.add("battle", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:1});
+        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:1});
+        this.sfxDano = this.sound.add("dano", {loop: false, volume:1});
         //this.bg_music.setMute(false);
         this.add.image(0, 0, "background_Battle").setOrigin(0);
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", Translate.Translate("MsgSurrender"), this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
@@ -120,6 +122,23 @@ export class Battle extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
     }
     Animation(animPlayer, animCPU){
+
+        if(animPlayer === "Ataque1"){
+            setTimeout(()=>{ this.sfxKick1.play();}, 1000);
+        } else if(animPlayer === "Ataque2"){
+            setTimeout(()=>{ this.sfxKick2.play();}, 1000);
+        } else if(animPlayer === "dano"){
+            setTimeout(()=>{ this.sfxDano.play();}, 1000);
+        }
+
+        if(animCPU === "Ataque1"){
+            setTimeout(()=>{ this.sfxKick1.play();}, 1000);
+        } else if(animCPU === "Ataque2"){
+            setTimeout(()=>{ this.sfxKick2.play();}, 1000);
+        } else if(animCPU === "dano"){
+            setTimeout(()=>{ this.sfxDano.play();}, 1000);
+        }
+
         this.burritoCPU.play(animCPU + "_CPU").once('animationcomplete', () => {
             this.sliderCPU.SetValue(parseFloat(this.currentBattle.health_cpu) / parseFloat(this.currentBattle.start_health_cpu));
             this.AccionLog("CPU", animCPU);
@@ -337,6 +356,11 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 });
 
+        //audio
+        this.load.audio("battle", "../src/audio/battle.ogg");
+        this.load.audio("kick_1", "../src/audio/Kick-A1.mp3");
+        this.load.audio("kick_2", "../src/audio/Kicks-A3.mp3");
+        this.load.audio("dano", "../src/audio/ough.mp3");
 
         this.load.once("complete", this.LoadBurritos, this);
         this.load.start();
