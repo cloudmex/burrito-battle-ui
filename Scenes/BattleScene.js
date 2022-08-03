@@ -218,7 +218,7 @@ export class Battle extends Phaser.Scene{
                 result = burrito + ":" + Translate.Translate("MsgStrongAttack"); 
                 break;
             case "dano":
-                result = burrito + ":" + Translate.toString("MsgDamage") + damage.toFixed(2); 
+                result = burrito + ":" + Translate.Translate("MsgDamage") + damage.toFixed(2); 
                 break;
             case "defensa":
                 result = burrito + ":" + Translate.Translate("MsgShield"); 
