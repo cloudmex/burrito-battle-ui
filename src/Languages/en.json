@@ -102,7 +102,7 @@
     "MsgAttack": "Attack",
     "MsgPassTurn": "Pass\nTurn",
     "MsgHeavyAttack": "Heavy\nAttack",
-    "MsgDefense": "Defense",
+    "MsgDefense": "Shield",
 
     "TleColiseumDestroyAlert": "The Coliseum is in recontruption",
     "MsgColiseumDestroyAlert":	"The Coliseum suffered a lot of damage to the latest incursion so it is in reconstruction for the next incursion.",
@@ -133,7 +133,7 @@
     "MsgSurrender": "Surrender",
     "MsgWeakAttack":" \nHas made a weak attack",
     "MsgStrongAttack": "\nHas made a strong attack",
-    "MsgDamage": "\nHas received damage",
+    "MsgDamage": "\nHas received damage: ",
     "MsgShield": "\nHas used shield",
     "TleSurrenderAlert": "Are you sure to flee?",
     "MsgSurrenderAlert": "The fleeing of the fight will cost your burrito a life"

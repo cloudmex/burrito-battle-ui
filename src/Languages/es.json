@@ -102,7 +102,7 @@
     "MsgAttack": "Ataque",
     "MsgPassTurn": "Pasar\nTurno",
     "MsgHeavyAttack": "Ataque\nPesado",
-    "MsgDefense": "Defensa",
+    "MsgDefense": "Escudo",
 
     "TleColiseumDestroyAlert": "El coliseo esta en recontrucción",
     "MsgColiseumDestroyAlert":	"El coliseo sufrio mucho daño en la ultima incursion por lo que esta en reconstruccion para la siguiente incursion.",
@@ -133,7 +133,7 @@
     "MsgSurrender": "Rendirse",
     "MsgWeakAttack": "\nHa realizado un ataque debil",
     "MsgStrongAttack": "\nHa realizado un ataque fuerte",
-    "MsgDamage": "\nHa recibido un daño",
+    "MsgDamage": "\nHa recibido daño: ",
     "MsgShield": "\nHa utilizado escudo",
     "TleSurrenderAlert": "¿Esta seguro de huir?",
     "MsgSurrenderAlert": "El huir de la pelea le costara una vida a tu burrito"
