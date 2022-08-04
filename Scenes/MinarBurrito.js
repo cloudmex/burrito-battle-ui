@@ -29,8 +29,7 @@ export class MinarBurrito extends Phaser.Scene{
         Helpers.Alert.isAlert = false;
         this.LoadSpritesheet();  
     }
-    LoadSpritesheet(){
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+    LoadSpritesheet(){;
         this.load.image("mintBurritoBackground", "../src/images/Minar Burrito/background.png");
         this.load.image("silo", "../src/images/Minar Burrito/Silo.webp");
         this.load.spritesheet("Silo_start", "../src/images/Minar Burrito/Silo animación.webp", {frameWidth: 1920, frameHeight: 4000});
@@ -57,11 +56,17 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("alert_small", "../src/images/Informacion_small.png");
 
+        //audios
+        this.load.audio("praderaSong", "../src/audio/acoustic-motivation.ogg");
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
+
         this.load.once("complete", this.Start, this);
         this.load.start();
     }
     async Start(){
         this.camera = this.cameras.main;
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.camera.scrollY = 2920; 
         this.background = this.add.image(this.sys.game.scale.gameSize.width / 2, 0, "mintBurritoBackground").setOrigin(0.5, 0)
         this.clouds = this.add.tileSprite(0,0, this.sys.game.scale.gameSize.width, 2100, "clouds").setOrigin(0);
@@ -87,11 +92,8 @@ export class MinarBurrito extends Phaser.Scene{
         }
         this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(3);
 
-        //Minar http://localhost:8000/?transactionHashes=A2aBbofNJwytrY7eAXqambphUE8SjafGSc2vvRHxdxfh 
-        //STRW http://localhost:8000/?transactionHashes=9teFRKRmst8y5MxiX4C48NkbmdUqFzZ2jbMh9xRZPziE
         let info = await Near.GetInfoByURL();
         if(info != null){
-            console.log(info);
             this.canNavigate = false;
             if(localStorage.getItem("action") == "mintBurrito"){
                 this.MintBurrito(JSON.parse(info.receipts_outcome[5].outcome.logs[2]));
@@ -101,6 +103,7 @@ export class MinarBurrito extends Phaser.Scene{
             localStorage.removeItem("action");
             localStorage.removeItem("lastScene");
         }
+        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play()
     }
     update(){
         if(this.clouds == null || this.camera == null || this.background) return;

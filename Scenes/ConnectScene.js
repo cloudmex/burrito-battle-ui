@@ -10,14 +10,18 @@ export class Connection extends Phaser.Scene{
     }
 
     preload () {
+        if(Near.IsConnected())
+            this.scene.start('MainMenu');
+
         this.load.image("backgroud_Connection", "../src/images/connection_background.png");
         this.load.image("logo", "../src/images/Logo.png");
 
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("buttonContainer", "../src/images/button.png");
-
-        if(Near.IsConnected())
-            this.scene.start('MainMenu');
+            
+        this.load.audio("acoustic-motivation", "../src/audio/acoustic-motivation.ogg");
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
     }
 
     async create () {
@@ -40,6 +44,7 @@ export class Connection extends Phaser.Scene{
                     this.LoginFullAccess(); 
             });
         }, null, { fontSize: 56, fontFamily: "BangersRegular" });
+        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
     }
     
     Login = async() => {

@@ -42,6 +42,7 @@ export class Button{
     }
     PointerDown(downCallback){
         if(downCallback !== null){
+            this.scene.sound.add("button-click", { loop: false, volume: 1}).play();
             downCallback();
         }
     }
@@ -51,6 +52,7 @@ export class Button{
         }
     }
    PointerOver = () => {
+        this.scene.sound.add("button-hover", { loop: false, volume: 1}).play();
         this.button.setTint (0xaaaaaa);
     }
     PointerOut = () => {
@@ -357,9 +359,6 @@ export class InfoCard{
     InfoCard;
     constructor(x, y, burrito, scene, interactuable = false){
         this.InfoCard = {x, y, burrito, scene };
-
-
-        //console.log('scene',scene.bigCard)
         const components = scene.bigCard.GetComponents().list
         components[1].visible = false;
         for (const item of components) {
@@ -571,8 +570,14 @@ export class SettingsButton{
         this.button = scene.add.sprite(0, 0 ,"engrane")
         .setInteractive(scene.input.makePixelPerfect())
         .setScale(scale)
-        .on("pointerdown", ()=>{ this.ShowOptionsPanel();})
-        .on('pointerover', this.PointerOver)
+        .on("pointerdown", ()=>{ 
+            this.scene.sound.add("button-click", { loop: false, volume: 1}).play();
+            this.ShowOptionsPanel();
+        })
+        .on('pointerover',()=>{
+            this.scene.sound.add("button-hover", { loop: false, volume: 1}).play(); 
+            this.PointerOver() 
+        })
         .on("pointerout", this.PointerOut);
         this.settingsButtonResult.add(this.button);
     }

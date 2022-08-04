@@ -63,22 +63,6 @@ export function Login() {
 export function LogOut() {
     wallet.signOut();
 }
-export async function GetAccountDetails(){
-    const account = await near.account(GetAccountId());
-    let details = await account.getAccountDetails();
-    console.log(details);
-}
-export async function GetStateInfo(){
-    const account = await near.account(GetAccountId());
-    const response = await account.state();
-    console.log(response);
-}
-
-export async function GetAllAccessKeys(){
-    const account = await near.account(GetAccountId());
-    const response = await account.getAccessKeys();
-    console.log(response);
-}
 export function IsConnected() {
     return wallet.isSignedIn();
 }
@@ -175,7 +159,6 @@ export async function NFTTokensForOwner(from, limit){
 }
 export async function GetNFTToken(index){
     let burritoJson = await NFTTokens(index);
-    console.log(burritoJson);
     let burritoPlayer = JSON.parse(burritoJson.metadata.extra.replace(/'/g, '"'));
     burritoPlayer["media"] = burritoJson.metadata.media;
     burritoPlayer["name"] = burritoJson.metadata.title;

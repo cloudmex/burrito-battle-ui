@@ -26,16 +26,10 @@ export class Battle extends Phaser.Scene{
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("alert_small", "../src/images/Informacion_small.png");
         this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
-
-        
     }
     async create(){
         Helpers.Alert.isAlert = false;
         await Translate.LoadJson();
-        this.sound.add("battle", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
-        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:1});
-        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:1});
-        this.sfxDano = this.sound.add("dano", {loop: false, volume:1});
         //this.bg_music.setMute(false);
         this.add.image(0, 0, "background_Battle").setOrigin(0);
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", Translate.Translate("MsgSurrender"), this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
@@ -54,34 +48,26 @@ export class Battle extends Phaser.Scene{
     }
     
     async GetBattle(){
-        //http://localhost:8000/?transactionHashes=M89kpWNUZPpRnQALKXcHVzVGPKcbgAbHNWxZ3fksj7o
-        if(true){
-            let info = await Near.GetInfoByURL();
-            if(info != null){
-                try{
-                    console.log(info);
-                    this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[0]);
-                    localStorage.removeItem("tempBattle");
-                } catch {
-                    this.currentBattle = JSON.parse(info.receipts_outcome[0].outcome.logs[0]);
-                }
-                if(localStorage.getItem("tempBattle") != null){
-                    this.battleAnims = this.DiffStatus(this.Diff(this.currentBattle, JSON.parse(localStorage.getItem("tempBattle"))))
-                    this.tmpBattle = JSON.parse(localStorage.getItem("tempBattle"));
-                    localStorage.removeItem("tempBattle");
-                } 
-            } else {
-                let isInBattle = await Near.IsInBattle();
-                if(isInBattle){
-                    this.currentBattle = await Near.GetBattleActiveCpu();
-                } else{
-                    this.currentBattle = await Near.CreateBattlePlayerCpu();
-                }
+        let info = await Near.GetInfoByURL();
+        if(info != null){
+            try{
+                this.currentBattle = JSON.parse(info.receipts_outcome[6].outcome.logs[0]);
+                localStorage.removeItem("tempBattle");
+            } catch {
+                this.currentBattle = JSON.parse(info.receipts_outcome[0].outcome.logs[0]);
             }
+            if(localStorage.getItem("tempBattle") != null){
+                this.battleAnims = this.DiffStatus(this.Diff(this.currentBattle, JSON.parse(localStorage.getItem("tempBattle"))))
+                this.tmpBattle = JSON.parse(localStorage.getItem("tempBattle"));
+                localStorage.removeItem("tempBattle");
+            } 
         } else {
-            let info = await Near.GetInfoByURL();
-            console.log(info);
-            this.currentBattle = JSON.parse('{"accesories_attack_b1":"0","accesories_attack_b2":"0","accesories_defense_b1":"0","accesories_defense_b2":"0","accesories_speed_b1":"0","accesories_speed_b2":"0","attack_b1":"8","burrito_cpu_attack":"8","burrito_cpu_defense":"7","burrito_cpu_level":"1","burrito_cpu_speed":"6","burrito_cpu_type":"Planta","burrito_id":"2","defense_b1":"7","health_cpu":"11","health_player":"20","level_b1":"1","player_id":"jesus13th.testnet","shields_cpu":"3","shields_player":"3","speed_b1":"5","start_health_cpu":"11","start_health_player":"20","status":"2","strong_attack_cpu":"3","strong_attack_player":"3","turn":"CPU"}');
+            let isInBattle = await Near.IsInBattle();
+            if(isInBattle){
+                this.currentBattle = await Near.GetBattleActiveCpu();
+            } else{
+                this.currentBattle = await Near.CreateBattlePlayerCpu();
+            }
         }
     }
     async LoadBurritos(){
@@ -120,6 +106,10 @@ export class Battle extends Phaser.Scene{
             this.Animation(this.battleAnims.animPlayer, this.battleAnims.animCPU);
         
         await this.loadingScreen.OnComplete();
+        this.sound.add("battle-background", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:1});
+        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:1});
+        this.sfxDano = this.sound.add("dano", {loop: false, volume:1});
     }
     Animation(animPlayer, animCPU){
 
@@ -357,10 +347,12 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 });
 
         //audio
-        this.load.audio("battle", "../src/audio/battle.ogg");
+        this.load.audio("battle-background", "../src/audio/battle.ogg");
         this.load.audio("kick_1", "../src/audio/Kick-A1.mp3");
         this.load.audio("kick_2", "../src/audio/Kicks-A3.mp3");
         this.load.audio("dano", "../src/audio/ough.mp3");
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
 
         this.load.once("complete", this.LoadBurritos, this);
         this.load.start();

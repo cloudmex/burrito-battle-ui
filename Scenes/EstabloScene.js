@@ -39,11 +39,12 @@ export class Establo extends Phaser.Scene{
         this.load.image("right_arrow", "../src/images/Establo/right_arrow.png");
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
-        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
+        this.load.audio("acoustic-motivation", "../src/audio/acoustic-motivation.ogg");
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
     }
     async create(){
         Helpers.Alert.isAlert = false;
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         await Translate.LoadJson();
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_background").setOrigin(0.5);
         this.add.image(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "establo_ui").setOrigin(0.5);
@@ -77,14 +78,15 @@ export class Establo extends Phaser.Scene{
         await this.loadingScreen.OnComplete();
 
         if(info != null){
-            if(localStorage.getItem("action") == "evolve"){//http://localhost:8000/?transactionHashes=5F9r6M7rzH5kpSiKRqwDsdnE44sYXVuXopAyCGTSxkqp
+            if(localStorage.getItem("action") == "evolve"){
                 let value = JSON.parse(info.receipts_outcome[5].outcome.logs[0]);
                 this.EvolveBurrito(value, value);
-            } else if(localStorage.getItem("action") == "heal") {//http://localhost:8000/?transactionHashes=L6hUXzrtwMXKUuiqMvhyvcaMk7ffm2wUjqh9UuvM4A9
+            } else if(localStorage.getItem("action") == "heal") {
                 let value = JSON.parse(info.receipts_outcome[5].outcome.logs[1]);
                 this.ResetBurrito(value, value);
             }
         }
+        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
     }
     BackToMainMenu = () => {
         localStorage.removeItem("lastScene");
@@ -92,7 +94,6 @@ export class Establo extends Phaser.Scene{
     }
     GoToSilo = () => this.scene.start("MinarBurrito");
     SetSelected = (_index) => {
-        console.log(_index); 
         this.cards.forEach((element, index) => {
             element.setSelected(index == _index);
         });
@@ -188,7 +189,6 @@ export class Establo extends Phaser.Scene{
         localStorage.removeItem("lastScene");
         this.cards.forEach((card, index) => {
             if(card.Card.burrito.token_id == id) {
-                console.log("Evoluciona")
                 this.cards[index].Card.burrito = newBurrito; 
                 this.bigCard.ResetLevel(newBurrito);
                 card.ResetLevel(newBurrito);

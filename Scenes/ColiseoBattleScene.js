@@ -31,6 +31,9 @@ export class ColiseoBattle extends Phaser.Scene{
         this.load.image("Coliseo_bg", "../src/images/Coliseo/Shader.png");
         this.load.image("Coliseo_gradas", "../src/images/Coliseo/Coliseo.png");
         this.load.image("Coliseo_ground", "../src/images/Coliseo/Base.png");
+        
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
     }
     async create(){
         Helpers.Alert.isAlert = false;
@@ -228,7 +231,7 @@ export class ColiseoBattle extends Phaser.Scene{
                 let tmpBattle = (localStorage.getItem("tempColiseoBattle") != null) ? JSON.parse(localStorage.getItem("tempColiseoBattle")) : this.tmpBattle;
                 damage = parseFloat(tmpBattle["health"]) - parseFloat(this.currentBattle["health"]);
             } catch{
-                console.log("No se puede obtener la batalla");
+                console.error("No se puede obtener la batalla");
             }
         }else {
             damage = parseFloat(this.tmpMegaburrito["health"]) - parseFloat(this.megaburritoData["health"]);

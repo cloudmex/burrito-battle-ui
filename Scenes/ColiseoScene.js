@@ -33,7 +33,9 @@ export class Coliseo extends Phaser.Scene{
         this.load.image("alert_small", "../src/images/Informacion_small.png");
 
         this.load.image("cerrar", "../src/images/cerrar.png");
-        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
+        this.load.audio("acoustic-motivation", "../src/audio/acoustic-motivation.ogg");
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
     }
 
     create(){
@@ -72,8 +74,6 @@ export class Coliseo extends Phaser.Scene{
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
             await this.loadingScreen.OnComplete();
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleColiseumDestroyAlert"), Translate.Translate("MsgColiseumDestroyAlert"), Translate.Translate("BtnAccept"));
-            /*esto no debe ir aqui */
-            //this.CreateIncursionInfo();
             this.loadingScreen = new Helpers.LoadingScreen(this);
             let playerIncursion = await Near.GetPlayerIncursion();
             let canWithdrawBurrito = await Near.CanWithdrawBurrito();
@@ -112,24 +112,13 @@ export class Coliseo extends Phaser.Scene{
             this.CreatePanelIncursion();
         }
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", Translate.Translate("BtnMeadow"), this, this.BackToPradera, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar incursion", this, 
-        /*async()=>{ 
-            this.loadingScreen = new Helpers.LoadingScreen(this);
-            await Near.WithdrawBurritoOwner(); 
-            await Near.DeleteAllIncursions(); 
-            await this.loadingScreen.OnComplete();
-            location.reload();
-        }
-        , null, {fontSize: 30, fontFamily: "BangersRegular"});*/
-        //new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 750,  200, 0.5, "buttonContainer", "Retirar Burrito", this, async() => { this.loadingScreen = new Helpers.LoadingScreen(this); let result = await Near.WithdrawBurritoOwner(); await this.loadingScreen.OnComplete(); }, null, {fontSize: 30, fontFamily: "BangersRegular"});
+        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
-        //this.GetRewards();
     }
     GetRewards = async() =>{
         this.canNavigate = false;
         this.loadingScreen = new Helpers.LoadingScreen(this);
-        let result = await Near.WithdrawBurritoOwner(); 
-        //let result = { complete: true, win: "Players", msg: "Vencieron al mega burrito", rewards: 520000 }
+        let result = await Near.WithdrawBurritoOwner();
         await this.loadingScreen.OnComplete();
         if(result.complete){
             if(result.win == "MegaBurrito")

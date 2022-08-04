@@ -15,7 +15,7 @@ export class Pradera extends Phaser.Scene{
     }
     
     async preload(){
-        this.sound.stopAll();
+        this.game.sound.stopAll();
         this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
@@ -55,18 +55,18 @@ export class Pradera extends Phaser.Scene{
 
         this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
         this.load.audio("footSteps", "../src/audio/Footsteps.ogg");
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
     }
     async create(){
         await Translate.LoadJson();
         Helpers.Alert.isAlert = false;
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume: Helpers.SettingsButton.GetVolume() * 0.5});
         
         this.footStepsSFX.setMute(true); 
         this.footStepsSFX.play();
-        let incursion = await Near.GetActiveIncursion(); console.log(incursion);
-        console.log(parseInt(Date.now()));
-        console.log(parseInt(incursion.finish_time).toString().substring(0, 13));
+        let incursion = await Near.GetActiveIncursion();
         this.background = this.add.image(0,0, "background").setOrigin(0).setScale(1);
         this.map = this.add.image(0, 0, "map").setOrigin(0).setScale(1);
         this.add.image(0, 0, "edificiosBase").setOrigin(0).setScale(1);
@@ -82,17 +82,7 @@ export class Pradera extends Phaser.Scene{
         }else{
             this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
             this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);
-        }
-        /*switch (incursion.status) {
-            case "WaitingPlayers":
-                this.anims.create({ key: "coliseoIncursionWaitLoop", frameRate: 30, frames: this.anims.generateFrameNumbers("coliseoIncursionWait", { start: 0, end: 74 }), repeat: -1 });
-                this.add.sprite(1265, -185, "coliseoIncursionWait").play("coliseoIncursionWaitLoop").setOrigin(0);
-                break;
-            case "Null": this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1); break;
-            case "InProgress": this.add.image(1475, 25, "coliseo", 1).setOrigin(0).setScale(1); break;
-            case "Finished": this.add.image(1475, 25, "coliseo", 2).setOrigin(0).setScale(1); break;
-            default: this.add.image(1475, 25, "coliseo", 0).setOrigin(0).setScale(1); break;}*/
-        
+        }        
 
         if(await Near.NFTSupplyForOwner() == 1 && localStorage.getItem("in_incursion")){
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBurritoInIncursion"), Translate.Translate("MsgBurritoInIncursion"), Translate.Translate("BtnGoColiseum"), Translate.Translate("BtnCancelAlert"))

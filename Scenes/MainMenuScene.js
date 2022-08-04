@@ -26,7 +26,9 @@ export class MainMenu extends Phaser.Scene{
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
 
-        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");     
+        this.load.audio("acoustic-motivation", "./src/audio/acoustic-motivation.ogg"); 
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
 
         this.load.spritesheet("derrota", "../src/images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
         this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
@@ -74,25 +76,13 @@ export class MainMenu extends Phaser.Scene{
 
         new Helpers.Button(this.sys.game.scale.gameSize.width -  290, 70, 0.5, "buttonContainer", Near.GetAccountId(), this,this.LogOut, null, {fontSize: 30, fontFamily: "BangersRegular"});
         new Helpers.SettingsButton(1850, 60, this, 0.25, ()=>{this.sound.setVolume(Helpers.SettingsButton.GetVolume());});
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
-        /*new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 450,  100, 0.5, "buttonContainer", "Configuracion", this, () => {
-            Helpers.Alert.Fire(this, this.game.config.width/2, this.game.config.height/2, "Configuracion", "Aqui puedes cambiar algunos aspectos de la aplicacion", "Idioma", "Sonido")
-            .then((result) => {
-                if(result) {
-                   
-            }else{
-                
-            }});
-            
-         }, null, {fontSize: 30, fontFamily: "BangersRegular"});*/
+        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
 
         new Helpers.Button(450, 600, 0.75, "buttonContainer", Translate.Translate("BtnGoMintBurrito"), this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         
         await this.loadingScreen.OnComplete();
-        let result = await Near.GetCurrentNears();
-        console.log(result);
     }
     
     LogOut = () => {
