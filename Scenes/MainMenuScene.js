@@ -29,10 +29,6 @@ export class MainMenu extends Phaser.Scene{
         this.load.audio("acoustic-motivation", "./src/audio/acoustic-motivation.ogg"); 
         this.load.audio("button-hover", "./src/audio/button-hover.ogg");
         this.load.audio("button-click", "./src/audio/button-click.ogg");
-
-        this.load.spritesheet("derrota", "../src/images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 }); 
     }
     
     Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
