@@ -80,16 +80,18 @@ export class MinarBurrito extends Phaser.Scene{
         
         let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
-
-        this.sing = "";
+        this.burroTienda = this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
+        this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
+        this.sign = this.add.text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5);
         if(remainToBuy == 0){
-            this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
-            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
+            //this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
+            //this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
             this.comprarBtn = new Helpers.Button(360,  this.sys.game.scale.gameSize.height + 2350, 0.25, "buttonContainer2", Translate.Translate("BtnBuyStrw"), this, this.BuyTokens, null, {fontSize: 20, fontFamily: "BangersRegular"}, false)
-            this.sign = this.add.text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5);
+            //this.add(this.sign = text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         } else {
+            this.burroTienda.destroy();
+            this.sign.destroy();
             this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
-            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
             this.comprarBtn = null;
         }
         this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(3);
@@ -137,7 +139,6 @@ export class MinarBurrito extends Phaser.Scene{
         if(remainToBuy != 0){
             this.contdown = true;
             this.timeToBuy.setText( Translate.Translate("SignAfterBuyStrw")+`\n${parseInt(hour).toString().padStart(2, '0')}:${parseInt(minutes).toString().padStart(2, '0')}:${parseInt(seconds).toString().padStart(2, '0')}`);
-            this.sign.setText("");
         } else if(this.contdown)
             location.reload();
     }
@@ -273,6 +274,8 @@ export class MinarBurrito extends Phaser.Scene{
                         this.GetTokens(tokens);
                         localStorage.removeItem("action");
                         localStorage.removeItem("lastScene");
+                        this.burroTienda.destroy();
+                        this.sign.destroy();
                     } else {
                         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("DontHaveEnoughNearForBuyStraw"), Translate.Translate("BtnCancelAlert"));
                     }
