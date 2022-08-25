@@ -294,9 +294,9 @@ export class MinarBurrito extends Phaser.Scene{
             this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
                 this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', async () => {
                     animContainer.destroy();
-                    this.tienda.setTexture("tienda2");
                     let remainToBuy = await Near.CanBuyTokens();
                     this.hudTokens.UpdateTokens();
+                    this.tienda.setTexture("tienda2");
                     this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
                     this.canNavigate = true;
                 })

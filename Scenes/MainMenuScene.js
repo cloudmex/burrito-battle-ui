@@ -21,7 +21,7 @@ export class MainMenu extends Phaser.Scene{
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("mainMenubackground", "../src/images/mainMenu_Background.png");
         this.load.image("logo1", "../src/images/Logo.png");
-        this.load.image("buttonContainer", "../src/images/button.png");
+        this.load.image("buttonContainer1", "../src/images/button.png");
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
 
         this.load.audio("acoustic-motivation", "./src/audio/acoustic-motivation.ogg"); 
