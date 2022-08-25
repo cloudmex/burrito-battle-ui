@@ -90,10 +90,12 @@ export class ColiseoBattle extends Phaser.Scene{
 
         if(this.IsDefined(this.battleAnims))
             this.Animation(this.battleAnims.animPlayer, this.battleAnims.animCPU);
-        this.sound.add("epic_battle", {loop:true, volume:0.5}).play();
-        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:1});
-        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:1});
-        this.sfxDano = this.sound.add("dano", {loop: false, volume:1});
+        this.sound.add("epic_battle", {loop:true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        
+        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxDano = this.sound.add("dano", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxCover = this.sound.add("cover", {loop:false, volume:Helpers.SettingsButton.GetVolumeSFX()});
 
         this.countDownText = this.add.text(this.game.config.width / 2,  75, "", {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5);
         let result = this.incursion.incursion.finish_time.toString();
@@ -134,7 +136,9 @@ export class ColiseoBattle extends Phaser.Scene{
         }
         if(animPlayer === "dano"){
             setTimeout(()=>{ this.sfxDano.play();}, 1000);
-        }
+        } else if(animPlayer === "defensa"){
+            setTimeout(()=>{ this.sfxCover.play();}, 1000);
+        }  
         this.burritoCPU.play(animCPU + "_mega").once('animationcomplete', () => {
             this.slider_Mega.SetValue(this.megaburritoData.health / this.megaburritoData.start_health);
             this.AccionLog(this.megaburritoData.name, animCPU);
@@ -150,9 +154,7 @@ export class ColiseoBattle extends Phaser.Scene{
             if(animPlayer !== "derrota")
                 this.burritoPlayer.play("idle_Player");
             else
-                this.BackToPradera("CPU");
-                
-            
+                this.BackToPradera("CPU");            
         });
     }
     CreateActionsMenu = async () => {

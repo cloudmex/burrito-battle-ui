@@ -48,6 +48,7 @@
     "Language": "Idioma",
     "Volume": "Volumen",
     "Apply": "Aplicar",
+    "SFX": "Efectos de sonido",
 
     "TleSelectedBurritoAlert": "Ningun burrito seleccionado",
     "MsgSelectedBurritoAlert": "Para poder luchar contra otros burritos necesitas seleccionar uno de tus burritos. Ve al establo para poder seleccionar algun burrito o bien al silo para minar un nuevo burrito.",
@@ -84,7 +85,7 @@
     "Strength": "Fuerza",
     "Defense": "Defensa",
     "Speed": "Velocidad",
-    "MsgSelectBurrito": "El burrtio se selecciono exitosamente.",
+    "MsgSelectBurrito": "El burrito se selecciono exitosamente.",
     "MsgLevelUp": "Para subir de nivel un burrito debes tener al menos 10 victorias en combate.",
     "BtnAccept": "Aceptar",
     "MsgNotBurritos": "No cuentas con ningun burrito",
@@ -95,6 +96,8 @@
     "TleEvolveAlert": "¿Quieres evolucionar a este burrito?",
     "MsgEvolveAlert": "Al evolucionar este burrito subira su nivel y aumentara sus estadisticas. El costo es de 2 Near y 70,000 $STRW. Actualmente tienes ",
     "BtnEvolve": "Evolucionar",
+    "NotEnoughForRecover":"Necesitas 1 Near y 30,000 $STRW para recuperar la salud de tu burrito.",
+    "NotEnoughForEvolve":"Necesitas 2 Near y 70,000 $STRW para evolucionar tu burrito.",
 
     "MsgLevel": "Nivel",
     "MsgHealth": "Salud",

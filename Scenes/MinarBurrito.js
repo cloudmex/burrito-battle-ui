@@ -12,8 +12,6 @@ export class MinarBurrito extends Phaser.Scene{
         super("MinarBurrito");
     }
     preload(){
-        this.sound.stopAll();
-        this.sound.removeAll();
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
         
@@ -22,10 +20,11 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("buttonContainer2", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
-        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
         this.loadingScreen = new Helpers.LoadingScreen(this);
     }
     create(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         Helpers.Alert.isAlert = false;
         this.LoadSpritesheet();  
     }
@@ -57,7 +56,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.image("alert_small", "../src/images/Informacion_small.png");
 
         //audios
-        this.load.audio("praderaSong", "../src/audio/acoustic-motivation.ogg");
+        this.load.audio("acoustic-motivation", "../src/audio/acoustic-motivation.ogg");
         this.load.audio("button-hover", "./src/audio/button-hover.ogg");
         this.load.audio("button-click", "./src/audio/button-click.ogg");
 
@@ -66,7 +65,6 @@ export class MinarBurrito extends Phaser.Scene{
     }
     async Start(){
         this.camera = this.cameras.main;
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.camera.scrollY = 2920; 
         this.background = this.add.image(this.sys.game.scale.gameSize.width / 2, 0, "mintBurritoBackground").setOrigin(0.5, 0)
         this.clouds = this.add.tileSprite(0,0, this.sys.game.scale.gameSize.width, 2100, "clouds").setOrigin(0);
@@ -103,7 +101,7 @@ export class MinarBurrito extends Phaser.Scene{
             localStorage.removeItem("action");
             localStorage.removeItem("lastScene");
         }
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play()
+        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
     }
     update(){
         if(this.clouds == null || this.camera == null || this.background) return;

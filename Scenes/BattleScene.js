@@ -9,8 +9,6 @@ export class Battle extends Phaser.Scene{
         super("Battle");
     }
     preload(){
-        this.sound.stopAll();
-        this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -20,17 +18,18 @@ export class Battle extends Phaser.Scene{
         this.load.image("slider_background", "../src/images/Battle/slider_background.png");
         this.load.spritesheet("slider_fill", "../src/images/Battle/slider_fill.png", { frameWidth: 512, frameHeight: 89 });
         
-        this.load.image("background_Battle", "../src/images/Establo/Background.webp")
-        //this.load.image("burrito", "../src/images/Burrito Agua.png");
+        this.load.image("background_Battle", "../src/images/Establo/Background.webp");
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("alert_small", "../src/images/Informacion_small.png");
         this.load.spritesheet("actions", "../src/images/Battle/battle_actions.png", {frameWidth: 160, frameHeight: 160});
     }
     async create(){
+        this.sound.stopAll();
+        this.sound.removeAll();
+        this.sound.pauseOnBlur = false;
         Helpers.Alert.isAlert = false;
         await Translate.LoadJson();
-        //this.bg_music.setMute(false);
         this.add.image(0, 0, "background_Battle").setOrigin(0);
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", Translate.Translate("MsgSurrender"), this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
@@ -105,28 +104,32 @@ export class Battle extends Phaser.Scene{
         if(this.IsDefined(this.battleAnims))
             this.Animation(this.battleAnims.animPlayer, this.battleAnims.animCPU);
         
-        await this.loadingScreen.OnComplete();
         this.sound.add("battle-background", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
-        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:1});
-        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:1});
-        this.sfxDano = this.sound.add("dano", {loop: false, volume:1});
+        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxDano = this.sound.add("dano", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxCover = this.sound.add("cover", {loop:false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        await this.loadingScreen.OnComplete();
     }
     Animation(animPlayer, animCPU){
-
         if(animPlayer === "Ataque1"){
-            setTimeout(()=>{ this.sfxKick1.play();}, 1000);
+            setTimeout(()=>{ this.sfxKick1.play();}, 200);
         } else if(animPlayer === "Ataque2"){
-            setTimeout(()=>{ this.sfxKick2.play();}, 1000);
+            setTimeout(()=>{ this.sfxKick2.play();}, 200);
         } else if(animPlayer === "dano"){
-            setTimeout(()=>{ this.sfxDano.play();}, 1000);
+            setTimeout(()=>{ this.sfxDano.play();}, 500);
+        } else if(animPlayer === "defensa") {
+            setTimeout(()=>{this.sfxCover.play(); }, 500);
         }
 
         if(animCPU === "Ataque1"){
-            setTimeout(()=>{ this.sfxKick1.play();}, 1000);
+            setTimeout(()=>{ this.sfxKick1.play();}, 200);
         } else if(animCPU === "Ataque2"){
-            setTimeout(()=>{ this.sfxKick2.play();}, 1000);
+            setTimeout(()=>{ this.sfxKick2.play();}, 200);
         } else if(animCPU === "dano"){
-            setTimeout(()=>{ this.sfxDano.play();}, 1000);
+            setTimeout(()=>{ this.sfxDano.play();}, 500);
+        } else if(animCPU === "defensa") {
+            setTimeout(()=>{this.sfxCover.play();}, 500);
         }
 
         this.burritoCPU.play(animCPU + "_CPU").once('animationcomplete', () => {
@@ -348,9 +351,10 @@ export class Battle extends Phaser.Scene{
 
         //audio
         this.load.audio("battle-background", "../src/audio/battle.ogg");
-        this.load.audio("kick_1", "../src/audio/Kick-A1.mp3");
-        this.load.audio("kick_2", "../src/audio/Kicks-A3.mp3");
-        this.load.audio("dano", "../src/audio/ough.mp3");
+        this.load.audio("kick_1", "../src/audio/attack strong.wav");
+        this.load.audio("kick_2", "../src/audio/attack weak.wav");
+        this.load.audio("dano", "../src/audio/donkey-hit.wav");
+        this.load.audio("cover", "../src/audio/cover.wav");
         this.load.audio("button-hover", "./src/audio/button-hover.ogg");
         this.load.audio("button-click", "./src/audio/button-click.ogg");
 

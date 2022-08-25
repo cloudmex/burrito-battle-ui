@@ -62,7 +62,7 @@ export class Pradera extends Phaser.Scene{
         await Translate.LoadJson();
         Helpers.Alert.isAlert = false;
         this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
-        this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume: Helpers.SettingsButton.GetVolume() * 0.5});
+        this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume: Helpers.SettingsButton.GetVolumeSFX() * 0.5});
         
         this.footStepsSFX.setMute(true); 
         this.footStepsSFX.play();

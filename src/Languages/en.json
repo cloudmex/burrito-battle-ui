@@ -48,6 +48,7 @@
     "Language": "Language",
     "Volume": "Volume",
     "Apply": "Apply",
+    "SFX": "Sound effects",
 
     "TleSelectedBurritoAlert": "No selected burrito",
     "MsgSelectedBurritoAlert": "To be able to fight other burritos you need to select one of your burritos. Go to the stable to select some burrito or the silo to undermine a new burrito.",
@@ -95,6 +96,8 @@
     "TleEvolveAlert": "Do you want to evolve this Burrito?",
     "MsgEvolveAlert": "By evolving this Burrito, it will raise its level and increase its statistics. The cost is 2 Near and 70,000 $STRW. You currently have ",
     "BtnEvolve": "Evolve",
+    "NotEnoughForRecover":"You need 1 Near and 30,000 $STRW for recover the health of you burrito",
+    "NotEnoughForEvolve":"You need 2 Near and 70,000 $STRW for evolve you burrito",
 
     "MsgLevel":	"Level",
     "MsgHealth": "Health",

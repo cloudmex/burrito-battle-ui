@@ -19,12 +19,17 @@ export class Connection extends Phaser.Scene{
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("buttonContainer", "../src/images/button.png");
             
-        this.load.audio("acoustic-motivation", "../src/audio/acoustic-motivation.ogg");
+    }
+    
+    create(){
+        this.load.audio("acoustic-motivation", "./src/audio/acoustic-motivation.ogg"); 
         this.load.audio("button-hover", "./src/audio/button-hover.ogg");
         this.load.audio("button-click", "./src/audio/button-click.ogg");
+        this.load.once("complete", this.createScene, this);
+        this.load.start();
     }
 
-    async create () {
+    async createScene () {
         await Translate.LoadJson();
         this.add.image(0,0, "backgroud_Connection").setOrigin(0,0);
         this.add.image(0,0, "logo").setScale(0.75).setPosition(this.sys.game.scale.gameSize.width / 2, 150);

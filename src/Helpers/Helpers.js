@@ -42,8 +42,10 @@ export class Button{
     }
     PointerDown(downCallback){
         if(downCallback !== null){
-            this.scene.sound.add("button-click", { loop: false, volume: 1}).play();
-            downCallback();
+            this.scene.sound.add("button-click", { loop: false, volume: SettingsButton.GetVolumeSFX()}).play();
+            setTimeout(() => {
+                downCallback();
+            }, 500);
         }
     }
     PointerUp(upCallback){
@@ -52,7 +54,7 @@ export class Button{
         }
     }
    PointerOver = () => {
-        this.scene.sound.add("button-hover", { loop: false, volume: 1}).play();
+        this.scene.sound.add("button-hover", { loop: false, volume: SettingsButton.GetVolumeSFX()}).play();
         this.button.setTint (0xaaaaaa);
     }
     PointerOut = () => {
@@ -465,12 +467,13 @@ export class TokenHud{
 }
 export class BattleEnd{
     constructor(x, y, scene, isVictoria, STRWTokens, isIncursion = false){
+        console.error("Battle ends")
         this.resultUI = scene.add.container(x, y);
         scene.anims.create({ key: "backgroundAnim", frames: scene.anims.generateFrameNumbers("background_animation", { frames: [0, 1, 2, 3] }), frameRate: 24, repeat: 0 });
         this.resultUI.add(this.backgroundAnimation = scene.add.sprite(0, 0));
         this.backgroundAnimation.play("backgroundAnim");
 
-        scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers( isVictoria ? "victoria" : "derrota", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
+        scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers(isVictoria ? "victoria" : "derrota", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
         this.resultUI.add(this.animation = scene.add.sprite(0, 0));
         this.animation.play("finishAnim");
         setTimeout(() => {
@@ -550,7 +553,10 @@ export class Incursion{
 
 export class SettingsButton{
     static GetVolume = () => {
-        return localStorage.getItem("volume", 0.5);
+        return localStorage.getItem("volume");
+    }
+    static GetVolumeSFX = () => {
+        return localStorage.getItem("volumeSFX");
     }
     constructor(x, y, scene, scale, Callback){
         this.isPanel = false;
@@ -562,6 +568,8 @@ export class SettingsButton{
 
         if(localStorage.getItem("volume") === null)
             localStorage.setItem("volume", 0.5);
+        if(localStorage.getItem("volumeSFX") === null)
+            localStorage.setItem("volumeSFX", 0.5);
         if(localStorage.getItem("language") === null){
             localStorage.setItem("language", "en");
         }
@@ -571,11 +579,11 @@ export class SettingsButton{
         .setInteractive(scene.input.makePixelPerfect())
         .setScale(scale)
         .on("pointerdown", ()=>{ 
-            this.scene.sound.add("button-click", { loop: false, volume: 1}).play();
+            this.scene.sound.add("button-click", { loop: false, volume: SettingsButton.GetVolumeSFX()}).play();
             this.ShowOptionsPanel();
         })
         .on('pointerover',()=>{
-            this.scene.sound.add("button-hover", { loop: false, volume: 1}).play(); 
+            this.scene.sound.add("button-hover", { loop: false, volume: SettingsButton.GetVolumeSFX()}).play(); 
             this.PointerOver() 
         })
         .on("pointerout", this.PointerOut);
@@ -585,21 +593,29 @@ export class SettingsButton{
         if(this.isPanel)
             return;
         Alert.isAlert = this.isPanel = true;
-        this.volume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
+        this.ambientVolume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
+        this.SFXVolume = parseFloat(Alert.IsDefined(localStorage.getItem("volumeSFX")) ?  localStorage.getItem("volumeSFX") : 0);
         this.prevLang = this.language = localStorage.getItem("language") !== 'null' ? localStorage.getItem("language") : "en";
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
-        this.configContainer.add(this.scene.add.text(0, -150, Translate.Translate("Language"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
-        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
+        this.configContainer.add(this.scene.add.text(0, -220, Translate.Translate("Language"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -120, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
+        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -120, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
 
-        this.configContainer.add(this.scene.add.text(0, 75, Translate.Translate("Volume"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.scene.add.image(0, 150, "volume"));
-        this.configContainer.add(new Button(-360, 150, 1, "volume_off", null, this.scene, this.DecreaseVolume, null, null, false, false).GetComponents());
-        this.configContainer.add(this.volumeHandler = this.scene.add.image(-310 + (620 * this.volume), 150, "volume_handler"));
-        this.configContainer.add(new Button(360, 150, 1, "volume_on", null, this.scene, this.IncreaseVolume, null, null, false, false).GetComponents());
-        this.configContainer.add(new Button(0, 250, 0.5, "buttonContainer", Translate.Translate("Apply"), this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
+        this.configContainer.add(this.scene.add.text(0, -25, Translate.Translate("Volume"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.scene.add.image(0, 50, "volume"));
+        this.configContainer.add(new Button(-360, 50, 1, "volume_off", null, this.scene, this.DecreaseAmbientVolume, null, null, false, false).GetComponents());
+        this.configContainer.add(this.ambientVolumeHandler = this.scene.add.image(-310 + (620 * this.ambientVolume), 50, "volume_handler"));
+        this.configContainer.add(new Button(360, 50, 1, "volume_on", null, this.scene, this.IncreaseAmbientVolume, null, null, false, false).GetComponents());
+
+        this.configContainer.add(this.scene.add.text(0, 125, Translate.Translate("SFX"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.scene.add.image(0, 200, "volume"));
+        this.configContainer.add(new Button(-360, 200, 1, "volume_off", null, this.scene, this.DecreaseSFXVolume, null, null, false, false).GetComponents());
+        this.configContainer.add(this.SFXVolumeHandler = this.scene.add.image(-310 + (620 * this.SFXVolume), 200, "volume_handler"));
+        this.configContainer.add(new Button(360, 200, 1, "volume_on", null, this.scene, this.IncreaseSFXVolume, null, null, false, false).GetComponents());
+
+        this.configContainer.add(new Button(0, 280, 0.5, "buttonContainer", Translate.Translate("Apply"), this.scene, this.ApplyChanges, null, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}, false).GetComponents())
 }
     SetEsp = () => {
         this.language = "es";
@@ -612,27 +628,42 @@ export class SettingsButton{
         this.engImg.setTexture("languages", 1);
         this.espImg.setTexture("languages", 2);
     }
-    IncreaseVolume = () => {
-        if(this.volume + 0.1 <= 1){
-            this.volume += 0.1;
-            this.volumeHandler.setX(-310 + (620 * this.volume));
-            this.scene.sound.setVolume(this.volume)
+    IncreaseAmbientVolume = () => {
+        if(this.ambientVolume + 0.1 <= 1){
+            this.ambientVolume += 0.1;
+            this.ambientVolumeHandler.setX(-310 + (620 * this.ambientVolume));
+            this.scene.sound.setVolume(this.ambientVolume)
         }
     }
-    DecreaseVolume = () => {
-        if(this.volume - 0.1 >= 0){
-            this.volume -= 0.1;
-            this.volumeHandler.setX(-310 + (620 * this.volume));
-            this.scene.sound.setVolume(this.volume)
+    DecreaseAmbientVolume = () => {
+        if(this.ambientVolume - 0.1 >= 0){
+            this.ambientVolume -= 0.1;
+            this.ambientVolumeHandler.setX(-310 + (620 * this.ambientVolume));
+            this.scene.sound.setVolume(this.ambientVolume)
         }
     }
+    IncreaseSFXVolume = () => {
+        if(this.SFXVolume + 0.1 <= 1){
+            this.SFXVolume += 0.1;
+            this.SFXVolumeHandler.setX(-310 + (620 * this.SFXVolume));
+        }
+    }
+    DecreaseSFXVolume = () => {
+        if(this.SFXVolume - 0.1 >= 0){
+            this.SFXVolume -= 0.1;
+            this.SFXVolumeHandler.setX(-310 + (620 * this.SFXVolume));
+        }
+    }
+    
     ApplyChanges = () => {
+        let prevVolumeSFX = localStorage.getItem("volumeSFX");
         localStorage.setItem("language", this.language);
-        localStorage.setItem("volume", this.volume.toFixed(1));
+        localStorage.setItem("volume", this.ambientVolume.toFixed(1));
+        localStorage.setItem("volumeSFX", this.SFXVolume.toFixed(1));
         this.configContainer.destroy();
         Alert.isAlert = this.isPanel = false;
-        this.scene.sound.setVolume(this.volume.toFixed(1));
-        if(this.language != this.prevLang)
+        //this.scene.sound.setVolume(this.ambientVolume.toFixed(1));
+        if(this.language != this.prevLang || prevVolumeSFX != this.SFXVolume)
             location.reload();
     }
     GetComponents(){
