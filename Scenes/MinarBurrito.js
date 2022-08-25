@@ -73,19 +73,23 @@ export class MinarBurrito extends Phaser.Scene{
         localStorage.removeItem("prevScene");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? Translate.Translate("BtnBackToMeadow") : Translate.Translate("BtnMainMenu"), this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"})
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"});
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"});
         
         let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
-
+        this.burroTienda = this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
+        this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
+        this.sign = this.add.text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5);
         if(remainToBuy == 0){
-            this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
-            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda1").setOrigin(0);
+            //this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
+            //this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
             this.comprarBtn = new Helpers.Button(360,  this.sys.game.scale.gameSize.height + 2350, 0.25, "buttonContainer2", Translate.Translate("BtnBuyStrw"), this, this.BuyTokens, null, {fontSize: 20, fontFamily: "BangersRegular"}, false)
+            //this.add(this.sign = text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         } else {
+            this.burroTienda.destroy();
+            this.sign.destroy();
             this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
-            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
             this.comprarBtn = null;
         }
         this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(3);
@@ -268,6 +272,8 @@ export class MinarBurrito extends Phaser.Scene{
                         this.GetTokens(tokens);
                         localStorage.removeItem("action");
                         localStorage.removeItem("lastScene");
+                        this.burroTienda.destroy();
+                        this.sign.destroy();
                     } else {
                         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("DontHaveEnoughNearForBuyStraw"), Translate.Translate("BtnCancelAlert"));
                     }

@@ -373,7 +373,8 @@ export class InfoCard{
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
         this.numBurrito = burrito.name.split("#", 2);
 
-        this.cardResult.add(scene.add.text(-100, -235, "Burrito #"+this.numBurrito[1]+"\nTipo: "+burrito.burrito_type+"\nNivel: "+burrito.level+"\nVictorias: "+burrito.win+" \nVidas: "+burrito.hp+"\nFuerza: "+burrito.attack+"\nDefensa: "+burrito.defense+"\nVelocidad: "+burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
+        console.log(burrito);
+        this.cardResult.add(scene.add.text(-100, -235, "Burrito #" + this.numBurrito[1] + "\n" + Translate.Translate("Type") + Translate.Translate(burrito.burrito_type) + "\n" + Translate.Translate("Level") + burrito.level+ "\n" + Translate.Translate("Wins") + burrito.win + "\n" + Translate.Translate("Lifes") + burrito.hp + "\n" + Translate.Translate("Strength") + burrito.attack + "\n" + Translate.Translate("Defense") + burrito.defense + "\n" + Translate.Translate("Speed") + burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
 
     }
     
@@ -390,8 +391,6 @@ export class InfoCard{
         return this.cardResult;
     }
 }
-
-
 export class BurritoHud{
     BurritoHud;
     constructor(x, y, burrito, scene){
@@ -437,7 +436,6 @@ export class BurritoHud{
         this.burrito.setAlpha(alpha)
     }
 }
-
 export class TokenHud{
     TokenHud;
     constructor(x, y, scene, currentNEAR, currentSTRW){
@@ -468,7 +466,6 @@ export class TokenHud{
 }
 export class BattleEnd{
     constructor(x, y, scene, isVictoria, STRWTokens, isIncursion = false){
-        console.error("Battle ends")
         this.resultUI = scene.add.container(x, y);
         scene.anims.create({ key: "backgroundAnim", frames: scene.anims.generateFrameNumbers("background_animation", { frames: [0, 1, 2, 3] }), frameRate: 24, repeat: 0 });
         this.resultUI.add(this.backgroundAnimation = scene.add.sprite(0, 0));
@@ -481,13 +478,27 @@ export class BattleEnd{
             if(!isIncursion){
                 this.resultUI.add(scene.add.text(245, 390, `+${STRWTokens}`, {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
                 this.resultUI.add(scene.add.text(-255, 390, isVictoria ? "+1" : "-1", {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
-            }
-            this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
-            this.burrito.play(isVictoria ? "victoria_Player" : "derrota_Player");
-        }, 1000);
+                this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+            
+                this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
+                this.burrito.play(isVictoria ? "victoria_Player" : "derrota_Player");
+            }, 1000);
+        }else{
+            scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers( isVictoria ? "victoria_incursion" : "derrota_incursion", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
+            this.resultUI.add(this.animation = scene.add.sprite(0, 0));
+            this.animation.play("finishAnim");
+
+            setTimeout(() => {
+                this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+                this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
+                if(isVictoria){
+                    this.burrito.play("victoria_Player");
+                }
+            }, 1000);
+        }
+        
     }
 }
-
 export class Alert{
     static isAlert = false;
     static Fire(scene, x, y, title, description, acceptBtn = Translate.Translate("BtnAccept"), cancelBtn = null){
@@ -541,7 +552,6 @@ export class Alert{
         return typeof obj !== "undefined";
     }
 }
-
 export class Incursion{
     constructor(x, y, scene, scale){
         this.x = x;
@@ -551,7 +561,6 @@ export class Incursion{
         this.incursionResult = scene.add.container(x, y).setScrollFactor(0).setScale(this.scale);
     }
 }
-
 export class SettingsButton{
     static GetVolume = () => {
         return localStorage.getItem("volume");
@@ -600,9 +609,10 @@ export class SettingsButton{
         this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
-        this.configContainer.add(this.scene.add.text(0, -220, Translate.Translate("Language"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -120, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
-        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -120, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
+        this.configContainer.add(this.scene.add.text(0, -335, Translate.Translate("Settings"), { fontSize:72, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.scene.add.text(0, -150, Translate.Translate("Language"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
+        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
 
         this.configContainer.add(this.scene.add.text(0, -25, Translate.Translate("Volume"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.scene.add.image(0, 50, "volume"));
