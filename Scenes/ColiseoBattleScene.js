@@ -53,6 +53,9 @@ export class ColiseoBattle extends Phaser.Scene{
                 await this.loadSpriteSheet(this.burritoMediaToSkin(result.media), this.burritoSkinCPU);
             });
        });
+
+       //await this.loadSpriteSheet("agua", this.burritoSkinCPU); //--
+
     }
     
     async GetBattle(){
@@ -70,7 +73,7 @@ export class ColiseoBattle extends Phaser.Scene{
         
         this.CreateMegaAnimations();
         this.burritoCPU = this.add.sprite(this.game.config.width / 2, this.game.config.height / 2, "idle_mega", 0).setOrigin(0.5);
-        this.burritoCPU.play("idle_mega");
+        this.burritoCPU.play("Ataque2_mega");
 
         //this.anims.create({ key: "sparksAnim", frameRate: 24, frames: this.anims.generateFrameNumbers("sparks", { start: 0, end: 13 }), repeat: -1 });
         //this.add.sprite(0, 0, "sparks", 0).play("sparksAnim").setOrigin(0);
@@ -90,10 +93,15 @@ export class ColiseoBattle extends Phaser.Scene{
 
         if(this.IsDefined(this.battleAnims))
             this.Animation(this.battleAnims.animPlayer, this.battleAnims.animCPU);
-        this.sound.add("epic_battle", {loop:true, volume:0.5}).play();
-        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:1});
-        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:1});
-        this.sfxDano = this.sound.add("dano", {loop: false, volume:1});
+        this.sound.add("epic_battle", {loop:true, volume: Helpers.SettingsButton.GetVolume()}).play();
+        
+        this.sfxKick1 = this.sound.add("kick_1", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxKick2 = this.sound.add("kick_2", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxDano = this.sound.add("dano", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxCover = this.sound.add("cover", {loop:false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        
+        this.sfxKick1Mega = this.sound.add("mega kick_1", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
+        this.sfxKick2Mega = this.sound.add("mega kick_2", {loop: false, volume:Helpers.SettingsButton.GetVolumeSFX()});
 
         this.countDownText = this.add.text(this.game.config.width / 2,  75, "", {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5);
         let result = this.incursion.incursion.finish_time.toString();
@@ -134,7 +142,22 @@ export class ColiseoBattle extends Phaser.Scene{
         }
         if(animPlayer === "dano"){
             setTimeout(()=>{ this.sfxDano.play();}, 1000);
+        } else if(animPlayer === "defensa"){
+            setTimeout(()=>{ this.sfxCover.play();}, 1000);
+        }  
+
+        if(animCPU === "Ataque1"){
+            setTimeout(()=>{ this.sfxKick1Mega.play();}, 1000);
         }
+        if(animCPU === "Ataque2"){
+            setTimeout(()=>{ this.sfxKick2Mega.play();}, 1000);
+        }
+        if(animCPU === "dano"){
+            setTimeout(()=>{ this.sfxDanoMega.play();}, 1000);
+        } else if(animCPU === "defensa"){
+            setTimeout(()=>{ this.sfxCoverMega.play();}, 1000);
+        }  
+
         this.burritoCPU.play(animCPU + "_mega").once('animationcomplete', () => {
             this.slider_Mega.SetValue(this.megaburritoData.health / this.megaburritoData.start_health);
             this.AccionLog(this.megaburritoData.name, animCPU);
@@ -150,9 +173,7 @@ export class ColiseoBattle extends Phaser.Scene{
             if(animPlayer !== "derrota")
                 this.burritoPlayer.play("idle_Player");
             else
-                this.BackToPradera("CPU");
-                
-            
+                this.BackToPradera("CPU");            
         });
     }
     CreateActionsMenu = async () => {
@@ -352,9 +373,13 @@ export class ColiseoBattle extends Phaser.Scene{
 
         //audios
         this.load.audio("epic_battle", "../src/audio/epic_battle.mp3");
-        this.load.audio("kick_1", "../src/audio/Kick-A1.mp3");
-        this.load.audio("kick_2", "../src/audio/Kicks-A3.mp3");
-        this.load.audio("dano", "../src/audio/ough.mp3");
+        this.load.audio("kick_1", "../src/audio/attack strong.wav");
+        this.load.audio("kick_2", "../src/audio/attack weak.wav");
+        this.load.audio("dano", "../src/audio/donkey-hit.wav");
+        this.load.audio("cover", "../src/audio/cover.wav");
+
+        this.load.audio("mega kick_1", "../src/audio/mega attack weak.wav");
+        this.load.audio("mega kick_2", "../src/audio/mega attack strong.wav");
 
         this.load.once("complete", this.LoadBurritos, this);
         this.load.start();
@@ -362,8 +387,8 @@ export class ColiseoBattle extends Phaser.Scene{
     
     CreateMegaAnimations(){
         this.anims.create({ key: `idle_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_idle`, { frames: this.Range(0, 14)}), frameRate: 14, repeat: -1 });
-        this.anims.create({ key: `Ataque1_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque1`, { frames: this.Range(0, 54)}), frameRate: 24, repeat: 0 });
-        this.anims.create({ key: `Ataque2_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque2`, { frames: this.Range(0, 24)}), frameRate: 24, repeat: 0 });
+        this.anims.create({ key: `Ataque1_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque1`, { frames: this.Range(0, 54)}), frameRate: 24, repeat: -1 });
+        this.anims.create({ key: `Ataque2_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_ataque2`, { frames: this.Range(0, 24)}), frameRate: 24, repeat: -1 });
         this.anims.create({ key: `defensa_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_defensa`, { frames: this.Range(0, 19)}), frameRate: 24, repeat: 0 });
         this.anims.create({ key: `dano_mega`, frames: this.anims.generateFrameNumbers(`megaburrito_defensa`, { frames: this.Range(0, 19)}), frameRate: 24, repeat: 0 });
     }

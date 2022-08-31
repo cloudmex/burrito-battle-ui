@@ -7,8 +7,6 @@ export class MainMenu extends Phaser.Scene{
         super("MainMenu");
     }
     preload(){
-        this.sound.stopAll();
-        this.sound.removeAll();
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.spritesheet("engrane", "../src/images/Engranajes.webp",{ frameWidth: 500, frameHeight:  468});
@@ -23,20 +21,25 @@ export class MainMenu extends Phaser.Scene{
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("mainMenubackground", "../src/images/mainMenu_Background.png");
         this.load.image("logo1", "../src/images/Logo.png");
-        this.load.image("buttonContainer", "../src/images/button.png");
+        this.load.image("buttonContainer1", "../src/images/button.png");
         this.load.image("miniAlert", "../src/images/Informacion_small.png");
 
         this.load.audio("acoustic-motivation", "./src/audio/acoustic-motivation.ogg"); 
         this.load.audio("button-hover", "./src/audio/button-hover.ogg");
         this.load.audio("button-click", "./src/audio/button-click.ogg");
-
-        this.load.spritesheet("derrota", "../src/images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("victoria", "../src/images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("background_animation", "../src/images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 }); 
     }
     
-    Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
-    async create(){
+    create(){
+        this.load.audio("acoustic-motivation", "./src/audio/acoustic-motivation.ogg"); 
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
+        this.load.once("complete", this.createScene, this);
+        this.load.start();
+    }
+    async createScene(){
+        this.sound.stopAll();
+        this.sound.removeAll();
+        //this.sound.pauseOnBlur = false;
         Helpers.Alert.isAlert = false;
         await Translate.LoadJson();
         this.loadingScreen = new Helpers.LoadingScreen(this);
@@ -75,13 +78,12 @@ export class MainMenu extends Phaser.Scene{
         }
 
         new Helpers.Button(this.sys.game.scale.gameSize.width -  290, 70, 0.5, "buttonContainer", Near.GetAccountId(), this,this.LogOut, null, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Helpers.SettingsButton(1850, 60, this, 0.25, ()=>{this.sound.setVolume(Helpers.SettingsButton.GetVolume());});
-        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
-
+        new Helpers.SettingsButton(1850, 60, this, 0.25, null);
         new Helpers.Button(450, 600, 0.75, "buttonContainer", Translate.Translate("BtnGoMintBurrito"), this, ()=>{ this.ChangeScene("MinarBurrito")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 750, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         new Helpers.Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, null, {fontSize: 60, fontFamily: "BangersRegular"});
         
+        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }
     

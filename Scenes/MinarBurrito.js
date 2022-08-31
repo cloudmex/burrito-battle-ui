@@ -8,12 +8,11 @@ export class MinarBurrito extends Phaser.Scene{
     canNavigate = true;
     isBigCard = false;
     alertVisible = false;
+    
     constructor(){
         super("MinarBurrito");
     }
     preload(){
-        this.sound.stopAll();
-        this.sound.removeAll();
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
         
@@ -22,10 +21,11 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.load.image("buttonContainer2", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
-        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
         this.loadingScreen = new Helpers.LoadingScreen(this);
     }
     create(){
+        this.sound.stopAll();
+        this.sound.removeAll();
         Helpers.Alert.isAlert = false;
         this.LoadSpritesheet();  
     }
@@ -57,7 +57,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.load.image("alert_small", "../src/images/Informacion_small.png");
 
         //audios
-        this.load.audio("praderaSong", "../src/audio/acoustic-motivation.ogg");
+        this.load.audio("acoustic-motivation", "../src/audio/acoustic-motivation.ogg");
         this.load.audio("button-hover", "./src/audio/button-hover.ogg");
         this.load.audio("button-click", "./src/audio/button-click.ogg");
 
@@ -66,7 +66,6 @@ export class MinarBurrito extends Phaser.Scene{
     }
     async Start(){
         this.camera = this.cameras.main;
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
         this.camera.scrollY = 2920; 
         this.background = this.add.image(this.sys.game.scale.gameSize.width / 2, 0, "mintBurritoBackground").setOrigin(0.5, 0)
         this.clouds = this.add.tileSprite(0,0, this.sys.game.scale.gameSize.width, 2100, "clouds").setOrigin(0);
@@ -75,19 +74,20 @@ export class MinarBurrito extends Phaser.Scene{
         localStorage.removeItem("prevScene");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? Translate.Translate("BtnBackToMeadow") : Translate.Translate("BtnMainMenu"), this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"})
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"})
+        this.mintButton = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"});
+        this.barnButton = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"});
         
         let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
-
+        this.burroTienda = this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
+        this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
+        this.sign = this.add.text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5);
         if(remainToBuy == 0){
-            this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
-            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda1").setOrigin(0);
             this.comprarBtn = new Helpers.Button(360,  this.sys.game.scale.gameSize.height + 2350, 0.25, "buttonContainer2", Translate.Translate("BtnBuyStrw"), this, this.BuyTokens, null, {fontSize: 20, fontFamily: "BangersRegular"}, false)
         } else {
+            this.burroTienda.destroy();
+            this.sign.destroy();
             this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
-            this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
             this.comprarBtn = null;
         }
         this.timeToBuy = this.add.text(260, this.sys.game.scale.gameSize.height + 2550, "", {fontSize: 26, fontFamily: "BangersRegular"}).setOrigin(0.5).setDepth(3);
@@ -103,7 +103,7 @@ export class MinarBurrito extends Phaser.Scene{
             localStorage.removeItem("action");
             localStorage.removeItem("lastScene");
         }
-        this.backgroundMusic = this.sound.add("praderaSong", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play()
+        this.sound.add("acoustic-motivation", { loop: true, volume: Helpers.SettingsButton.GetVolume()}).play();
     }
     update(){
         if(this.clouds == null || this.camera == null || this.background) return;
@@ -124,7 +124,7 @@ export class MinarBurrito extends Phaser.Scene{
         if(!this.canNavigate || Helpers.Alert.isAlert) return;
         clearInterval(this.counterInterval);
         localStorage.removeItem("lastScene");
-        this.scene.start(this.isPrevScene ? "Pradera" :"MainMenu");
+        this.scene.start(this.isPrevScene ? "newMap" :"MainMenu");
     }
     Contdown(remainToBuy) {
         let timeNow = Date.now();
@@ -149,6 +149,8 @@ export class MinarBurrito extends Phaser.Scene{
                 if(currentSTRW >= 50_000) {
                     if((await Near.GetCurrentNears()) >= 5){
                         this.canNavigate = false;
+                        this.mintButton.GetComponents().visible = false;
+                        this.barnButton.GetComponents().visible = false;
                         localStorage.setItem("action", "mintBurrito");
                         localStorage.setItem("lastScene", "MinarBurrito");
                         this.loadingScreen2 = new Helpers.LoadingScreen(this);
@@ -243,6 +245,8 @@ export class MinarBurrito extends Phaser.Scene{
             }
         });
         timeline.play();
+        this.mintButton.GetComponents().visible = true;
+        this.barnButton.GetComponents().visible = true;
         this.canNavigate = true;
     }
     GetStadistic(burrito){
@@ -270,6 +274,8 @@ export class MinarBurrito extends Phaser.Scene{
                         this.GetTokens(tokens);
                         localStorage.removeItem("action");
                         localStorage.removeItem("lastScene");
+                        this.burroTienda.destroy();
+                        this.sign.destroy();
                     } else {
                         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("DontHaveEnoughNearForBuyStraw"), Translate.Translate("BtnCancelAlert"));
                     }
@@ -296,9 +302,9 @@ export class MinarBurrito extends Phaser.Scene{
             this.cofreAnimation.play("cofreAnim").once('animationcomplete', () => { 
                 this.cofreAnimation.play("cofreAnimOut").once('animationcomplete', async () => {
                     animContainer.destroy();
-                    this.tienda.setTexture("tienda2");
                     let remainToBuy = await Near.CanBuyTokens();
                     this.hudTokens.UpdateTokens();
+                    this.tienda.setTexture("tienda2");
                     this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
                     this.canNavigate = true;
                 })

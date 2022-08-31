@@ -9,6 +9,8 @@ import * as Establo from "./Scenes/EstabloScene.js";
 import * as Coliseo from "./Scenes/ColiseoScene.js";
 import * as ColiseoBattle from "./Scenes/ColiseoBattleScene.js";
 
+import * as NewMap from "./Scenes/NewMap.js";
+
 const connection = Connection.Connection;
 const mainMenu = MainMenu.MainMenu;
 const minarBurrito = MinarBurrito.MinarBurrito;
@@ -17,6 +19,8 @@ const establo = Establo.Establo;
 const battle = Battle.Battle;
 const coliseo = Coliseo.Coliseo;
 const coliseoBattle = ColiseoBattle.ColiseoBattle;
+
+const newMap = NewMap.NewMap;
 
 const config = {
     type: Phaser.AUTO,
@@ -38,31 +42,22 @@ const config = {
         },
         zoom: 1
     },
-    /*plugins: {
-        scene: [
-          {
-            key: 'i18nPlugin',
-            mapping: 'i18n',
-            plugin: I18nPlugin,
-          },
-        ],
-    },*/
     physics:{
         default: "arcade",
         arcade:{
             gravity:{
                 y: 0
             },
-            debug: false,
-            debugShowBody: false,
-            debugShowStaticBody: false,
+            debug: true,
+            debugShowBody: true,
+            debugShowStaticBody: true,
         },
     },
     autorRound: false,
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu, minarBurrito, pradera, battle, establo, coliseo, coliseoBattle ]
+    scene: [ newMap, connection, mainMenu, minarBurrito, pradera, battle, establo, coliseo, coliseoBattle, ]
 };
 
 const game = new Phaser.Game(config);
