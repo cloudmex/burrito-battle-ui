@@ -6,7 +6,8 @@ await Translate.LoadJson();
 export class Button{
     text;
     constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle, useScrollFactor = true, setPixelPerfect = true) {
-        this.buttonResult = scene.add.container(x, y);
+        this.buttonResult = scene.add.container(x, y)
+        .setDepth(5);
         
         this.scene = scene;
         this.button = scene.add.sprite(0,0, img)
@@ -396,14 +397,15 @@ export class BurritoHud{
     constructor(x, y, burrito, scene){
         this.BurritoHud = {x, y, burrito, scene };
 
-        this.hudResult = scene.add.container(x, y).setScrollFactor(0);
+        this.hudResult = scene.add.container(x, y).setScrollFactor(0).setDepth(5);
         this.hud = scene.add.image(0, 0, "hud", this.GetIndexByType(burrito.burrito_type));   //HUD segun el tipo
         this.hudResult.add(this.hud);
         this.burrito = scene.add.image(-83, -51, "burritoHud", this.GetSkinBurrito(burrito.media));  //Imagen del burrito en HUD     
         this.hudResult.add(this.burrito);
         this.hudResult.add(scene.add.text(130, -82, burrito.hp, { fontSize: 50, fontFamily: "BangersRegular" }));//health
         this.hudResult.add(scene.add.text(130, 26, burrito.win, { fontSize: 50, fontFamily: "BangersRegular" }));//wins
-
+        this.hudResult.add(this.zone = scene.add.zone(0, 0, this.hud.width, this.hud.height));
+        scene.physics.world.enable(this.zone);
     }
 
     GetIndexByType(type){
@@ -441,7 +443,7 @@ export class TokenHud{
     constructor(x, y, scene, currentNEAR, currentSTRW){
         this.TokenHud = {x, y, scene};
 
-        this.hudResult = scene.add.container(x, y).setScrollFactor(0);
+        this.hudResult = scene.add.container(x, y).setScrollFactor(0).setDepth(5);
         this.nearHud = scene.add.image(-40, -150, "tokenHud");
         this.strwHud = scene.add.image(-40, -80, "tokenHud");
         this.hudResult.add(this.nearHud);
@@ -482,21 +484,20 @@ export class BattleEnd{
             
                 this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
                 this.burrito.play(isVictoria ? "victoria_Player" : "derrota_Player");
-            }, 1000);
-        }else{
-            scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers( isVictoria ? "victoria_incursion" : "derrota_incursion", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
-            this.resultUI.add(this.animation = scene.add.sprite(0, 0));
-            this.animation.play("finishAnim");
+            } else{
+                scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers( isVictoria ? "victoria_incursion" : "derrota_incursion", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
+                this.resultUI.add(this.animation = scene.add.sprite(0, 0));
+                this.animation.play("finishAnim");
 
-            setTimeout(() => {
-                this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-                this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
-                if(isVictoria){
-                    this.burrito.play("victoria_Player");
-                }
-            }, 1000);
-        }
-        
+                setTimeout(() => {
+                    this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+                    this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
+                    if(isVictoria){
+                        this.burrito.play("victoria_Player");
+                    }
+                }, 1000);
+            }
+        }, 1000);        
     }
 }
 export class Alert{
@@ -610,9 +611,9 @@ export class SettingsButton{
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
         this.configContainer.add(this.scene.add.text(0, -335, Translate.Translate("Settings"), { fontSize:72, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.scene.add.text(0, -150, Translate.Translate("Language"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -50, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
-        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -50, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
+        this.configContainer.add(this.scene.add.text(0, -200, Translate.Translate("Language"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        this.configContainer.add(this.engImg = this.scene.add.sprite(200, -115, "languages", localStorage.getItem("language") === "es" ? 0 : 1).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEng).setScale(0.2));
+        this.configContainer.add(this.espImg = this.scene.add.sprite(-200, -115, "languages",  localStorage.getItem("language") === "es" ? 3 : 2).setInteractive(this.scene.input.makePixelPerfect()).on("pointerdown", this.SetEsp).setScale(0.2));
 
         this.configContainer.add(this.scene.add.text(0, -25, Translate.Translate("Volume"), { fontSize:60 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         this.configContainer.add(this.scene.add.image(0, 50, "volume"));
@@ -643,14 +644,14 @@ export class SettingsButton{
         if(this.ambientVolume + 0.1 <= 1){
             this.ambientVolume += 0.1;
             this.ambientVolumeHandler.setX(-310 + (620 * this.ambientVolume));
-            this.scene.sound.setVolume(this.ambientVolume)
+            //this.scene.sound.setVolume(this.ambientVolume)
         }
     }
     DecreaseAmbientVolume = () => {
         if(this.ambientVolume - 0.1 >= 0){
             this.ambientVolume -= 0.1;
             this.ambientVolumeHandler.setX(-310 + (620 * this.ambientVolume));
-            this.scene.sound.setVolume(this.ambientVolume)
+            //this.scene.sound.setVolume(this.ambientVolume)
         }
     }
     IncreaseSFXVolume = () => {

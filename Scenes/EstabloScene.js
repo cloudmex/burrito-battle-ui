@@ -90,7 +90,7 @@ export class Establo extends Phaser.Scene{
     }
     BackToMainMenu = () => {
         localStorage.removeItem("lastScene");
-        this.scene.start(this.isPrevScene ? "Pradera" :"MainMenu");
+        this.scene.start(this.isPrevScene ? "newMap" :"MainMenu");
     }
     GoToSilo = () => this.scene.start("MinarBurrito");
     SetSelected = (_index) => {

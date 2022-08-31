@@ -183,7 +183,7 @@ export class Battle extends Phaser.Scene{
         localStorage.removeItem("lastScene");
         new Helpers.BattleEnd(this.game.config.width / 2, this.game.config.height / 2, this, isWinner, this.currentBattle.rewards);
         setTimeout(() => {
-            this.scene.start("Pradera")
+            this.scene.start("newMap")
         }, 10000);
     }
     IsDefined(obj){
@@ -294,7 +294,9 @@ export class Battle extends Phaser.Scene{
                
                 await Near.SurrenderCpu(); 
                 await this.loadingScreen.OnComplete();
-                this.scene.start("Pradera");
+                console.log("give up");
+                this.scene.start("newMap"); 
+                console.log("something");
             } 
         });
     }

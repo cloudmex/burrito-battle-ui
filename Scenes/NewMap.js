@@ -1,5 +1,6 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
+import * as Objects from "../src/Helpers/Objects";
 import { Translate } from "../src/Translate.js";
 
 export class NewMap extends Phaser.Scene{
@@ -9,89 +10,15 @@ export class NewMap extends Phaser.Scene{
     speed = 500;
     target = new Phaser.Math.Vector2();
     showAlert = false;
-    
+    lastPosition = {x:0, y: 0, position: {x:960, y: 540}};
+    followCharacter = true;
+
     constructor(){
         super("newMap");
     }
     preload(){ }
     create(){
         this.loadAssets();
-    }
-    CameraLerp(){
-        if(this.burrito == null)
-            return;
-
-        let x = Math.floor(this.burrito?.x / 1920) * 1920;
-        let y = Math.floor(this.burrito?.y / 1080) * 1080;
-
-        if(x != this.tmpX || y != this.tmpY){
-            this.burrito?.body.stop();
-            this.StopAnimation();
-            this.canMove =false;
-            this.tweens.timeline({
-                duration:1500,
-                delay:100,
-                tweens:[{
-                    targets: this.cameras.main,
-                    scrollX: x,
-                    scrollY: y,
-                    onComplete: () => { this.canMove = true; }
-                }]
-            })
-            this.tmpX = x;
-            this.tmpY = y;
-        }
-    }
-    update(){
-        if(Helpers.Alert.isAlert)
-            return;
-        if(true)
-            this.CameraLerp();
-        else if(this.burrito != null)
-            this.cameras.main.startFollow(this.burrito);
-
-            if(window["barn"] != null)
-        this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["barn"].getBounds());
-        
-        if(this.canMove){
-            let distance = Phaser.Math.Distance.Between(this.burrito?.x, this.burrito?.y, this.target?.x, this.target?.y);
-            if(this.burrito?.body.speed > 0){
-                this.PlayAnimation();
-                this.footStepsSFX?.setMute(false); 
-                if(distance < 4 && !this.isKeyboard)
-                    this.burrito?.body.reset(this.target.x, this.target.y)
-            } else{
-                this.StopAnimation();
-                this.footStepsSFX?.setMute(true); 
-            }
-            
-            this.keyboardMovement();
-        }
-    }
-    loadAssets(){
-        this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
-        this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
-        this.load.image("loading_bg", "../src/images/loading_bg.png");
-        for (let index = 1; index <= 16; index++) {
-            this.load.image(`cell_${index}`, `./src/images/new Pradera/C${index}/C${index}.png`);
-            this.load.image(`cell_${index}_details_1`, `./src/images/new Pradera/C${index}/Details 2.png`);
-            this.load.image(`cell_${index}_details_2`, `./src/images/new Pradera/C${index}/Details 1.png`);
-        }
-
-        this.load.image("cell_empty", "./src/images/new Pradera/cell_empty.png")
-        this.load.image("light volumetric", "../src/images/new Pradera/Shader.png")
-        this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_agua.png`, {frameWidth: 51, frameHeight: 53});
-        this.load.image("buttonContainer", "../src/images/button.png");
-        this.load.image("alert", "../src/images/Información 1.png");
-        this.load.image("alert_small", "../src/images/Informacion_small.png");
-
-        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
-        this.load.audio("footSteps", "../src/audio/Footsteps.ogg");
-        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
-        this.load.audio("button-click", "./src/audio/button-click.ogg");
-
-        this.load.once("complete", this.start, this);
-        this.load.start(); 
     }
     async start(){
         this.loadingScreen = new Helpers.LoadingScreen(this);
@@ -104,8 +31,9 @@ export class NewMap extends Phaser.Scene{
         this.footStepsSFX.play();
 
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
-
-        let cell_1 = { 
+        this.SetBurritoLocation()
+        //#region CELLS
+        let cell_01 = { 
             images: [ {image: "cell_1", depth: -1}, { image: "cell_1_details_1", depth: -1 }, { image: "cell_1_details_2", depth: 1}],
             colliders: [
                 {x: 167, y: 253, w: 44, h: 7},//tree
@@ -119,9 +47,11 @@ export class NewMap extends Phaser.Scene{
                 {x: 1585, y: 556, w: 44, h: 7},//tree
                 {x: 1772, y: 301, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
+                {x: 20, y: 1080, w: 5, h: 2000},//fence
             ], 
+            wildBurritos: 3
         };
-        let cell_2 = { 
+        let cell_02 = { 
             images: [ { image: "cell_2", depth: -1 }, { image: "cell_2_details_1", depth: -1 }, { image: "cell_2_details_2", depth: 1}], 
             colliders: [
                 {x: 250, y: 280, w: 44, h: 7},//tree
@@ -140,9 +70,10 @@ export class NewMap extends Phaser.Scene{
             ], 
             triggers:[
                 {x: 938, y: 120, w: 512, h: 240, variable: "barn", event: ()=>{this.ShowAlert(Translate.Translate("TleGoBarnAlert"), Translate.Translate("MsgGoBarnAlert"), "Establo")}},//barn
-            ]
+            ], 
+            wildBurritos: 3
         };
-        let cell_3 = { 
+        let cell_03 = { 
             images: [ { image: "cell_3", depth: -1 }, { image: "cell_3_details_1", depth: -1 }, { image: "cell_3_details_2", depth: 1}], 
             colliders: [
                 {x: 243, y: 184, w: 44, h: 7},//tree
@@ -155,8 +86,9 @@ export class NewMap extends Phaser.Scene{
                 {x: 1762, y: 254, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
             ],
+            wildBurritos: 3
         };
-        let cell_4 = { 
+        let cell_04 = { 
             images: [ { image: "cell_4", depth: -1 }, { image: "cell_4_details_1", depth: -1 }, { image: "cell_4_details_2", depth: 1}], 
             colliders: [
                 {x: 246, y: 188, w: 44, h: 7},//tree
@@ -166,9 +98,10 @@ export class NewMap extends Phaser.Scene{
                 {x: 1589, y: 960, w: 44, h: 7},//tree
                 {x: 1759, y: 247, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
-            ],
+            ], 
+            wildBurritos: 3
         };
-        let cell_5 = { 
+        let cell_05 = { 
             images: [ { image: "cell_5", depth: -1 }, { image: "cell_5_details_1", depth: -1 }, { image: "cell_5_details_2", depth: 1}], 
             colliders: [
                 {x: 679, y: 433, w: 44, h: 7},//tree
@@ -179,19 +112,20 @@ export class NewMap extends Phaser.Scene{
                 {x: 520, y: 165, w: 550, h: 5},//fence
                 {x: 240, y: 290, w: 5, h: 230},//fence
                 {x: 520, y: 765, w: 550, h: 5},//fence
-                {x: 240, y: 676, w: 5, h: 200},//fence
+                {x: 240, y: 676, w: 5, h: 180},//fence
 
                 {x: 1450, y: 165, w: 550, h: 5},//fence
                 {x: 1726, y: 290, w: 5, h: 230},//fence
                 {x: 1450, y: 765, w: 550, h: 5},//fence
-                {x: 1726, y: 676, w: 5, h: 200},//fence
+                {x: 1726, y: 676, w: 5, h: 180},//fence
                 {x: 993, y: 470, w: 250, h: 250},//silo
             ],
             triggers:[
-                {x: 993, y: 500, w: 400, h: 300, variable: "barn", event: ()=>{ this.ShowAlert(Translate.Translate("TleGoSiloAlert"), Translate.Translate("MsgGoSiloAlert"), "MinarBurrito") }},//silo
-            ]
+                {x: 980, y: 480, w: 1400, h: 500, variable: "silo", event: ()=>{ this.ShowAlert(Translate.Translate("TleGoSiloAlert"), Translate.Translate("MsgGoSiloAlert"), "MinarBurrito") }},//silo
+            ], 
+            wildBurritos: 3
         };
-        let cell_6 = { 
+        let cell_06 = { 
             images: [ { image: "cell_6", depth: -1 }, { image: "cell_6_details_1", depth: -1 }, { image: "cell_6_details_2", depth: 1}], 
             colliders: [
                 {x: 116, y: 131, w: 44, h: 7},//tree
@@ -204,9 +138,10 @@ export class NewMap extends Phaser.Scene{
                 {x: 1683, y: 175, w: 44, h: 7},//tree
                 {x: 1047, y: 291, w: 44, h: 7},//tree
                 {x: 1648, y: 772, w: 44, h: 7},//tree
-            ],
+            ], 
+            wildBurritos: 3
         };
-        let cell_7 = { 
+        let cell_07 = { 
             images: [ { image: "cell_7", depth: -1 }, { image: "cell_7_details_1", depth: -1 }, { image: "cell_7_details_2", depth: 1}], 
             colliders: [
                 {x: 116, y: 131, w: 44, h: 7},//tree
@@ -221,7 +156,7 @@ export class NewMap extends Phaser.Scene{
                 {x: 1645, y: 765, w: 44, h: 7},//tree
             ],
         };
-        let cell_8 = { 
+        let cell_08 = { 
             images: [ { image: "cell_8", depth: -1 }, { image: "cell_8_details_1", depth: -1 }, { image: "cell_8_details_2", depth: 1}], 
             colliders: [
                 {x: 116, y: 131, w: 44, h: 7},//tree
@@ -230,22 +165,30 @@ export class NewMap extends Phaser.Scene{
                 {x: 1594, y: 859, w: 44, h: 7},//tree
                 {x: 1683, y: 175, w: 44, h: 7},//tree
                 {x: 1776, y: 378, w: 44, h: 7},//tree
-                {x: 945, y: 600, w: 400, h: 175},//statue
-            ],
+                {x: 945, y: 650, w: 400, h: 50},//statue
+                {x: 1900, y: 540, w: 5, h: 3000},//fence
+            ], 
+            wildBurritos: 3
         };
-        let cell_9 = {
-            images: [ { image: "cell_9", depth: -1 }, { image: "cell_9_details_1", depth: -1 }], 
+        let cell_09 = {
+            images: [ { image: "cell_9", depth: -1 }], 
             colliders: [
                 {x: 200, y: 260, w: 385, h: 750},//wall
                 {x: 100, y: 830, w: 210, h: 390},//wall
                 {x: 232, y: 985, w: 100, h: 100},//wall
-            ],
+            ], 
+            wildBurritos: 3,
+            cactus:[ { x: 755, y: 550 },{ x: 755, y: 550 },{ x: 1775, y: 360 },{ x: 1415, y: 770 },{ x: 560, y: 815 },{ x: 1220, y: 415 }]
         };
         let cell_10 = { 
             images: [ { image: "cell_10", depth: -1 }, { image: "cell_10_details_1", depth: 1 }], 
+            wildBurritos: 3,
+            cactus:[ { x: 216, y: 322 },{ x: 344, y: 550 },{ x: 320, y: 787 },{ x: 840, y: 435 },{ x: 1013, y: 462 },{ x: 1665, y: 709 }, {x:1560, y:381}]
         };
         let cell_11 = { 
-            images: [ { image: "cell_11", depth: -1 }, { image: "cell_11_details_1", depth: -1 }], 
+            images: [ { image: "cell_11", depth: -1 }], 
+            wildBurritos: 3,
+            cactus:[ { x: 550, y: 260 },{ x: 720, y: 425 },{ x: 455, y: 795 },{ x: 930, y: 853 },{ x: 1315, y: 826 },{ x: 1507, y: 456 }, {x:1750, y:254}, {x:1550, y:940}]
         };
         let cell_12 = {
             images: [ { image: "cell_12", depth: -1 }, { image: "cell_12_details_1", depth: -1 }, { image: "cell_12_details_2", depth: 1 }], 
@@ -258,35 +201,71 @@ export class NewMap extends Phaser.Scene{
                 {x: 1686, y: 667, w: 44, h: 7},//tree
 
                 {x: 1620, y: 1090, w: 620, h: 500},//wall
-            ],
-            };
+            ], 
+            wildBurritos: 3
+        };
         let cell_13 = {
-            images: [ { image: "cell_13", depth: -1 }, { image: "cell_13_details_2", depth: 1 }], 
+            images: [ { image: "cell_13", depth: -1 }], 
             colliders: [
                 {x: 205, y: 170, w: 411, h: 440},//wall
                 {x: 110, y: 460, w: 240, h: 160},//wall
                 {x: 150, y: 620, w: 320, h: 160},//wall
                 {x: 15, y: 805, w: 45, h: 200},//wall
                 {x: 80, y: 990, w: 170, h: 180},//wall
-            ],
+                {x: 1700, y: 300, w: 1700, h: 500},//wall
+            ], 
+            wildBurritos: 3,
+            cactus:[ { x: 550, y: 260 }, { x: 350, y: 640 },{ x: 980, y: 600 }, { x: 790, y: 1035 } ]
         };
         let cell_14 = { 
-            images: [ { image: "cell_14", depth: -1 }, { image: "cell_14_details_2", depth: 1 }], 
+            images: [ { image: "cell_14", depth: -1 }], 
+            colliders:[
+                {x: 1160, y: 0, w: 400, h: 300},//wall
+                {x: 0, y: 60, w: 1920, h: 420},//wall
+                {x: 2320, y: 60, w: 1920, h: 420},//wall
+            ],
+            triggers:[
+                {x: 1160, y: 200, w: 400, h: 100, variable: "coliseum", event:()=>{ this.ShowAlert(Translate.Translate("TleGoColiseumAlert"), Translate.Translate("MsgGoColiseumAlert"), "Coliseo");}},//wall
+            ], 
+            wildBurritos: 3,
+            cactus:[ { x: 348, y: 590 }, { x: 640, y: 925 },  { x: 774, y: 541 }, { x: 1566, y: 541 }, { x: 1713, y: 1069 }, ]
         };
         let cell_15 = { 
-            images: [ { image: "cell_15", depth: -1 }, { image: "cell_15_details_2", depth: 1 }], 
+            images: [ { image: "cell_15", depth: -1 }, ], 
+            colliders: [
+                {x: 645, y: 300, w: 1700, h: 500},//wall
+            ],
+            cactus:[ { x: 445, y: 1006 },{ x: 766, y: 616 },{ x: 1359, y: 593 },{ x: 1778, y: 989 },{ x: 1508, y: 302 }, ]
         };
         let cell_16 = { 
-            images: [ { image: "cell_16", depth: -1 }], 
+            images: [ { image: "cell_16", depth: -1 }],
+            colliders:[
+                {x: 1710, y: 355, w: 440, h: 176},//wall
+                {x: 1670, y: 535, w: 520, h: 180},//wall
+                {x: 1800, y: 750, w: 240, h: 240},//wall
+                {x: 1745, y: 976, w: 373, h: 210},//wall
+            ], 
+            wildBurritos: 3,
+            cactus:[ { x: 280, y: 511 }, { x: 809, y: 379 }, { x: 1354, y: 578 }, { x: 1266, y: 246 }, { x: 865, y: 1050 },]
         };
-        
+        let cDesert = {
+            images: [ {image: "desert", depth:-1}],
+            triggers:[
+                { x: 960, y: 1070, w: 1920, h: 5, variable: "Desert", event:()=>{ this.DesertEndless("down");} },//wall
+                { x: 5, y: 540, w: 5, h: 1080, variable: "Desert", event:()=>{ this.DesertEndless("left"); } },//wall
+                { x: 1915, y: 540, w: 5, h: 1080, variable: "Desert", event:()=>{ this.DesertEndless("right"); } },//wall
+            ], 
+        }
+        //#endregion
         let map = [
-            [cell_1, cell_2, cell_3, cell_4, ],
-            [cell_5, cell_6, cell_7, cell_8, ],
-            [cell_9, cell_10, cell_11, cell_12, ],
+            [cell_01, cell_02, cell_03, cell_04, ],
+            [cell_05, cell_06, cell_07, cell_08, ],
+            [cell_09, cell_10, cell_11, cell_12, ],
             [cell_13, cell_14, cell_15, cell_16, ],
+            [cDesert, cDesert, cDesert, cDesert, ],
         ];
 
+        this.zoneBattles = this.physics.add.group();
         map.forEach((row, y) => {
             row.forEach((cell, x)=>{
                 cell.images.forEach(c =>{
@@ -306,12 +285,19 @@ export class NewMap extends Phaser.Scene{
                     zone.body.setImmovable(true);
                     this.physics.add.overlap(this.burrito, zone, c.event);
                 })
+                
+                for (let i = 0; i <= cell.wildBurritos; i++) {
+                    this.zoneBattles.create(Phaser.Math.RND.between(1920 * x , 1920 * (x + 1)), Phaser.Math.RND.between(1080 * y , 1808 * (y + 1)), null, null, false, true);
+                }
+                cell.cactus?.forEach(c=>{
+                    new Objects.Cactus(this, 1920 * x + c.x, 1080 * y + c.y);
+                })
             })
         });
 
         this.add.image(0,0, "light volumetric").setDepth(2).setOrigin(0).setScrollFactor(0)
 
-        this.cameras.main.setBounds(0, 0, 1920 * map[0].length, 1080 * map[0].length);
+        this.cameras.main.setBounds(0, 0, 1920 * map[0].length, 1080 * map.length);
         this.physics.world.bounds.width = 1920 * map[0].length;
         this.physics.world.bounds.height = 1080 * map.length;
         
@@ -333,11 +319,111 @@ export class NewMap extends Phaser.Scene{
                 this.physics.moveToObject(this.burrito, this.target, 500);
             }
         }, this);
-
-        this.input.on("pointerdown", (pointer)=>{console.log(`X: ${pointer.downX}, Y:${pointer.downY}`)});
-        //
         
+        this.physics.add.overlap(this.burrito, this.zoneBattles, this.Battle, null, this);
+        this.input.on("pointerdown", (pointer)=>{console.log(`X: ${pointer.downX.toFixed()}, Y:${pointer.downY.toFixed()}`)});
+
+        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnGoMainMenu"), this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
+        this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
+        this.hudBurrito = new Helpers.BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
         await this.loadingScreen.OnComplete();
+    }
+    DesertEndless(direction){
+        let x = Math.floor(this.burrito?.x / 1920);
+        let y = Math.floor(this.burrito?.y / 1080);
+        let newPos;
+        switch (direction) {
+            case "down":
+                newPos = {x: this.burrito.x, y: 1080 * y};
+                break;
+            case "right":
+                newPos = {x: 1920 * x + 50, y: this.burrito.y};
+                break;
+            case "left":
+                newPos = {x: 1920 * x + 1870, y: this.burrito.y};
+                break;
+        }
+        this.burrito.setPosition(newPos.x, newPos.y); 
+        this.burrito?.body.stop();
+    }
+    update(){
+        if(Helpers.Alert.isAlert)
+            return;
+        if(true)
+            this.CameraLerp();
+        else if(this.burrito != null)
+            this.cameras.main.startFollow(this.burrito);
+
+        if(window["barn"] != null&&window["silo"] != null&&window["coliseum"] != null)
+            this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["barn"].getBounds()) 
+                            | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["silo"].getBounds()) 
+                            | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["coliseum"].getBounds());
+        
+        if(this.canMove){
+            let distance = Phaser.Math.Distance.Between(this.burrito?.x, this.burrito?.y, this.target?.x, this.target?.y);
+            if(this.burrito?.body?.speed > 0){
+                this.PlayAnimation();
+                this.footStepsSFX?.setMute(false); 
+                if(distance < 4 && !this.isKeyboard)
+                    this.burrito?.body.reset(this.target.x, this.target.y)
+            } else{
+                this.StopAnimation();
+                try {
+                this.footStepsSFX?.setMute(true); }
+                catch{}
+            }
+            
+            this.keyboardMovement();
+        }
+    }
+    CameraLerp(){
+        if(this.burrito == null)
+            return;
+
+        let x = Math.floor(this.burrito?.x / 1920) * 1920;
+        let y = Math.floor(this.burrito?.y / 1080) * 1080;
+        if(x != this.tmpX || y != this.tmpY){
+            this.burrito?.body.stop();
+            this.followCharacter = false;
+            this.StopAnimation();
+            this.canMove =false;
+            this.tweens.timeline({
+                duration:1500,
+                delay:100,
+                tweens:[{
+                    targets: this.cameras.main,
+                    scrollX: x,
+                    scrollY: y,
+                    onComplete: () => { this.canMove = true; }
+                }]
+            })
+            this.tmpX = x;
+            this.tmpY = y;
+        }
+    }
+    SetBurritoLocation(){
+        let newX = 1920 * (this.lastPosition.x + 1) - (1920 / 2);
+        let newY = 1080 * (this.lastPosition.y + 1) - (1080 / 2);
+        this.burrito.setX(this.lastPosition.position.x);
+        this.burrito.setY(this.lastPosition.position.y);
+        this.cameras.main.setScroll(newX - 960, newY - 540);
+    }
+    async Battle(burrito, triggerZone){
+        burrito.body.stop();
+        this.burrito.stop();
+        this.footStepsSFX.setMute(true); 
+        triggerZone.disableBody(true, true);
+        triggerZone.destroy();
+        await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleWildBurritoAlert"), Translate.Translate("MsgWildBurritoAlert"), Translate.Translate("BtnWildBurritoAlertFight"), Translate.Translate("BtnWildBurrtitoAlertEscape"))
+        .then(async (result) => {
+            if (result){
+                let x = Math.floor(this.burrito?.x / 1920);
+                let y = Math.floor(this.burrito?.y / 1080);
+                this.lastPosition = {x: x, y: y, position: {x: this.burrito?.x, y: this.burrito?.y}};
+                this.scene.start("Battle");
+                this.scene.remove("newMap");
+            }
+        });
     }
     ShowAlert = async(title, description, scene) => {
         
@@ -349,6 +435,9 @@ export class NewMap extends Phaser.Scene{
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, title, description, Translate.Translate("BtnGoSiteAlert"), Translate.Translate("BtnCancelAlert"))
             .then(async (result) => {
                 if(result && scene != null) {
+                    let x = Math.floor(this.burrito?.x / 1920);
+                    let y = Math.floor(this.burrito?.y / 1080);
+                    this.lastPosition = {x: x, y: y, position: {x: this.burrito?.x, y: this.burrito?.y}};
                     localStorage.setItem("prevScene", "pradera");
                     this.scene.start(scene);
                 }
@@ -386,8 +475,8 @@ export class NewMap extends Phaser.Scene{
         } else
             this.velocity.x = 0;
 
-        if(this.isKeyboard)
-            this.burrito.setVelocity(this.velocity.x * this.speed, this.velocity.y * this.speed);
+        if(this.isKeyboard && this.burrito.body != null)
+            this.burrito?.setVelocity(this.velocity.x * this.speed, this.velocity.y * this.speed);
     }
     PlayAnimation() {
         if(!this.burrito.anims.isPlaying) {
@@ -409,12 +498,45 @@ export class NewMap extends Phaser.Scene{
         }
     }
     StopAnimation(){
-        if(this.burrito?.anims.isPlaying)
-            this.burrito.stop();
+        if(this.burrito?.anims?.isPlaying)
+            this.burrito?.stop();
     } 
     clampAngle(angle){
         let result = angle - Math.ceil(angle / 360) * 360;
         if(result < 0) result += 360;
         return result;
+    }
+    loadAssets(){
+        this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
+        this.load.image("loading_bg", "../src/images/loading_bg.png");
+        for (let index = 1; index <= 16; index++) {
+            this.load.image(`cell_${index}`, `./src/images/new Pradera/C${index}/C${index}.png`);
+            this.load.image(`cell_${index}_details_1`, `./src/images/new Pradera/C${index}/Details 2.png`);
+            this.load.image(`cell_${index}_details_2`, `./src/images/new Pradera/C${index}/Details 1.png`);
+        }
+        this.load.image("desert", "./src/images/new Pradera/Desert.png");
+        this.load.image("cactus1", "./src/images/new Pradera/Cactus 1.png");
+        this.load.image("cactus2", "./src/images/new Pradera/Cactus 2.png");
+
+        this.load.spritesheet("burritoHud", "../src/images/HUD/Burritos.png", {frameWidth: 215, frameHeight: 305});
+        this.load.spritesheet("hud", "../src/images/HUD/HUD.png", {frameWidth: 390, frameHeight: 226});
+        this.load.image("tokenHud", "../src/images/HUD/Information.png");
+        this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
+
+        this.load.image("cell_empty", "./src/images/new Pradera/cell_empty.png")
+        this.load.image("light volumetric", "../src/images/new Pradera/Shader.png")
+        this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_agua.png`, {frameWidth: 51, frameHeight: 53});
+        this.load.image("buttonContainer", "../src/images/button.png");
+        this.load.image("alert", "../src/images/Información 1.png");
+        this.load.image("alert_small", "../src/images/Informacion_small.png");
+
+        this.load.audio("praderaSong", "../src/audio/Pradera.ogg");
+        this.load.audio("footSteps", "../src/audio/Footsteps.ogg");
+        this.load.audio("button-hover", "./src/audio/button-hover.ogg");
+        this.load.audio("button-click", "./src/audio/button-click.ogg");
+
+        this.load.once("complete", this.start, this);
+        this.load.start(); 
     }
 }

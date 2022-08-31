@@ -8,6 +8,7 @@ export class MinarBurrito extends Phaser.Scene{
     canNavigate = true;
     isBigCard = false;
     alertVisible = false;
+    
     constructor(){
         super("MinarBurrito");
     }
@@ -73,8 +74,8 @@ export class MinarBurrito extends Phaser.Scene{
         localStorage.removeItem("prevScene");
         new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer2", this.isPrevScene ? Translate.Translate("BtnBackToMeadow") : Translate.Translate("BtnMainMenu"), this, this.BackToMainMenu, null, {fontSize: 30, fontFamily: "BangersRegular"});
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"});
-        this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"});
+        this.mintButton = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, null, {fontSize: 38, fontFamily: "BangersRegular"});
+        this.barnButton = new Helpers.Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer2", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo, null, {fontSize: 40, fontFamily: "BangersRegular"});
         
         let remainToBuy = await Near.CanBuyTokens();
         await this.loadingScreen.OnComplete();
@@ -82,10 +83,7 @@ export class MinarBurrito extends Phaser.Scene{
         this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
         this.sign = this.add.text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5);
         if(remainToBuy == 0){
-            //this.add.sprite(180, this.sys.game.scale.gameSize.height + 2300, "burrito").setOrigin(0);
-            //this.tienda = this.add.sprite(50, this.sys.game.scale.gameSize.height + 2270, "tienda2").setOrigin(0);
             this.comprarBtn = new Helpers.Button(360,  this.sys.game.scale.gameSize.height + 2350, 0.25, "buttonContainer2", Translate.Translate("BtnBuyStrw"), this, this.BuyTokens, null, {fontSize: 20, fontFamily: "BangersRegular"}, false)
-            //this.add(this.sign = text(257, this.sys.game.scale.gameSize.height + 2554, Translate.Translate("SignBuyStrw"), {fontSize: 20 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         } else {
             this.burroTienda.destroy();
             this.sign.destroy();
@@ -126,7 +124,7 @@ export class MinarBurrito extends Phaser.Scene{
         if(!this.canNavigate || Helpers.Alert.isAlert) return;
         clearInterval(this.counterInterval);
         localStorage.removeItem("lastScene");
-        this.scene.start(this.isPrevScene ? "Pradera" :"MainMenu");
+        this.scene.start(this.isPrevScene ? "newMap" :"MainMenu");
     }
     Contdown(remainToBuy) {
         let timeNow = Date.now();
@@ -151,6 +149,8 @@ export class MinarBurrito extends Phaser.Scene{
                 if(currentSTRW >= 50_000) {
                     if((await Near.GetCurrentNears()) >= 5){
                         this.canNavigate = false;
+                        this.mintButton.GetComponents().visible = false;
+                        this.barnButton.GetComponents().visible = false;
                         localStorage.setItem("action", "mintBurrito");
                         localStorage.setItem("lastScene", "MinarBurrito");
                         this.loadingScreen2 = new Helpers.LoadingScreen(this);
@@ -245,6 +245,8 @@ export class MinarBurrito extends Phaser.Scene{
             }
         });
         timeline.play();
+        this.mintButton.GetComponents().visible = true;
+        this.barnButton.GetComponents().visible = true;
         this.canNavigate = true;
     }
     GetStadistic(burrito){
