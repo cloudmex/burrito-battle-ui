@@ -45,6 +45,7 @@
     "DontHaveEnoughNearForMint": "You don't have enough $Nears to buy a burrito, you need 5 $Near.",
     "DontHaveEnoughNearForBuyStraw": "You don't have enough $Nears to buy Straw tokens, you need 1 $Near.",
 
+    "Settings": "Settings",
     "Language": "Language",
     "Volume": "Volume",
     "Apply": "Apply",

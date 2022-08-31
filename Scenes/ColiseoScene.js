@@ -40,7 +40,6 @@ export class Coliseo extends Phaser.Scene{
 
     create(){
         Helpers.Alert.isAlert = false;
-        //await Translate.LoadJson();
         this.loadSpritesheet();
     }
     loadSpritesheet(){
@@ -150,7 +149,7 @@ export class Coliseo extends Phaser.Scene{
     Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
     BackToPradera = () =>{ 
         clearInterval(this.counterInterval); 
-        this.scene.start("Pradera"); 
+        this.scene.start("newMap"); 
     }
     ConfirmIncursion = async() => {
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleStartIncursionAlert"), Translate.Translate("MsgStartIncursionAlert"), Translate.Translate("BtnStartIncursion"), Translate.Translate("BtnCancelAlert"))
@@ -217,58 +216,8 @@ export class Coliseo extends Phaser.Scene{
     }
     async CreateIncursionInfo(){
         let incursion = await Near.GetPlayerIncursion();
-        console.log(incursion)
-        /*{
-            id: 1,
-            status: "WaitingPlayers",
-            create_time: 1658268241826193400,
-            start_time: 1658268301826193400,
-            finish_time: 1658268601826193400,
-            players_number: 10,
-            registered_players: 1,
-            win: "",
-            mega_burrito: {
-                name: "Cerberus",
-                burrito_type: "Fuego",
-                start_health: "100",
-                health: "77.96",
-                attack: "15",
-                defense: "15",
-                speed: "15",
-                level: "40"
-            },
-            players: [
-                {
-                    burrito_id: "118",
-                    burrito_owner: "jesusrobles.testnet"
-                }
-            ],
-            rewards: 120000
-        }*/
         let mega = incursion.incursion.mega_burrito;
         let info = await Near.BurritosIncursionInfo(incursion.incursion.id);
-        /*[
-            {
-                "player_name": "jesusrobles.testnet",
-                "media": "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk",
-                "is_alive": false
-            },
-            {
-                "player_name": "pepeP2.testnet",
-                "media": "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D",
-                "is_alive": false
-            },
-            {
-                "player_name": "benitoCamela.testnet",
-                "media": "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq",
-                "is_alive": true
-            },
-            {
-                "player_name": "juanchoTalarga.testnet",
-                "media": "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6",
-                "is_alive": true
-            }
-        ]*/
         mega.hp = mega.win /*= mega.attack = mega.defense = mega.level = mega.speed*/ = "?";
         mega.cards = "mega_cards"
         let incursionContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2 ).setScale(0.75);
