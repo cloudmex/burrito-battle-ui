@@ -1,6 +1,6 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
-import * as Objects from "../src/Helpers/Objects";
+import * as Objects from "../src/Helpers/Objects.js";
 import { Translate } from "../src/Translate.js";
 
 export class NewMap extends Phaser.Scene{
@@ -16,7 +16,7 @@ export class NewMap extends Phaser.Scene{
     constructor(){
         super("newMap");
     }
-    preload(){ }
+    preload(){  }
     create(){
         this.loadAssets();
     }
@@ -29,6 +29,27 @@ export class NewMap extends Phaser.Scene{
         this.footStepsSFX = this.sound.add("footSteps", {loop:true, volume: Helpers.SettingsButton.GetVolumeSFX() * 0.5});
         this.footStepsSFX.setMute(true); 
         this.footStepsSFX.play();
+
+        if(localStorage.getItem("burrito_selected") == null){
+            console.log("no burrito");
+            await this.loadingScreen.OnComplete();
+            this.add.image(0, 0, "cell_1").setOrigin(0,0)
+            this.add.image(0, 0, "cell_1_details_1").setOrigin(0,0)
+            this.add.image(0, 0, "cell_1_details_2").setOrigin(0,0)
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleSelectedBurritoAlert"), Translate.Translate("MsgSelectedBurritoAlert"), Translate.Translate("BtnGoBarn"), Translate.Translate("BtnGoSilo"))
+            .then((result) =>{ this.scene.start(result ? "Establo": "MinarBurrito"); });
+            return;
+        }
+        
+        let burritoNFT = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+        if(burritoNFT.hp <= 0){
+            await this.loadingScreen.OnComplete();
+            this.add.image(0, 0, "cell_1").setOrigin(0,0)
+            this.add.image(0, 0, "cell_1_details_1").setOrigin(0,0)
+            this.add.image(0, 0, "cell_1_details_2").setOrigin(0,0)
+            await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleDeadBurritoAlert"), Translate.Translate("MsgDeadBurritoAlert"), Translate.Translate("BtnGoBarn"))
+            .then(async (result) => { if (result) this.scene.start("Establo"); });
+        }
 
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
         this.SetBurritoLocation()
@@ -346,6 +367,10 @@ export class NewMap extends Phaser.Scene{
         this.burrito.setPosition(newPos.x, newPos.y); 
         this.burrito?.body.stop();
     }
+    BackToMainMenu = async () => {
+        localStorage.removeItem("lastScene");
+        this.scene.start("MainMenu");
+    }
     update(){
         if(Helpers.Alert.isAlert)
             return;
@@ -506,7 +531,12 @@ export class NewMap extends Phaser.Scene{
         if(result < 0) result += 360;
         return result;
     }
-    loadAssets(){
+    async loadAssets(){
+        if(localStorage.getItem("burrito_selected") != null){
+            let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+            this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
+        }
+
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
@@ -524,9 +554,8 @@ export class NewMap extends Phaser.Scene{
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
 
-        this.load.image("cell_empty", "./src/images/new Pradera/cell_empty.png")
-        this.load.image("light volumetric", "../src/images/new Pradera/Shader.png")
-        this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_agua.png`, {frameWidth: 51, frameHeight: 53});
+        this.load.image("cell_empty", "./src/images/new Pradera/cell_empty.png");
+        this.load.image("light volumetric", "../src/images/new Pradera/Shader.png");
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("alert_small", "../src/images/Informacion_small.png");
@@ -538,5 +567,13 @@ export class NewMap extends Phaser.Scene{
 
         this.load.once("complete", this.start, this);
         this.load.start(); 
+    }
+    burritoMediaToSkin = (media) => {
+        switch(media){
+            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return "electrico";
+            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return "planta";
+            case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return "fuego";
+            case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
+        }
     }
 }
