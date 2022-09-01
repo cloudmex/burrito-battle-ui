@@ -3,7 +3,7 @@ import { Translate } from "../Translate.js";
 
 await Translate.LoadJson();
 
-export class Button{
+export class Button {
     text;
     constructor(x, y, scale, img, label, scene, downCallback, upCallback, fontStyle, useScrollFactor = true, setPixelPerfect = true) {
         this.buttonResult = scene.add.container(x, y)
@@ -68,8 +68,8 @@ export class LoadingScreen {
         let animation = Phaser.Math.Between(1, 2);
         this.loadingBackground = scene.add.image(0, 0, "loading_bg").setScale(120).setOrigin(0).setAlpha(0.9).setScrollFactor(0);
         this.loadingScreen = scene.add.sprite(scene.sys.game.scale.gameSize.width / 2, scene.sys.game.scale.gameSize.height / 2, `loading_screen_${animation}`, 0).setOrigin(0.5).setScrollFactor(0);
-        this.loadingScreen.depth = 4;
-        this.loadingBackground.depth = 4;
+        this.loadingScreen.depth = 10;
+        this.loadingBackground.depth = 10;
         
         scene.anims.create({ key: "loading", frames: scene.anims.generateFrameNumbers(`loading_screen_${animation}`), frameRate: 24, repeat: -1 });
         this.loadingScreen.play("loading");
@@ -607,7 +607,7 @@ export class SettingsButton{
         this.ambientVolume = parseFloat(Alert.IsDefined(localStorage.getItem("volume")) ?  localStorage.getItem("volume") : 0);
         this.SFXVolume = parseFloat(Alert.IsDefined(localStorage.getItem("volumeSFX")) ?  localStorage.getItem("volumeSFX") : 0);
         this.prevLang = this.language = localStorage.getItem("language") !== 'null' ? localStorage.getItem("language") : "en";
-        this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2);
+        this.configContainer = this.scene.add.container(this.scene.game.config.width / 2, this.scene.game.config.height/2).setDepth(6);
         this.configContainer.add(this.scene.add.image(0, 0, "options"));
         
         this.configContainer.add(this.scene.add.text(0, -335, Translate.Translate("Settings"), { fontSize:72, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
