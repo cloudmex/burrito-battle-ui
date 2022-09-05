@@ -57,7 +57,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu, minarBurrito, pradera, newMap, battle, establo, coliseo, coliseoBattle, ]
+    scene: [ connection, mainMenu, newMap, minarBurrito, pradera,  battle, establo, coliseo, coliseoBattle, ]
 };
 
 const game = new Phaser.Game(config);

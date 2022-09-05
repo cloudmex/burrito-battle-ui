@@ -10,13 +10,17 @@ export class NewMap extends Phaser.Scene{
     speed = 500;
     target = new Phaser.Math.Vector2();
     showAlert = false;
-    lastPosition = {x:0, y: 0, position: {x:960, y: 540}};
+    lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
     followCharacter = true;
+    static battle_background = "";
 
     constructor(){
         super("newMap");
     }
-    preload(){  }
+    preload(){ 
+        this.game.sound.stopAll();
+        this.sound.removeAll();
+     }
     create(){
         this.loadAssets();
     }
@@ -70,7 +74,7 @@ export class NewMap extends Phaser.Scene{
                 {x: 960, y: 55, w: 1920, h: 20},//wall
                 {x: 20, y: 1080, w: 5, h: 2000},//fence
             ], 
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_02 = { 
             images: [ { image: "cell_2", depth: -1 }, { image: "cell_2_details_1", depth: -1 }, { image: "cell_2_details_2", depth: 1}], 
@@ -92,7 +96,7 @@ export class NewMap extends Phaser.Scene{
             triggers:[
                 {x: 938, y: 120, w: 512, h: 240, variable: "barn", event: ()=>{this.ShowAlert(Translate.Translate("TleGoBarnAlert"), Translate.Translate("MsgGoBarnAlert"), "Establo")}},//barn
             ], 
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_03 = { 
             images: [ { image: "cell_3", depth: -1 }, { image: "cell_3_details_1", depth: -1 }, { image: "cell_3_details_2", depth: 1}], 
@@ -107,7 +111,7 @@ export class NewMap extends Phaser.Scene{
                 {x: 1762, y: 254, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
             ],
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_04 = { 
             images: [ { image: "cell_4", depth: -1 }, { image: "cell_4_details_1", depth: -1 }, { image: "cell_4_details_2", depth: 1}], 
@@ -120,7 +124,7 @@ export class NewMap extends Phaser.Scene{
                 {x: 1759, y: 247, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
             ], 
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_05 = { 
             images: [ { image: "cell_5", depth: -1 }, { image: "cell_5_details_1", depth: -1 }, { image: "cell_5_details_2", depth: 1}], 
@@ -144,7 +148,7 @@ export class NewMap extends Phaser.Scene{
             triggers:[
                 {x: 980, y: 480, w: 1400, h: 500, variable: "silo", event: ()=>{ this.ShowAlert(Translate.Translate("TleGoSiloAlert"), Translate.Translate("MsgGoSiloAlert"), "MinarBurrito") }},//silo
             ], 
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_06 = { 
             images: [ { image: "cell_6", depth: -1 }, { image: "cell_6_details_1", depth: -1 }, { image: "cell_6_details_2", depth: 1}], 
@@ -160,7 +164,7 @@ export class NewMap extends Phaser.Scene{
                 {x: 1047, y: 291, w: 44, h: 7},//tree
                 {x: 1648, y: 772, w: 44, h: 7},//tree
             ], 
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_07 = { 
             images: [ { image: "cell_7", depth: -1 }, { image: "cell_7_details_1", depth: -1 }, { image: "cell_7_details_2", depth: 1}], 
@@ -189,30 +193,34 @@ export class NewMap extends Phaser.Scene{
                 {x: 945, y: 650, w: 400, h: 50},//statue
                 {x: 1900, y: 540, w: 5, h: 3000},//fence
             ], 
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_09 = {
             images: [ { image: "cell_9", depth: -1 }], 
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 200, y: 260, w: 385, h: 750},//wall
                 {x: 100, y: 830, w: 210, h: 390},//wall
                 {x: 232, y: 985, w: 100, h: 100},//wall
             ], 
-            wildBurritos: 3,
+            wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 755, y: 550 },{ x: 755, y: 550 },{ x: 1775, y: 360 },{ x: 1415, y: 770 },{ x: 560, y: 815 },{ x: 1220, y: 415 }]
         };
         let cell_10 = { 
-            images: [ { image: "cell_10", depth: -1 }, { image: "cell_10_details_1", depth: 1 }], 
-            wildBurritos: 3,
+            images: [ { image: "cell_10", depth: -1 },], 
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}, {x: 960, y: 540 ,spritesheet:"coliseo1_up", depth: -1, end:49, repeat: -1}],
+            wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 216, y: 322 },{ x: 344, y: 550 },{ x: 320, y: 787 },{ x: 840, y: 435 },{ x: 1013, y: 462 },{ x: 1665, y: 709 }, {x:1560, y:381}]
         };
         let cell_11 = { 
             images: [ { image: "cell_11", depth: -1 }], 
-            wildBurritos: 3,
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            wildBurritos: {num: 3, background: "pradera"},
             cactus:[ { x: 550, y: 260 },{ x: 720, y: 425 },{ x: 455, y: 795 },{ x: 930, y: 853 },{ x: 1315, y: 826 },{ x: 1507, y: 456 }, {x:1750, y:254}, {x:1550, y:940}]
         };
         let cell_12 = {
             images: [ { image: "cell_12", depth: -1 }, { image: "cell_12_details_1", depth: -1 }, { image: "cell_12_details_2", depth: 1 }], 
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 458, y: 750, w: 44, h: 7},//tree
                 {x: 870, y: 480, w: 44, h: 7},//tree
@@ -223,10 +231,11 @@ export class NewMap extends Phaser.Scene{
 
                 {x: 1620, y: 1090, w: 620, h: 500},//wall
             ], 
-            wildBurritos: 3
+            wildBurritos: {num: 3, background: "desierto"},
         };
         let cell_13 = {
             images: [ { image: "cell_13", depth: -1 }], 
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 205, y: 170, w: 411, h: 440},//wall
                 {x: 110, y: 460, w: 240, h: 160},//wall
@@ -235,11 +244,12 @@ export class NewMap extends Phaser.Scene{
                 {x: 80, y: 990, w: 170, h: 180},//wall
                 {x: 1700, y: 300, w: 1700, h: 500},//wall
             ], 
-            wildBurritos: 3,
+            wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 550, y: 260 }, { x: 350, y: 640 },{ x: 980, y: 600 }, { x: 790, y: 1035 } ]
         };
         let cell_14 = { 
             images: [ { image: "cell_14", depth: -1 }], 
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}, {x: 960, y: 540 ,spritesheet:"coliseo1_down", depth: -1, end:37, repeat: -1}],
             colliders:[
                 {x: 1160, y: 0, w: 400, h: 300},//wall
                 {x: 0, y: 60, w: 1920, h: 420},//wall
@@ -248,29 +258,33 @@ export class NewMap extends Phaser.Scene{
             triggers:[
                 {x: 1160, y: 200, w: 400, h: 100, variable: "coliseum", event:()=>{ this.ShowAlert(Translate.Translate("TleGoColiseumAlert"), Translate.Translate("MsgGoColiseumAlert"), "Coliseo");}},//wall
             ], 
-            wildBurritos: 3,
+            wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 348, y: 590 }, { x: 640, y: 925 },  { x: 774, y: 541 }, { x: 1566, y: 541 }, { x: 1713, y: 1069 }, ]
         };
         let cell_15 = { 
             images: [ { image: "cell_15", depth: -1 }, ], 
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 645, y: 300, w: 1700, h: 500},//wall
             ],
+            wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 445, y: 1006 },{ x: 766, y: 616 },{ x: 1359, y: 593 },{ x: 1778, y: 989 },{ x: 1508, y: 302 }, ]
         };
         let cell_16 = { 
             images: [ { image: "cell_16", depth: -1 }],
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders:[
                 {x: 1710, y: 355, w: 440, h: 176},//wall
                 {x: 1670, y: 535, w: 520, h: 180},//wall
                 {x: 1800, y: 750, w: 240, h: 240},//wall
                 {x: 1745, y: 976, w: 373, h: 210},//wall
             ], 
-            wildBurritos: 3,
+            wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 280, y: 511 }, { x: 809, y: 379 }, { x: 1354, y: 578 }, { x: 1266, y: 246 }, { x: 865, y: 1050 },]
         };
         let cDesert = {
             images: [ {image: "desert", depth:-1}],
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_2", depth: 2, end:28, repeat: -1}],
             triggers:[
                 { x: 960, y: 1070, w: 1920, h: 5, variable: "Desert", event:()=>{ this.DesertEndless("down");} },//wall
                 { x: 5, y: 540, w: 5, h: 1080, variable: "Desert", event:()=>{ this.DesertEndless("left"); } },//wall
@@ -286,11 +300,17 @@ export class NewMap extends Phaser.Scene{
             [cDesert, cDesert, cDesert, cDesert, ],
         ];
 
-        this.zoneBattles = this.physics.add.group();
+        this.zoneBattles_pradera = this.physics.add.group();
+        this.zoneBattles_desierto = this.physics.add.group();
+        //this.zoneBattles = this.physics.add.group();
         map.forEach((row, y) => {
             row.forEach((cell, x)=>{
                 cell.images.forEach(c =>{
                     this.add.image(x * 1920, y * 1080, c.image).setOrigin(0).setDepth(c.depth);
+                })
+                cell.animations?.forEach(c=>{
+                    this.anims.create({ key: c.spritesheet+"_anim", frameRate: 30, frames: this.anims.generateFrameNumbers(c.spritesheet, { start: 0, end: c.end }), repeat: c.repeat });
+                    this.add.sprite(c.x + x * 1920, c.y +  y * 1080, c.spritesheet, 0).play(c.spritesheet+"_anim").setOrigin(0.5).setDepth(c.depth);
                 })
                 cell.colliders?.forEach(c =>{
                     let zone = this.add.zone(c.x + x * 1920, c.y +  y * 1080, c.w, c.h);
@@ -307,8 +327,15 @@ export class NewMap extends Phaser.Scene{
                     this.physics.add.overlap(this.burrito, zone, c.event);
                 })
                 
-                for (let i = 0; i <= cell.wildBurritos; i++) {
-                    this.zoneBattles.create(Phaser.Math.RND.between(1920 * x , 1920 * (x + 1)), Phaser.Math.RND.between(1080 * y , 1808 * (y + 1)), null, null, false, true);
+                for (let i = 0; i <= cell?.wildBurritos?.num; i++) {
+                    switch (cell.wildBurritos.background) {
+                        case "pradera":
+                            this.zoneBattles_pradera.create(Phaser.Math.RND.between(1920 * x , 1920 * (x + 1)), Phaser.Math.RND.between(1080 * y , 1808 * (y + 1)), null, null, false, true);
+                            break;
+                        case "desierto":
+                            this.zoneBattles_desierto.create(Phaser.Math.RND.between(1920 * x , 1920 * (x + 1)), Phaser.Math.RND.between(1080 * y , 1808 * (y + 1)), null, null, false, true);
+                            break;
+                    }
                 }
                 cell.cactus?.forEach(c=>{
                     new Objects.Cactus(this, 1920 * x + c.x, 1080 * y + c.y);
@@ -341,7 +368,8 @@ export class NewMap extends Phaser.Scene{
             }
         }, this);
         
-        this.physics.add.overlap(this.burrito, this.zoneBattles, this.Battle, null, this);
+        this.physics.add.overlap(this.burrito, this.zoneBattles_pradera, this.Battle_Pradera, null, this);
+        this.physics.add.overlap(this.burrito, this.zoneBattles_desierto, this.Battle_Desierto, null, this);
         this.input.on("pointerdown", (pointer)=>{console.log(`X: ${pointer.downX.toFixed()}, Y:${pointer.downY.toFixed()}`)});
 
         this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnGoMainMenu"), this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
@@ -433,12 +461,19 @@ export class NewMap extends Phaser.Scene{
         this.burrito.setY(this.lastPosition.position.y);
         this.cameras.main.setScroll(newX - 960, newY - 540);
     }
-    async Battle(burrito, triggerZone){
+    Battle_Pradera(burrito, triggerZone){
+        this.Battle(burrito, triggerZone, "pradera");
+    }
+    Battle_Desierto(burrito, triggerZone){
+        this.Battle(burrito, triggerZone, "desert");
+    }
+    async Battle(burrito, triggerZone, enviroment){
         burrito.body.stop();
         this.burrito.stop();
         this.footStepsSFX.setMute(true); 
         triggerZone.disableBody(true, true);
         triggerZone.destroy();
+        localStorage.setItem("battle_background", enviroment);
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleWildBurritoAlert"), Translate.Translate("MsgWildBurritoAlert"), Translate.Translate("BtnWildBurritoAlertFight"), Translate.Translate("BtnWildBurrtitoAlertEscape"))
         .then(async (result) => {
             if (result){
@@ -548,6 +583,10 @@ export class NewMap extends Phaser.Scene{
         this.load.image("desert", "./src/images/new Pradera/Desert.png");
         this.load.image("cactus1", "./src/images/new Pradera/Cactus 1.png");
         this.load.image("cactus2", "./src/images/new Pradera/Cactus 2.png");
+        this.load.spritesheet("coliseo1_down", "./src/images/new Pradera/C14/Coliseo_animacion_down 1.webp", {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("coliseo1_up", "./src/images/new Pradera/C14/Coliseo_animacion_up 1.webp", {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("sand_storm_1", "./src/images/new Pradera/Sand Storm_1.webp", {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("sand_storm_2", "./src/images/new Pradera/Sand Storm_2.webp", {frameWidth:1920, frameHeight: 1080});
 
         this.load.spritesheet("burritoHud", "../src/images/HUD/Burritos.png", {frameWidth: 215, frameHeight: 305});
         this.load.spritesheet("hud", "../src/images/HUD/HUD.png", {frameWidth: 390, frameHeight: 226});
