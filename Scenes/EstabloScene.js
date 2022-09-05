@@ -131,13 +131,14 @@ export class Establo extends Phaser.Scene{
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("BtnRestoreLives"), Translate.Translate("MsgRestoreLivesAlert") + currentSTRW +" $STRW.", Translate.Translate("BtnRestore"), Translate.Translate("BtnCancelAlert"))
         .then(async(result) =>{ 
             if (result) {
-                if(currentSTRW >= 50_000 && (await Near.GetCurrentNears()) >= 5){
+                if(currentSTRW >= 30_000 && (await Near.GetCurrentNears()) >= 1){
                     this.canSelectCard = false;
                     this.loadingScreen = new Helpers.LoadingScreen(this);
                     localStorage.setItem("action", "heal");
                     localStorage.setItem("lastScene", "Establo");
                     this.ResetBurrito(burrito);
                 } else {
+                    console.log("WEA")
                     await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, null, Translate.Translate("NotEnoughForRecover"), Translate.Translate("BtnCancelAlert"));
                 }
             }
@@ -171,7 +172,7 @@ export class Establo extends Phaser.Scene{
             await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleEvolveAlert"), Translate.Translate("MsgEvolveAlert") + currentSTRW + " $STRW.", Translate.Translate("BtnEvolve"), Translate.Translate("BtnCancelAlert"))
             .then(async(result) =>{ 
                 if(result){
-                    if(currentSTRW >= 50_000 && (await Near.GetCurrentNears()) >= 5){
+                    if(currentSTRW >= 50_000 && (await Near.GetCurrentNears()) >= 2){
                         this.loadingScreen = new Helpers.LoadingScreen(this);
                         localStorage.setItem("action", "evolve");
                         localStorage.setItem("lastScene", "Establo");

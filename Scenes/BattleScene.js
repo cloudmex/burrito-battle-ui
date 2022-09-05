@@ -1,6 +1,7 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
 import { Translate } from "../src/Translate.js";
+import { NewMap } from "./NewMap.js";
 
 export class Battle extends Phaser.Scene{
     currentBattle;
@@ -19,6 +20,8 @@ export class Battle extends Phaser.Scene{
         this.load.spritesheet("slider_fill", "../src/images/Battle/slider_fill.png", { frameWidth: 512, frameHeight: 89 });
         
         this.load.image("background_Battle", "../src/images/Establo/Background.webp");
+        this.load.image("field_background", "../src/images/Battle/field_background.png");
+        this.load.image("desert_background", "../src/images/Battle/desert_background.png");
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
         this.load.image("alert_small", "../src/images/Informacion_small.png");
@@ -30,7 +33,13 @@ export class Battle extends Phaser.Scene{
         this.sound.pauseOnBlur = false;
         Helpers.Alert.isAlert = false;
         await Translate.LoadJson();
-        this.add.image(0, 0, "background_Battle").setOrigin(0);
+        console.log(localStorage.getItem("battle_background"))
+        if(localStorage.getItem("battle_background") == "desert")
+            this.add.image(0, 0, "field_background").setOrigin(0);
+        else if(localStorage.getItem("battle_background") == "pradera")
+            this.add.image(0, 0, "field_background").setOrigin(0);
+        else
+            this.add.image(0, 0, "background_Battle").setOrigin(0);
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", Translate.Translate("MsgSurrender"), this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
 
@@ -61,6 +70,8 @@ export class Battle extends Phaser.Scene{
                 localStorage.removeItem("tempBattle");
             } 
         } else {
+            //this.currentBattle = { status: "2", player_id: "jesusrobles.testnet", burrito_id: "28", accesories_attack_b1: "0", accesories_defense_b1: "0", accesories_speed_b1: "0", attack_b1: "5", defense_b1: "9", speed_b1: "6", level_b1: "1", accesories_attack_b2: "0", accesories_defense_b2: "0", accesories_speed_b2: "0", turn: "CPU", strong_attack_player: "3", shields_player: "3", start_health_player: "20", health_player: "20", strong_attack_cpu: "3", shields_cpu: "3", start_health_cpu: "36", health_cpu: "36", burrito_cpu_level: "3", burrito_cpu_type: "Volador", burrito_cpu_attack: "8", burrito_cpu_defense: "15", burrito_cpu_speed: "13", rewards: "" }
+            //return;
             let isInBattle = await Near.IsInBattle();
             if(isInBattle){
                 this.currentBattle = await Near.GetBattleActiveCpu();
@@ -181,9 +192,13 @@ export class Battle extends Phaser.Scene{
         localStorage.removeItem("burritoCPU");
         localStorage.removeItem("tempBattle");
         localStorage.removeItem("lastScene");
+        localStorage.removeItem("battle_background");
         new Helpers.BattleEnd(this.game.config.width / 2, this.game.config.height / 2, this, isWinner, this.currentBattle.rewards);
         setTimeout(() => {
-            this.scene.start("newMap")
+            console.log("change scene");
+            this.scene.start("MainMenu");
+            //this.scene.start("newMap")
+            console.log("must changed scene");
         }, 10000);
     }
     IsDefined(obj){
@@ -291,12 +306,13 @@ export class Battle extends Phaser.Scene{
                 this.loadingScreen = new Helpers.LoadingScreen(this);
                 localStorage.removeItem("lastScene");
                 localStorage.removeItem("burritoCPU");
+                localStorage.removeItem("battle_background");
+                localStorage.removeItem("tempBattle");
                
                 await Near.SurrenderCpu(); 
                 await this.loadingScreen.OnComplete();
-                console.log("give up");
-                this.scene.start("newMap"); 
-                console.log("something");
+                //localStorage.setItem("lastScene", "newMap");
+                this.scene.start("MainMenu");
             } 
         });
     }
