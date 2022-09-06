@@ -7,7 +7,7 @@ export class NewMap extends Phaser.Scene{
     tmpX = 0;
     tmpY = 0;
     canMove = true;
-    speed = 500;
+    speed = 150;
     target = new Phaser.Math.Vector2();
     showAlert = false;
     lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
