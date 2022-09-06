@@ -25,7 +25,6 @@ export class NewMap extends Phaser.Scene{
         this.loadAssets();
     }
     async start(){
-        this.loadingScreen = new Helpers.LoadingScreen(this);
         await Translate.LoadJson();
         Helpers.Alert.isAlert = false;
 
@@ -364,13 +363,13 @@ export class NewMap extends Phaser.Scene{
                 this.isKeyboard = false;
                 this.target.x = Number(pointer.worldX.toFixed(1));
                 this.target.y = Number(pointer.worldY.toFixed(1));
-                this.physics.moveToObject(this.burrito, this.target, 500);
+                this.physics.moveToObject(this.burrito, this.target, this.speed);
             }
         }, this);
         
         this.physics.add.overlap(this.burrito, this.zoneBattles_pradera, this.Battle_Pradera, null, this);
         this.physics.add.overlap(this.burrito, this.zoneBattles_desierto, this.Battle_Desierto, null, this);
-        this.input.on("pointerdown", (pointer)=>{console.log(`X: ${pointer.downX.toFixed()}, Y:${pointer.downY.toFixed()}`)});
+        //this.input.on("pointerdown", (pointer)=>{console.log(`X: ${pointer.downX.toFixed()}, Y:${pointer.downY.toFixed()}`)});
 
         this.button = new Helpers.Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnGoMainMenu"), this, this.BackToMainMenu, null, {fontSize: 24, fontFamily: "BangersRegular"});
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
@@ -575,6 +574,8 @@ export class NewMap extends Phaser.Scene{
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
+        this.loadingScreen = new Helpers.LoadingScreen(this);
+
         for (let index = 1; index <= 16; index++) {
             this.load.image(`cell_${index}`, `./src/images/new Pradera/C${index}/C${index}.png`);
             this.load.image(`cell_${index}_details_1`, `./src/images/new Pradera/C${index}/Details 2.png`);
