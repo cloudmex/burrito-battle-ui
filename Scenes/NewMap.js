@@ -54,6 +54,11 @@ export class NewMap extends Phaser.Scene{
             .then(async (result) => { if (result) this.scene.start("Establo"); });
         }
 
+        
+        this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2})
+        this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 2})
+        
+
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
         this.SetBurritoLocation()
         //#region CELLS
@@ -207,7 +212,7 @@ export class NewMap extends Phaser.Scene{
         };
         let cell_10 = { 
             images: [ { image: "cell_10", depth: -1 },], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}, {x: 960, y: 540 ,spritesheet:"coliseo1_up", depth: -1, end:49, repeat: -1}],
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 216, y: 322 },{ x: 344, y: 550 },{ x: 320, y: 787 },{ x: 840, y: 435 },{ x: 1013, y: 462 },{ x: 1665, y: 709 }, {x:1560, y:381}]
         };
@@ -248,7 +253,7 @@ export class NewMap extends Phaser.Scene{
         };
         let cell_14 = { 
             images: [ { image: "cell_14", depth: -1 }], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}, {x: 960, y: 540 ,spritesheet:"coliseo1_down", depth: -1, end:37, repeat: -1}],
+            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders:[
                 {x: 1160, y: 0, w: 400, h: 300},//wall
                 {x: 0, y: 60, w: 1920, h: 420},//wall
@@ -350,9 +355,9 @@ export class NewMap extends Phaser.Scene{
         
         this.burrito.setCollideWorldBounds(true);
         this.burrito.onWorldBounds = false;
-        this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: -1 });
-        this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: -1 })
-        this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: -1 });
+        this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: 0 });
+        this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: 0 })
+        this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: 0 });
         this.burrito.play("walkRight");
 
         this.Cursors = this.input.keyboard.createCursorKeys();
@@ -375,6 +380,14 @@ export class NewMap extends Phaser.Scene{
         this.hudTokens = new Helpers.TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
         this.hudBurrito = new Helpers.BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
         await this.loadingScreen.OnComplete();
+    }
+    InsertImageInQuadrant(data){
+        if(data.image) {
+            this.add.image(data.quadrant.x * 1920 + 960 + data.offset.x, data.quadrant.y * 1080 + 540 + data.offset.y, data.image.path).setDepth(data.depth);
+        } else if(data.animation){
+            this.anims.create({key: data.animation.path + "_anim", frameRate: 30, frames: this.anims.generateFrameNumbers(data.animation.path, { start: 0, end: data.animation.end }), repeat: data.animation.repeat });
+            this.add.sprite(data.quadrant.x * 1920 + 960 + data.offset.x, data.quadrant.y * 1080 + 540 + data.offset.y, data.animation.path, 0).play(data.animation.path+"_anim").setDepth(data.depth);
+        }
     }
     DesertEndless(direction){
         let x = Math.floor(this.burrito?.x / 1920);
@@ -406,10 +419,11 @@ export class NewMap extends Phaser.Scene{
         else if(this.burrito != null)
             this.cameras.main.startFollow(this.burrito);
 
-        if(window["barn"] != null&&window["silo"] != null&&window["coliseum"] != null)
+        if(window["barn"] != null&&window["silo"] != null&&window["coliseum"] != null && window["hospital"] != null)
             this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["barn"].getBounds()) 
                             | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["silo"].getBounds()) 
-                            | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["coliseum"].getBounds());
+                            | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["coliseum"].getBounds())
+                            | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito?.getBounds(), window["hospital"].getBounds());
         
         if(this.canMove){
             let distance = Phaser.Math.Distance.Between(this.burrito?.x, this.burrito?.y, this.target?.x, this.target?.y);
@@ -533,11 +547,13 @@ export class NewMap extends Phaser.Scene{
             this.angle = Math.atan2(this.velocity.y, this.velocity.x) * (180 / Math.PI);
         } else
             this.velocity.x = 0;
-
         if(this.isKeyboard && this.burrito.body != null)
             this.burrito?.setVelocity(this.velocity.x * this.speed, this.velocity.y * this.speed);
+        
     }
     PlayAnimation() {
+        if(this.isKeyboard)
+            return;
         if(!this.burrito.anims.isPlaying) {
             let direction = {x: this.target.x -  this.burrito.x, y: this.target.y - this.burrito.y};
             let angle = this.clampAngle(Math.atan2(direction.y, direction.x) * (180 / Math.PI));
@@ -546,14 +562,16 @@ export class NewMap extends Phaser.Scene{
                 this.burrito.flipX = false;
                 this.burrito.play("walkRight");
             }
-            else if(angle >= 45 && angle < 135)
+            if(angle >= 45 && angle < 135){
                 this.burrito.play("walkUp");
-            else if(angle >= 135 && angle < 225){
+            }
+            if(angle >= 135 && angle < 225){
                 this.burrito.flipX = true;
                 this.burrito.play("walkRight");
             }
-            else if(angle >= 225 && angle < 315)
+            if(angle >= 225 && angle < 315){
                 this.burrito.play("walkDown");
+            }
         }
     }
     StopAnimation(){
@@ -578,14 +596,23 @@ export class NewMap extends Phaser.Scene{
 
         for (let index = 1; index <= 16; index++) {
             this.load.image(`cell_${index}`, `./src/images/new Pradera/C${index}/C${index}.png`);
-            this.load.image(`cell_${index}_details_1`, `./src/images/new Pradera/C${index}/Details 2.png`);
-            this.load.image(`cell_${index}_details_2`, `./src/images/new Pradera/C${index}/Details 1.png`);
+            try{
+                this.load.image(`cell_${index}_details_1`, `./src/images/new Pradera/C${index}/Details 2.png`);
+            } catch{}
+            try{ 
+                this.load.image(`cell_${index}_details_2`, `./src/images/new Pradera/C${index}/Details 1.png`);
+            } catch{}
         }
+        this.load.image("hospital", "./src/images/new Pradera/C4/hospital.png")
+
         this.load.image("desert", "./src/images/new Pradera/Desert.png");
         this.load.image("cactus1", "./src/images/new Pradera/Cactus 1.png");
         this.load.image("cactus2", "./src/images/new Pradera/Cactus 2.png");
-        this.load.spritesheet("coliseo1_down", "./src/images/new Pradera/C14/Coliseo_animacion_down 1.webp", {frameWidth:1920, frameHeight: 1080});
-        this.load.spritesheet("coliseo1_up", "./src/images/new Pradera/C14/Coliseo_animacion_up 1.webp", {frameWidth:1920, frameHeight: 1080});
+
+        this.load.image("coliseo_up_normal", "./src/images/new Pradera/C10/coliseo_normal.png");
+
+        this.load.image("coliseo_down_normal", "./src/images/new Pradera/C14/coliseo_normal.png");
+        
         this.load.spritesheet("sand_storm_1", "./src/images/new Pradera/Sand Storm_1.webp", {frameWidth:1920, frameHeight: 1080});
         this.load.spritesheet("sand_storm_2", "./src/images/new Pradera/Sand Storm_2.webp", {frameWidth:1920, frameHeight: 1080});
 
@@ -594,7 +621,6 @@ export class NewMap extends Phaser.Scene{
         this.load.image("tokenHud", "../src/images/HUD/Information.png");
         this.load.spritesheet("tokenIcon", "../src/images/HUD/Tokens.png", {frameWidth: 49, frameHeight: 50});
 
-        this.load.image("cell_empty", "./src/images/new Pradera/cell_empty.png");
         this.load.image("light volumetric", "../src/images/new Pradera/Shader.png");
         this.load.image("buttonContainer", "../src/images/button.png");
         this.load.image("alert", "../src/images/Información 1.png");
