@@ -8,7 +8,6 @@ import * as Battle from "./Scenes/BattleScene.js";
 import * as Establo from "./Scenes/EstabloScene.js";
 import * as Coliseo from "./Scenes/ColiseoScene.js";
 import * as ColiseoBattle from "./Scenes/ColiseoBattleScene.js";
-import * as Hospital from "./Scenes/HospitalScene.js";
 
 import * as NewMap from "./Scenes/NewMap.js";
 
