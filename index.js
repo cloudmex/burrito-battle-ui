@@ -20,7 +20,6 @@ const establo = Establo.Establo;
 const battle = Battle.Battle;
 const coliseo = Coliseo.Coliseo;
 const coliseoBattle = ColiseoBattle.ColiseoBattle;
-const hospital = Hospital.Hospital;
 
 
 const config = {
@@ -58,7 +57,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu, newMap, minarBurrito, pradera,  battle, establo, coliseo, coliseoBattle, hospital ]
+    scene: [ connection, mainMenu, newMap, minarBurrito, pradera,  battle, establo, coliseo, coliseoBattle ]
 };
 
 const game = new Phaser.Game(config);
