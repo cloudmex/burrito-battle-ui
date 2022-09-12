@@ -1,7 +1,6 @@
 import * as Near  from "../src/near.js";
 import * as Helpers from "../src/Helpers/Helpers.js";
 import { Translate } from "../src/Translate.js";
-import { NewMap } from "./NewMap.js";
 
 export class Battle extends Phaser.Scene{
     currentBattle;
@@ -10,11 +9,12 @@ export class Battle extends Phaser.Scene{
         super("Battle");
     }
     preload(){
+        this.scene.remove("newMap");
         this.load.spritesheet("loading_screen_1", `../src/images/loading_screen_1.webp`, { frameWidth: 720, frameHeight: 512 });
         this.load.spritesheet("loading_screen_2", `../src/images/loading_screen_2.webp`, { frameWidth: 512, frameHeight: 512 });
         this.load.image("loading_bg", "../src/images/loading_bg.png");
         this.loadingScreen = new Helpers.LoadingScreen(this);
-
+        
         this.load.spritesheet("burritos", "../src/images/Battle/Burritos.png", { frameWidth: 200, frameHeight: 268});
         this.load.image("slider_background", "../src/images/Battle/slider_background.png");
         this.load.spritesheet("slider_fill", "../src/images/Battle/slider_fill.png", { frameWidth: 512, frameHeight: 89 });
@@ -33,16 +33,16 @@ export class Battle extends Phaser.Scene{
         this.sound.pauseOnBlur = false;
         Helpers.Alert.isAlert = false;
         await Translate.LoadJson();
-        console.log(localStorage.getItem("battle_background"))
+        
         if(localStorage.getItem("battle_background") == "desert")
-            this.add.image(0, 0, "field_background").setOrigin(0);
+            this.add.image(0, 0, "desert_background").setOrigin(0);
         else if(localStorage.getItem("battle_background") == "pradera")
             this.add.image(0, 0, "field_background").setOrigin(0);
         else
             this.add.image(0, 0, "background_Battle").setOrigin(0);
         new Helpers.Button(this.game.config.width / 2 , 50, 0.5, "buttonContainer", Translate.Translate("MsgSurrender"), this, this.GiveUp , null, {fontSize: 30, fontFamily: "BangersRegular"});
         localStorage.setItem("lastScene", "Battle");
-
+        
        await this.GetBattle().then(async () => {
            if(localStorage.getItem("burritoCPU") == null)
             localStorage.setItem("burritoCPU", this.RandomBurrito());
@@ -177,6 +177,14 @@ export class Battle extends Phaser.Scene{
         if(!this.IsDefined(diff.rewards))
             setTimeout(() => {this.CreateActionsMenu();} , 1000);
     }
+    BackToField(){
+        localStorage.removeItem("burritoCPU");
+        localStorage.removeItem("tempBattle");
+        localStorage.removeItem("battle_background");
+
+        localStorage.setItem("lastScene", "newMap");
+        location.reload();
+    }
     Loose(){
         this.burritoCPU.play("victoria_CPU");
         this.burritoPlayer.play("derrota_Player");
@@ -187,18 +195,11 @@ export class Battle extends Phaser.Scene{
         this.burritoPlayer.play("victoria_Player");
         this.BackToPradera("Player");
     }
-    BackToPradera(winner){
+    BackToPradera = (winner) => {
         let isWinner = winner == "Player";
-        localStorage.removeItem("burritoCPU");
-        localStorage.removeItem("tempBattle");
-        localStorage.removeItem("lastScene");
-        localStorage.removeItem("battle_background");
         new Helpers.BattleEnd(this.game.config.width / 2, this.game.config.height / 2, this, isWinner, this.currentBattle.rewards);
         setTimeout(() => {
-            console.log("change scene");
-            this.scene.start("MainMenu");
-            //this.scene.start("newMap")
-            console.log("must changed scene");
+            this.BackToField();
         }, 10000);
     }
     IsDefined(obj){
@@ -304,15 +305,10 @@ export class Battle extends Phaser.Scene{
         .then(async (result) => { 
             if (result){
                 this.loadingScreen = new Helpers.LoadingScreen(this);
-                localStorage.removeItem("lastScene");
-                localStorage.removeItem("burritoCPU");
-                localStorage.removeItem("battle_background");
-                localStorage.removeItem("tempBattle");
                
                 await Near.SurrenderCpu(); 
                 await this.loadingScreen.OnComplete();
-                //localStorage.setItem("lastScene", "newMap");
-                this.scene.start("MainMenu");
+                this.BackToField();
             } 
         });
     }
@@ -346,7 +342,7 @@ export class Battle extends Phaser.Scene{
             case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
         }
     }
-    loadSpriteSheet(folderPlayer, folderCPU){
+    loadSpriteSheet(folderPlayer, folderCPU){ 
         this.load.spritesheet(`burrito_idle_Player`, `../src/images/Battle/${folderPlayer}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque1_Player`, `../src/images/Battle/${folderPlayer}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
         this.load.spritesheet(`burrito_ataque2_Player`, `../src/images/Battle/${folderPlayer}/Ataque_pesado.webp`, {frameWidth: 700, frameHeight: 512});

@@ -8,6 +8,7 @@ import * as Battle from "./Scenes/BattleScene.js";
 import * as Establo from "./Scenes/EstabloScene.js";
 import * as Coliseo from "./Scenes/ColiseoScene.js";
 import * as ColiseoBattle from "./Scenes/ColiseoBattleScene.js";
+
 import * as NewMap from "./Scenes/NewMap.js";
 
 const connection = Connection.Connection;
@@ -19,6 +20,7 @@ const establo = Establo.Establo;
 const battle = Battle.Battle;
 const coliseo = Coliseo.Coliseo;
 const coliseoBattle = ColiseoBattle.ColiseoBattle;
+
 
 const config = {
     type: Phaser.AUTO,

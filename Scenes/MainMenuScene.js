@@ -47,7 +47,9 @@ export class MainMenu extends Phaser.Scene{
         this.add.image(50, 50, "logo1").setOrigin(0).setScale(0.75);
 
         if(localStorage.getItem("lastScene")) {
-            this.scene.start(localStorage.getItem("lastScene"));
+            let lastScene = localStorage.getItem("lastScene");
+            localStorage.removeItem("lastScene");
+            this.scene.start(lastScene);
         } else {
             await Near.GetInfoByURL(); 
             let isInBattle = await Near.IsInBattle();

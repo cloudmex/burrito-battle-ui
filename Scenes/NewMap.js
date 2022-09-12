@@ -54,10 +54,9 @@ export class NewMap extends Phaser.Scene{
             .then(async (result) => { if (result) this.scene.start("Establo"); });
         }
 
-        
         this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2})
         this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 2})
-        
+
 
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
         this.SetBurritoLocation()
@@ -127,7 +126,7 @@ export class NewMap extends Phaser.Scene{
                 {x: 1589, y: 960, w: 44, h: 7},//tree
                 {x: 1759, y: 247, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
-            ], 
+            ],
             wildBurritos: {num: 3, background: "pradera"},
         };
         let cell_05 = { 
@@ -347,6 +346,7 @@ export class NewMap extends Phaser.Scene{
             })
         });
 
+
         this.add.image(0,0, "light volumetric").setDepth(2).setOrigin(0).setScrollFactor(0)
 
         this.cameras.main.setBounds(0, 0, 1920 * map[0].length, 1080 * map.length);
@@ -468,6 +468,11 @@ export class NewMap extends Phaser.Scene{
         }
     }
     SetBurritoLocation(){
+        if(localStorage.getItem("lastPosition") !== null){
+            this.lastPosition = JSON.parse(localStorage.getItem("lastPosition"));
+            localStorage.removeItem("lastPosition")
+        }
+
         let newX = 1920 * (this.lastPosition.x + 1) - (1920 / 2);
         let newY = 1080 * (this.lastPosition.y + 1) - (1080 / 2);
         this.burrito.setX(this.lastPosition.position.x);
@@ -486,15 +491,15 @@ export class NewMap extends Phaser.Scene{
         this.footStepsSFX.setMute(true); 
         triggerZone.disableBody(true, true);
         triggerZone.destroy();
-        localStorage.setItem("battle_background", enviroment);
         await Helpers.Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleWildBurritoAlert"), Translate.Translate("MsgWildBurritoAlert"), Translate.Translate("BtnWildBurritoAlertFight"), Translate.Translate("BtnWildBurrtitoAlertEscape"))
         .then(async (result) => {
             if (result){
                 let x = Math.floor(this.burrito?.x / 1920);
                 let y = Math.floor(this.burrito?.y / 1080);
                 this.lastPosition = {x: x, y: y, position: {x: this.burrito?.x, y: this.burrito?.y}};
+                localStorage.setItem("lastPosition", JSON.stringify(this.lastPosition));
+                localStorage.setItem("battle_background", enviroment);
                 this.scene.start("Battle");
-                this.scene.remove("newMap");
             }
         });
     }
@@ -511,6 +516,7 @@ export class NewMap extends Phaser.Scene{
                     let x = Math.floor(this.burrito?.x / 1920);
                     let y = Math.floor(this.burrito?.y / 1080);
                     this.lastPosition = {x: x, y: y, position: {x: this.burrito?.x, y: this.burrito?.y}};
+                    localStorage.setItem("lastPosition", JSON.stringify(this.lastPosition));
                     localStorage.setItem("prevScene", "pradera");
                     this.scene.start(scene);
                 }
