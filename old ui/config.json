@@ -1,0 +1,32 @@
+{
+    "testnet":{
+        "Contract_Burritos": "dev-1662497209670-35450562637719",
+        "contract_strw_tokens": "bb-strw.testnet",
+        "contract_items": "bb-items.testnet",
+        "contract_PVEBattle": "bb-pve.testnet",
+        "contract_incursion": "bb-incursions.testnet",
+        "contract_hospital": "dev-1663091906107-11804226544868",
+
+        "NodeUrl": "https://rpc.testnet.near.org",
+        "WalletUrl":"https://wallet.testnet.near.org",
+        "HelperUrl": "https://helper.testnet.near.org",
+        "ExplorerUrl": "https://explorer.testnet.near.org",
+        
+        "Archival_RPC":"https://archival-rpc.testnet.near.org"
+    },
+    "mainnet":{
+        "Contract_Burritos": "dev-1662497209670-35450562637719",
+        "contract_strw_tokens": "bb-strw.testnet",
+        "contract_items": "bb-items.testnet",
+        "contract_PVEBattle": "bb-pve.testnet",
+        "contract_incursion": "bb-incursions.testnet",
+        "contract_hospital": "dev-1663091906107-11804226544868",
+
+        "NodeUrl": "https://rpc.testnet.near.org",
+        "WalletUrl":"https://wallet.testnet.near.org",
+        "HelperUrl": "https://helper.testnet.near.org",
+        "ExplorerUrl": "https://explorer.testnet.near.org",
+        
+        "Archival_RPC":"https://archival-rpc.testnet.near.org"
+    }
+}
