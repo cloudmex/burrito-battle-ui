@@ -335,3 +335,7 @@ export async function IsInBattleIncursion(){
     let result = await contract_incursion.is_in_battle_incursion ({account_id: GetAccountId()});
     return result;
 }
+export async function DeleteAllIncursions(){
+    let result = await contract_incursion.delete_all_incursions({}, 300000000000000);
+    return result;
+}

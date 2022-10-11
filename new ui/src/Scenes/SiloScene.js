@@ -227,12 +227,12 @@ export default class Silo extends Phaser.Scene{
             onComplete: () => {
                 this.time.delayedCall(300, () =>{ this.sprites.push((this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2990, minar.media).setScale(0.125))); }, [], this);
                 this.time.delayedCall(2000, () =>{ this.GetCard(minar) }, [], this);
-                this.isBigCard = true;
             }
         });
         timeline.play();
     }
     GetCard(minar){
+        this.isBigCard = true;
         this.card = new Card(this.sys.game.scale.gameSize.width / 2, -1000, minar, this, false, false, false).GetComponents();
         this.card.setDepth(2);
         let timeline = this.tweens.createTimeline();
@@ -243,21 +243,26 @@ export default class Silo extends Phaser.Scene{
             rotation: 360 * 10 * Math.PI / 180, 
             onComplete: ()=> timeline.pause()
         });
-        timeline.add({
-            targets: this.card,
-            y: -1000,
-            duration: 1500
-        });
+        timeline.play();
         this.input.on("pointerdown", () =>{
             if(this.isBigCard){
-                timeline.resume();
-                this.sprites.forEach(s => s.destroy());
-                this.isBigCard=false;
+                let newTimeLine = this.tweens.createTimeline();
+                newTimeLine.add({
+                    targets: this.card,
+                    y: -1000,
+                    duration: 1500,
+                    onComplete: ()=>{ 
+                        this.sprites.forEach(s => s.destroy());
+                        this.isBigCard=false;
+                        this.mintButton.GetComponents().visible = true;
+                        this.barnButton.GetComponents().visible = true;
+                    }
+                });
+                newTimeLine.play();
             }
         });
-        timeline.play();
-        this.mintButton.GetComponents().visible = true;
-        this.barnButton.GetComponents().visible = true;
+        
+        
         this.canNavigate = true;
     }
     GetStadistic(burrito){
@@ -275,6 +280,8 @@ export default class Silo extends Phaser.Scene{
                 if (result){
                     if((await Near.GetCurrentNears()) >= 1){
                         this.canNavigate = false;
+                        this.mintButton.GetComponents().visible = false;
+                        this.barnButton.GetComponents().visible = false;
                         localStorage.setItem("action", "mintBurrito");
                         localStorage.setItem("lastScene", "MinarBurrito");
                         this.loadingScreen2 = new LoadingScreen(this);
@@ -317,6 +324,8 @@ export default class Silo extends Phaser.Scene{
                     this.hudTokens.UpdateTokens();
                     this.tienda.setTexture("tienda2");
                     this.counterInterval = setInterval(() => {this.Contdown(remainToBuy) }, 1000);
+                    this.mintButton.GetComponents().visible = true;
+                    this.barnButton.GetComponents().visible = true;
                     this.canNavigate = true;
                 })
             })
