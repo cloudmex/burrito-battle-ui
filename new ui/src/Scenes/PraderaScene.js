@@ -126,10 +126,23 @@ export default class Pradera extends Phaser.Scene{
             .then(async (result) => { if (result) this.scene.start("Establo"); });
         }
 
+        this.incursion = await Near.GetActiveIncursion();
+
+        if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2})
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 2})
+        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_reconstruccion"}, offset: {x: 0, y:0}, depth : 2})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 2})
         
-
+        }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_roto"}, offset: {x: 0, y:0}, depth : 2})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_roto"}, offset: {x: 0, y:0}, depth : 2})
+        }else{
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_incursion"}, offset: {x: 0, y:0}, depth : 2})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_incursion"}, offset: {x: 0, y:0}, depth : 2})
+        }
+        
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
         this.SetBurritoLocation()
         //#region CELLS
@@ -510,11 +523,11 @@ export default class Pradera extends Phaser.Scene{
         if(true)
             this.CameraLerp();
 
-        if(window["barn"] != null && window["silo"] != null && window["coliseum"] != null && window["hospital"] != null)
+        if(window["barn"] != null && window["silo"] != null && window["coliseum"] != null/* && window["hospital"]*/)
             this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["barn"].getBounds()) 
                             | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["silo"].getBounds()) 
                             | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["coliseum"].getBounds())
-                            | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["hospital"].getBounds());
+                            //| Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["hospital"].getBounds());
         
         if(this.canMove){
             let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
@@ -595,8 +608,9 @@ export default class Pradera extends Phaser.Scene{
         });
     }
     ShowAlert = async(title, description, scene) => {
-        
+        console.log(1);
         if(!this.showAlert){
+            console.log(2);
             this.showAlert = true;
             this.footStepsSFX.setMute(true); 
             this.burrito.body.stop();

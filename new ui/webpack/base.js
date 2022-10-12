@@ -27,8 +27,7 @@ module.exports = {
     ]
   },
   plugins: [
-    
-    new Dotenv(),
+    new Dotenv({ systemvars: true }),
     new CleanWebpackPlugin({
       root: path.resolve(__dirname, "../")
     }),

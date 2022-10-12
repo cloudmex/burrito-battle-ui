@@ -97,6 +97,7 @@ export default class Establo extends Phaser.Scene{
             }
         }
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
+        
     }
     BackToMainMenu = () => {
         localStorage.removeItem("lastScene");
@@ -118,7 +119,6 @@ export default class Establo extends Phaser.Scene{
     }
     ShowCard = (burrito, index) => {
         if(Alert.isAlert || !this.canSelectCard) return;
-            
         localStorage.setItem("counter", this.counter);
         this.info_bigCard = false;
         
@@ -168,7 +168,8 @@ export default class Establo extends Phaser.Scene{
         localStorage.removeItem("lastScene");
         this.cards.forEach((card, index) => {
             if(card.Card.burrito.token_id == id) {
-                this.cards[index].Card.burrito = newBurrito; 
+                this.SpawnCards();
+                //this.cards[index].Card.burrito = newBurrito; 
                 this.bigCard.RecoverHealth(newBurrito);
                 card.RecoverHealth(newBurrito);
             }
@@ -209,7 +210,8 @@ export default class Establo extends Phaser.Scene{
         localStorage.removeItem("lastScene");
         this.cards.forEach((card, index) => {
             if(card.Card.burrito.token_id == id) {
-                this.cards[index].Card.burrito = newBurrito; 
+                //this.cards[index].Card.burrito = newBurrito; 
+                this.SpawnCards();
                 this.bigCard.ResetLevel(newBurrito);
                 card.ResetLevel(newBurrito);
             }
@@ -234,11 +236,14 @@ export default class Establo extends Phaser.Scene{
         }
     }
     SpawnCards = async() => {
+        let loadingText = this.add.text(this.sys.game.scale.gameSize.width / 2 - 400, this.sys.game.scale.gameSize.height / 2 + 100, "Loading...", {fontSize: 50, fontFamily: "BangersRegular"}).setOrigin(0.5)
+
         this.cards = [];
         let burritos = await Near.NFTTokensForOwner(0 + 6 * this.counter, 6);
         burritos.forEach((burrito, index) => {
             this.cards.push(new Card(295 + (270 * (index % 3)), 480 + (300 * Math.floor(index / 3)), burrito, this, true, true).setScale(0.3).On(() => { this.ShowCard(burrito, index); }));
         });
+        loadingText.destroy();
     }
     Navigate = async(nav) => {
         if(this.canNavigate){
