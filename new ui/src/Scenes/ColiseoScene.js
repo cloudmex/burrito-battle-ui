@@ -2,29 +2,6 @@ import { Button, Alert, LoadingScreen, SettingsButton, Card, BossSlider } from '
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 
-import mega_cards from '../assets/Images/Coliseo/Megaburrito.webp';
-import coliseo_vacio from "../assets/Images/Coliseo/Coliseo_vacio.png";
-import coliseo_inicio from "../assets/Images/Coliseo/Coliseo_inicio.png";
-import coliseo_reconstruccion from "../assets/Images/Coliseo/Coliseo_reconstrucción.png";
-import coliseo_destruido from "../assets/Images/Coliseo/Coliseo_destruido.png";
-import barra_jefe from '../assets/Images/Coliseo/Barra_jefe.png'
-
-import cerrar_img from '../assets/Images/cerrar.png'
-
-import Burrito_Relampago from '../assets/Images/Burritos/Burrito Relampago.png';
-import Burrito_Planta from '../assets/Images/Burritos/Burrito Planta.png';
-import Burrito_Fuego from '../assets/Images/Burritos/Burrito Fuego.png';
-import Burrito_Agua from '../assets/Images/Burritos/Burrito Agua.png';
-import Burrito_Muerto from '../assets/Images/Establo/gravestone.png';
-import burritos from '../assets/Images/Battle/Burritos.png'
-
-import cards from '../assets/Images/Cards/cards.png'
-import left_arrow from '../assets/Images/Establo/left_arrow.png'
-import right_arrow from '../assets/Images/Establo/right_arrow.png'
-import cofre from '../assets/Images/SiloScene/Cofre_abierto.webp'
-import Seleccion from '../assets/Images/Coliseo/Seleccion.png';
-import Informacion_incursion from '../assets/Images/Coliseo/Informacion_incursion.png';
-
 export default class Coliseo extends Phaser.Scene{
     constructor(){
         super("Coliseo");
@@ -46,30 +23,30 @@ export default class Coliseo extends Phaser.Scene{
         this.sound.stopAll();
         this.sound.removeAll();
         this.textures.remove("cards")
-        this.load.spritesheet("mega_cards", mega_cards, {frameWidth: 1080, frameHeight: 1080});
+        this.load.spritesheet("mega_cards", '../src/assets/Images/Coliseo/Megaburrito.webp', {frameWidth: 1080, frameHeight: 1080});
 
-        this.load.image("coliseo_vacio", coliseo_vacio);
-        this.load.image("coliseo_inicio", coliseo_inicio);
-        this.load.image("coliseo_reconstruccion", coliseo_reconstruccion);
-        this.load.image("coliseo_destruido", coliseo_destruido);
+        this.load.image("coliseo_vacio", "../src/assets/Images/Coliseo/Coliseo_vacio.png");
+        this.load.image("coliseo_inicio", "../src/assets/Images/Coliseo/Coliseo_inicio.png");
+        this.load.image("coliseo_reconstruccion", "../src/assets/Images/Coliseo/Coliseo_reconstrucción.png");
+        this.load.image("coliseo_destruido", "../src/assets/Images/Coliseo/Coliseo_destruido.png");
 
-        this.load.image("cerrar", cerrar_img);
+        this.load.image("cerrar", '../src/assets/Images/cerrar.png');
 
-        this.load.image("seleccion_panel", Seleccion);
-        this.load.image("informacion_incursion", Informacion_incursion);
-        this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", Burrito_Relampago);
-        this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", Burrito_Planta);
-        this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", Burrito_Fuego);
-        this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", Burrito_Agua);
+        this.load.image("seleccion_panel", '../src/assets/Images/Coliseo/Seleccion.png');
+        this.load.image("informacion_incursion", '../src/assets/Images/Coliseo/Informacion_incursion.png');
+        this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", '../src/assets/Images/Burritos/Burrito Relampago.png');
+        this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", '../src/assets/Images/Burritos/Burrito Planta.png');
+        this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", '../src/assets/Images/Burritos/Burrito Fuego.png');
+        this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", '../src/assets/Images/Burritos/Burrito Agua.png');
         this.textures.remove("cards")
-        this.load.spritesheet("cards", cards, {frameWidth: 1080, frameHeight: 1080});
-        this.load.image("burrito_muerto", Burrito_Muerto);
-        this.load.image("left_arrow", left_arrow);
-        this.load.image("right_arrow", right_arrow);
-        this.load.spritesheet("slider_background_mega", barra_jefe, {frameHeight: 211, frameWidth: 799})
+        this.load.spritesheet("cards", '../src/assets/Images/Cards/cards.png', {frameWidth: 1080, frameHeight: 1080});
+        this.load.image("burrito_muerto", '../src/assets/Images/Establo/gravestone.png');
+        this.load.image("left_arrow", '../src/assets/Images/Establo/left_arrow.png');
+        this.load.image("right_arrow", '../src/assets/Images/Establo/right_arrow.png');
+        this.load.spritesheet("slider_background_mega", '../src/assets/Images/Coliseo/Barra_jefe.png', {frameHeight: 211, frameWidth: 799})
 
-        this.load.spritesheet("burritos_heads", burritos, {frameWidth: 200, frameHeight: 268});
-        this.load.spritesheet("cofre", cofre, {frameWidth: 1920, frameHeight: 1080})
+        this.load.spritesheet("burritos_heads", '../src/assets/Images/Battle/Burritos.png', {frameWidth: 200, frameHeight: 268});
+        this.load.spritesheet("cofre", '../src/assets/Images/SiloScene/Cofre_abierto.webp', {frameWidth: 1920, frameHeight: 1080})
         this.load.once("complete", this.Start, this);
         this.load.start();
     }
@@ -122,13 +99,13 @@ export default class Coliseo extends Phaser.Scene{
             this.CreatePanelIncursion();
         }
         new Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", Translate.Translate("BtnMeadow"), this, this.BackToPradera, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar Incursion", this, async()=>{ 
+        /*new Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar Incursion", this, async()=>{ 
             let _loadingScreen = await new LoadingScreen(this);
             await Near.WithdrawBurritoOwner();
             await Near.DeleteAllIncursions() 
             _loadingScreen.OnComplete();
             location.reload();
-        }, {fontSize: 30, fontFamily: "BangersRegular"});
+        }, {fontSize: 30, fontFamily: "BangersRegular"});*/
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }

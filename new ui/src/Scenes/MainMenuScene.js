@@ -2,29 +2,20 @@ import { Button, Alert, LoadingScreen, SettingsButton } from '../Helpers/Helpers
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 
-import mainMenu_Background from '../assets/Images/MainMenuScene/mainMenu_Background.png';
-import engranajes from '../assets/Images/MainMenuScene/Engranajes.webp'
-import options from '../assets/Images/MainMenuScene/Opciones.png'
-import volume_on from '../assets/Images/MainMenuScene/volume_on.png'
-import volume_off from '../assets/Images/MainMenuScene/volume_off.png'
-import volume_handler from '../assets/Images/MainMenuScene/volume_handler.png'
-import volume from '../assets/Images/MainMenuScene/volume.png'
-import languages from '../assets/Images/MainMenuScene/Idiomas.webp'
-
 export default class MainMenu extends Phaser.Scene{
     constructor(){
         super("MainMenu");
     }
     preload(){
-        this.load.image("mainMenubackground", mainMenu_Background);
+        this.load.image("mainMenubackground", '../src/assets/Images/MainMenuScene/mainMenu_Background.png');
 
-        this.load.spritesheet("engrane", engranajes, { frameWidth: 500, frameHeight:  468});
-        this.load.image("options", options);
-        this.load.image("volume_on", volume_on);
-        this.load.image("volume_off", volume_off);
-        this.load.image("volume_handler", volume_handler);
-        this.load.image("volume", volume);
-        this.load.spritesheet("languages", languages, {frameWidth:1128, frameHeight: 455});
+        this.load.spritesheet("engrane", '../src/assets/Images/MainMenuScene/Engranajes.webp', { frameWidth: 500, frameHeight:  468});
+        this.load.image("options", '../src/assets/Images/MainMenuScene/Opciones.png');
+        this.load.image("volume_on", '../src/assets/Images/MainMenuScene/volume_on.png');
+        this.load.image("volume_off", '../src/assets/Images/MainMenuScene/volume_off.png');
+        this.load.image("volume_handler", '../src/assets/Images/MainMenuScene/volume_handler.png');
+        this.load.image("volume", '../src/assets/Images/MainMenuScene/volume.png');
+        this.load.spritesheet("languages", '../src/assets/Images/MainMenuScene/Idiomas.webp', {frameWidth:1128, frameHeight: 455});
     }
     
     create(){
@@ -78,11 +69,11 @@ export default class MainMenu extends Phaser.Scene{
         new Button(450, 750, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, {fontSize: 60, fontFamily: "BangersRegular"});
         new Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, {fontSize: 60, fontFamily: "BangersRegular"});
         
-        //this.sound.add("acoustic-motivation", { loop: true, volume: 1/*SettingsButton.GetVolume()*/}).play();
+        this.sound.add("acoustic-motivation", { loop: true, volume: 1/*SettingsButton.GetVolume()*/}).play();
         await this.loadingScreen.OnComplete();
     }
     
-    LogOut(){
+    LogOut = async () => {
         Alert.Fire(this, Translate.Translate("TleAccountAlert"), Translate.Translate("MsgAccountAlert"), Translate.Translate("BtnAccountAlert"), Translate.Translate("BtnCancelAlert"))
         .then((result) => {
             if(result) {

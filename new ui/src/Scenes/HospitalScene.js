@@ -1,29 +1,6 @@
-import { Button, Alert, LoadingScreen, SettingsButton, Card, TokenHud, Slider, Actions, BattleEnd, DialogueBox } from '../Helpers/Helpers.js'
-import *  as Near from '../Near.js';
+import { Button, Alert, LoadingScreen, Card, TokenHud, DialogueBox } from '../Helpers/Helpers.js'
+import * as Near from '../Near.js';
 import { Translate } from '../Language/Translate.js'
-
-import capsulas from '../assets/Images/Hospital/capsulas.png';
-import hospital_interior from '../assets/Images/Hospital/Interior Hospital.png';
-
-import cerrar_img from '../assets/Images/cerrar.png'
-
-import Burrito_Relampago from '../assets/Images/Burritos/Burrito Relampago.png';
-import Burrito_Planta from '../assets/Images/Burritos/Burrito Planta.png';
-import Burrito_Fuego from '../assets/Images/Burritos/Burrito Fuego.png';
-import Burrito_Agua from '../assets/Images/Burritos/Burrito Agua.png';
-import Burrito_Muerto from '../assets/Images/Establo/gravestone.png';
-
-import cards from '../assets/Images/Cards/cards.png'
-import left_arrow from '../assets/Images/Establo/left_arrow.png'
-import right_arrow from '../assets/Images/Establo/right_arrow.png'
-import Seleccion from '../assets/Images/Coliseo/Seleccion.png';
-import Informacion_incursion from '../assets/Images/Coliseo/Informacion_incursion.png';
-import dialog from '../assets/Images/Dialog.png';
-
-import tokenHud from '../assets/Images/HUD/Information.png'
-import tokens from '../assets/Images/HUD/Tokens.png'
-
-import miniBurrito from '../assets/Images/Pradera/burrito_agua.png'; 
 
 export default class Hospital extends Phaser.Scene{
     counter = 0;
@@ -47,28 +24,28 @@ export default class Hospital extends Phaser.Scene{
             //let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
             //this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
-        this.load.spritesheet("miniBurrito", miniBurrito, {frameWidth: 51, frameHeight: 53});
+        this.load.spritesheet("miniBurrito", '../src/assets/Images/Pradera/burrito_agua.png', {frameWidth: 51, frameHeight: 53});
 
-        this.load.spritesheet("capsulas", capsulas, {frameWidth:239, frameHeight:294});
-        this.load.image("hospital_background", hospital_interior);
+        this.load.spritesheet("capsulas", '../src/assets/Images/Hospital/capsulas.png', {frameWidth:239, frameHeight:294});
+        this.load.image("hospital_background", '../src/assets/Images/Hospital/Interior Hospital.png');
 
         this.textures.remove("cards")
-        this.load.spritesheet("cards", cards, {frameWidth: 1080, frameHeight: 1080});
-        this.load.image("burrito_muerto", Burrito_Muerto);
-        this.load.image("left_arrow", left_arrow);
-        this.load.image("right_arrow", right_arrow);
-        this.load.image("seleccion_panel", Seleccion);
-        this.load.image("informacion_incursion", Informacion_incursion);
-        this.load.image("cerrar", cerrar_img);
-        this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", Burrito_Relampago);
-        this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", Burrito_Planta);
-        this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", Burrito_Fuego);
-        this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", Burrito_Agua);
+        this.load.spritesheet("cards", '../src/assets/Images/Cards/cards.png', {frameWidth: 1080, frameHeight: 1080});
+        this.load.image("burrito_muerto", '../src/assets/Images/Establo/gravestone.png');
+        this.load.image("left_arrow", '../src/assets/Images/Establo/left_arrow.png');
+        this.load.image("right_arrow", '../src/assets/Images/Establo/right_arrow.png');
+        this.load.image("seleccion_panel", '../src/assets/Images/Coliseo/Seleccion.png');
+        this.load.image("informacion_incursion", '../src/assets/Images/Coliseo/Informacion_incursion.png');
+        this.load.image("cerrar", '../src/assets/Images/cerrar.png');
+        this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", '../src/assets/Images/Burritos/Burrito Relampago.png');
+        this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D",  '../src/assets/Images/Burritos/Burrito Planta.png');
+        this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", '../src/assets/Images/Burritos/Burrito Fuego.png');
+        this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", '../src/assets/Images/Burritos/Burrito Agua.png');
 
-        this.load.image("tokenHud", tokenHud);
-        this.load.spritesheet("tokenIcon", tokens, {frameWidth: 49, frameHeight: 50});
+        this.load.image("tokenHud", '../src/assets/Images/HUD/Information.png');
+        this.load.spritesheet("tokenIcon", '../src/assets/Images/HUD/Tokens.png', {frameWidth: 49, frameHeight: 50});
 
-        this.load.image("dialog", dialog);
+        this.load.image("dialog",  '../src/assets/Images/Dialog.png');
 
         this.load.once("complete", this.start, this);
         this.load.start(); 
@@ -90,7 +67,7 @@ export default class Hospital extends Phaser.Scene{
         this.loadingScreen = new LoadingScreen(this);
         this.add.image(0,0, "hospital_background").setOrigin(0);
         this.hudTokens = new TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
-        new Button(this.game.config.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnBackToMeadow"), this, () => {this.scene.start("newMap")}, null, {fontSize: 24, fontFamily: "BangersRegular"});
+        new Button(this.game.config.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnBackToMeadow"), this, () => {this.scene.start("newMap")}, {fontSize: 24, fontFamily: "BangersRegular"});
         this.capsulesStatus = await Near.GetPlayerCapsules();
         this.requiredSTRW = await Near.GetStrwCost();
         console.log(this.capsulesStatus);

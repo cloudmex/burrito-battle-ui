@@ -2,66 +2,6 @@ import { Button, Alert, LoadingScreen, SettingsButton, Card, TokenHud, Slider, A
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 
-import burritos_img from '../assets/Images/Battle/Burritos.png';
-import slider_background_img from '../assets/Images/Battle/slider_background.png';
-import slider_fill_img from '../assets/Images/Battle/slider_fill.png';
-import slider_background_mega_img from '../assets/Images/Coliseo/Barra_jefe.png';
-import actions_img from '../assets/Images/Battle/battle_actions.png';
-import background_coliseo_battle_img from '../assets/Images/Coliseo/Fondo.png';
-import Shader_coliseo_battle_img from '../assets/Images/Coliseo/Shader.png';
-import Coliseo_gradas_coliseo_battle_img from '../assets/Images/Coliseo/Coliseo.png';
-import Coliseo_ground_coliseo_battle_img from '../assets/Images/Coliseo/Base.png';
-
-
-import burrito_idle_agua from '../assets/Images/Battle/agua/Espera.webp';
-import burrito_ataque1_agua from '../assets/Images/Battle/agua/Ataque_ligero.webp';
-import burrito_ataque2_agua from '../assets/Images/Battle/agua/Ataque_pesado.webp';
-import burrito_defensa_agua from '../assets/Images/Battle/agua/Defensa.webp';
-import burrito_dano_agua from '../assets/Images/Battle/agua/Dano.webp';
-import burrito_derrota_agua from '../assets/Images/Battle/agua/Derrota.webp';
-import burrito_victoria_agua from '../assets/Images/Battle/agua/Victoria.webp';
-
-import burrito_idle_electrico from '../assets/Images/Battle/electrico/Espera.webp';
-import burrito_ataque1_electrico from '../assets/Images/Battle/electrico/Ataque_ligero.webp';
-import burrito_ataque2_electrico from '../assets/Images/Battle/electrico/Ataque_pesado.webp';
-import burrito_defensa_electrico from '../assets/Images/Battle/electrico/Defensa.webp';
-import burrito_dano_electrico from '../assets/Images/Battle/electrico/Dano.webp';
-import burrito_derrota_electrico from '../assets/Images/Battle/electrico/Derrota.webp';
-import burrito_victoria_electrico from '../assets/Images/Battle/electrico/Victoria.webp';
-
-import burrito_idle_fuego from '../assets/Images/Battle/fuego/Espera.webp';
-import burrito_ataque1_fuego from '../assets/Images/Battle/fuego/Ataque_ligero.webp';
-import burrito_ataque2_fuego from '../assets/Images/Battle/fuego/Ataque_pesado.webp';
-import burrito_defensa_fuego from '../assets/Images/Battle/fuego/Defensa.webp';
-import burrito_dano_fuego from '../assets/Images/Battle/fuego/Dano.webp';
-import burrito_derrota_fuego from '../assets/Images/Battle/fuego/Derrota.webp';
-import burrito_victoria_fuego from '../assets/Images/Battle/fuego/Victoria.webp';
-
-import burrito_idle_planta from '../assets/Images/Battle/planta/Espera.webp';
-import burrito_ataque1_planta from '../assets/Images/Battle/planta/Ataque_ligero.webp';
-import burrito_ataque2_planta from '../assets/Images/Battle/planta/Ataque_pesado.webp';
-import burrito_defensa_planta from '../assets/Images/Battle/planta/Defensa.webp';
-import burrito_dano_planta from '../assets/Images/Battle/planta/Dano.webp';
-import burrito_derrota_planta from '../assets/Images/Battle/planta/Derrota.webp';
-import burrito_victoria_planta from '../assets/Images/Battle/planta/Victoria.webp';
-
-import megaburrito_ataque1_img from '../assets/Images/Coliseo/Ataque 1.webp';
-import megaburrito_ataque2_img from '../assets/Images/Coliseo/Ataque 2 (2).webp';
-import megaburrito_idle_img from '../assets/Images/Coliseo/Standby.webp';
-import megaburrito_defensa_img from '../assets/Images/Coliseo/Teleport.webp';
-
-
-import epic_battle_audio from '../assets/audio/epic_battle.mp3'
-import kick1_audio from '../assets/audio/attack strong.wav';
-import kick2_audio from '../assets/audio/attack weak.wav';
-import dano_audio from '../assets/audio/donkey-hit.wav'
-import cover_audio from '../assets/audio/cover.wav'
-import mega_kick_1_ from '../assets/audio/mega attack weak.wav';
-import mega_kick_2_audio from '../assets/audio/mega attack strong.wav';
-import derrota_incursion_img from '../assets/Images/Coliseo/Derrota incursion.webp';
-import victoria_incursion_img from '../assets/Images/Coliseo/Victoria incursion.webp';
-import background_animation_img from '../assets/Images/Battle/Background.webp';
-
 export default class ColiseoBattle extends Phaser.Scene{
     constructor(){
         super("ColiseoBattle");
@@ -73,17 +13,16 @@ export default class ColiseoBattle extends Phaser.Scene{
         this.sound.removeAll();
         this.loadingScreen = new LoadingScreen(this);
 
-        this.load.spritesheet("burritos", burritos_img, { frameWidth: 200, frameHeight: 268});
-        this.load.image("slider_background", slider_background_img);
-        this.load.spritesheet("slider_fill", slider_fill_img, { frameWidth: 512, frameHeight: 89 });
-        this.load.spritesheet("slider_background_mega", slider_background_mega_img, {frameHeight: 211, frameWidth: 799})
-        
-        this.load.spritesheet("actions", actions_img, {frameWidth: 160, frameHeight: 160});
+        this.load.spritesheet("burritos", '../src/assets/Images/Battle/Burritos.png', { frameWidth: 200, frameHeight: 268});
+        this.load.image("slider_background", '../src/assets/Images/Battle/slider_background.png');
+        this.load.spritesheet("slider_fill", '../src/assets/Images/Battle/slider_fill.png', { frameWidth: 512, frameHeight: 89 });
+        this.load.spritesheet("slider_background_mega", '../src/assets/Images/Coliseo/Barra_jefe.png', {frameHeight: 211, frameWidth: 799})
+        this.load.spritesheet("actions", '../src/assets/Images/Battle/battle_actions.png', {frameWidth: 160, frameHeight: 160});
+        this.load.image("background", '../src/assets/Images/Coliseo/Fondo.png');
 
-        this.load.image("background", background_coliseo_battle_img);
-        this.load.image("Coliseo_bg", Shader_coliseo_battle_img);
-        this.load.image("Coliseo_gradas", Coliseo_gradas_coliseo_battle_img);
-        this.load.image("Coliseo_ground", Coliseo_ground_coliseo_battle_img);
+        this.load.image("Coliseo_bg", '../src/assets/Images/Coliseo/Shader.png');
+        this.load.image("Coliseo_gradas", '../src/assets/Images/Coliseo/Coliseo.png');
+        this.load.image("Coliseo_ground", '../src/assets/Images/Coliseo/Base.png');
     }
     async create(){
         Alert.isAlert = false;
@@ -404,64 +343,41 @@ export default class ColiseoBattle extends Phaser.Scene{
         //images
         //this.load.spritesheet("sparks", "../src/images/coliseo/Sparks.png"), { frameWidth: 1920, frameHeight: 1080 };
 
-        switch (folderPlayer) {
-            case 'agua':
-                this.load.spritesheet(`burrito_idle_Player`, burrito_idle_agua, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque1_Player`, burrito_ataque1_agua, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque2_Player`, burrito_ataque2_agua, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_defensa_Player`, burrito_defensa_agua, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_dano_Player`, burrito_dano_agua, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_derrota_Player`, burrito_derrota_agua, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_victoria_Player`, burrito_victoria_agua, {frameWidth: 512, frameHeight: 512});
-                break;
-            case 'fuego':
-                this.load.spritesheet(`burrito_idle_Player`, burrito_idle_fuego, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque1_Player`, burrito_ataque1_fuego, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque2_Player`, burrito_ataque2_fuego, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_defensa_Player`, burrito_defensa_fuego, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_dano_Player`, burrito_dano_fuego, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_derrota_Player`, burrito_derrota_fuego, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_victoria_Player`, burrito_victoria_fuego, {frameWidth: 512, frameHeight: 512});
-            break;
-            case 'electrico':
-                this.load.spritesheet(`burrito_idle_Player`, burrito_idle_electrico, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque1_Player`, burrito_ataque1_electrico, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque2_Player`, burrito_ataque2_electrico, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_defensa_Player`, burrito_defensa_electrico, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_dano_Player`, burrito_dano_electrico, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_derrota_Player`, burrito_derrota_electrico, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_victoria_Player`, burrito_victoria_electrico, {frameWidth: 512, frameHeight: 512});
-                break;
-            case 'planta':
-                this.load.spritesheet(`burrito_idle_Player`, burrito_idle_planta, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque1_Player`, burrito_ataque1_planta, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_ataque2_Player`, burrito_ataque2_planta, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_defensa_Player`, burrito_defensa_planta, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_dano_Player`, burrito_dano_planta, {frameWidth: 512, frameHeight: 512});
-                this.load.spritesheet(`burrito_derrota_Player`, burrito_derrota_planta, {frameWidth: 700, frameHeight: 512});
-                this.load.spritesheet(`burrito_victoria_Player`, burrito_victoria_planta, {frameWidth: 512, frameHeight: 512});
-            break;
-        }
+        this.load.spritesheet(`burrito_idle_Player`, `../src/assets/Images/Battle/${folderPlayer}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_ataque1_Player`, `../src/assets/Images/Battle/${folderPlayer}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_ataque2_Player`, `../src/assets/Images/Battle/${folderPlayer}/Ataque_pesado.webp`, {frameWidth: 700, frameHeight: 512});
+        this.load.spritesheet(`burrito_defensa_Player`, `../src/assets/Images/Battle/${folderPlayer}/Defensa.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_dano_Player`, `../src/assets/Images/Battle/${folderPlayer}/Dano.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_derrota_Player`, `../src/assets/Images/Battle/${folderPlayer}/Derrota.webp`, {frameWidth: 700, frameHeight: 512});
+        this.load.spritesheet(`burrito_victoria_Player`, `../src/assets/Images/Battle/${folderPlayer}/Victoria.webp`, {frameWidth: 512, frameHeight: 512});
 
-        this.load.spritesheet("derrota", derrota_incursion_img, { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("victoria", victoria_incursion_img, { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("background_animation", background_animation_img, { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet(`burrito_idle_CPU`, `../src/assets/Images/Battle/${folderCPU}/Espera.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_ataque1_CPU`, `../src/assets/Images/Battle/${folderCPU}/Ataque_ligero.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_ataque2_CPU`, `../src/assets/Images/Battle/${folderCPU}/Ataque_pesado.webp`, {frameWidth: 700, frameHeight: 512});
+        this.load.spritesheet(`burrito_defensa_CPU`, `../src/assets/Images/Battle/${folderCPU}/Defensa.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_dano_CPU`, `../src/assets/Images/Battle/${folderCPU}/Dano.webp`, {frameWidth: 512, frameHeight: 512});
+        this.load.spritesheet(`burrito_derrota_CPU`, `../src/assets/Images/Battle/${folderCPU}/Derrota.webp`, {frameWidth: 700, frameHeight: 512});
+        this.load.spritesheet(`burrito_victoria_CPU`, `../src/assets/Images/Battle/${folderCPU}/Victoria.webp`, {frameWidth: 512, frameHeight: 512});
+        
+        this.load.spritesheet("derrota", "../src/assets/Images/Battle/Derrota.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("victoria", "../src/assets/Images/Battle/Victoria.webp", { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("background_animation", "../src/assets/Images/Battle/Background.webp", { frameWidth: 1920, frameHeight: 1080 });
 
-        this.load.spritesheet("megaburrito_ataque1", megaburrito_ataque1_img, { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("megaburrito_ataque2", megaburrito_ataque2_img, { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("megaburrito_idle", megaburrito_idle_img, { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("megaburrito_defensa", megaburrito_defensa_img, { frameWidth: 1920, frameHeight: 1080 });
-        this.load.spritesheet("dano_defensa", megaburrito_defensa_img, { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("megaburrito_ataque1", '../src/assets/Images/Coliseo/Ataque 1.webp', { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("megaburrito_ataque2", '../src/assets/Images/Coliseo/Ataque 2 (2).webp', { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("megaburrito_idle", '../src/assets/Images/Coliseo/Standby.webp', { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("megaburrito_defensa", '../src/assets/Images/Coliseo/Teleport.webp', { frameWidth: 1920, frameHeight: 1080 });
+        this.load.spritesheet("dano_defensa", '../src/assets/Images/Coliseo/Teleport.webp', { frameWidth: 1920, frameHeight: 1080 });
 
         //audios
-        this.load.audio("epic_battle", epic_battle_audio);
-        this.load.audio("kick_1", kick1_audio);
-        this.load.audio("kick_2", kick2_audio);
-        this.load.audio("dano", dano_audio);
-        this.load.audio("cover", cover_audio);
+        this.load.audio("epic_battle", '../assets/audio/epic_battle.mp3');
+        this.load.audio("kick_1", '../src/assets/audio/attack strong.wav');
+        this.load.audio("kick_2", '../src/assets/audio/attack weak.wav');
+        this.load.audio("dano", '../src/assets/audio/donkey-hit.wav');
+        this.load.audio("cover", '../src/assets/audio/cover.wav');
 
-        this.load.audio("mega kick_1", mega_kick_1_);
-        this.load.audio("mega kick_2", mega_kick_2_audio);
+        this.load.audio("mega kick_1", '../src/assets/audio/mega attack weak.wav');
+        this.load.audio("mega kick_2", '../src/assets/audio/mega attack strong.wav');
 
         this.load.once("complete", this.LoadBurritos, this);
         this.load.start();

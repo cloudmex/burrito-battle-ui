@@ -1,17 +1,16 @@
-import Phaser from 'phaser';
-
 import *  as Near from '../src/Near.js';
 import { Translate } from '../src/Language/Translate.js'
 
 import connection from './Scenes/ConnectionScene.js'
 import mainMenu from './Scenes/MainMenuScene.js';
-import pradera from './Scenes/PraderaScene';
-import silo from './Scenes/SiloScene.js'
 import establo from './Scenes/EstabloScene.js';
+import pradera from './Scenes/PraderaScene';
+import battle from './Scenes/BattleScene.js';
+import silo from './Scenes/SiloScene.js'
 import coliseo from './Scenes/ColiseoScene.js';
 import coliseoBattle from './Scenes/ColiseoBattleScene.js';
 import hospital from './Scenes/HospitalScene.js';
-import battle from './Scenes/BattleScene.js';
+
 
 const config = {
     type: Phaser.AUTO,
@@ -46,7 +45,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu, pradera, silo, establo, coliseo, coliseoBattle, hospital, battle]
+    scene: [ connection, mainMenu, establo, silo, pradera, battle, coliseo, coliseoBattle, hospital]
 };
 
 (async()=>await Translate.LoadJson())();

@@ -2,29 +2,6 @@ import { Button, Alert, LoadingScreen, SettingsButton, Card, TokenHud } from '..
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 
-import siloBackground from '../assets/Images/SiloScene/background.png'
-import silo from '../assets/Images/SiloScene/Silo.webp'
-import siloAnimation from '../assets/Images/SiloScene/Silo animacion.webp'
-import nubes from '../assets/Images/SiloScene/Loop nubes.webp'
-import tienda1 from '../assets/Images/SiloScene/Tienda1.png'
-import tienda2 from '../assets/Images/SiloScene/Tienda2.png'
-import burrito from '../assets/Images/SiloScene/Burrito.png'
-import cofre from '../assets/Images/SiloScene/Cofre_abierto.webp'
-import elements from '../assets/Images/SiloScene/Elements/Elementos.png'
-import orbs from '../assets/Images/SiloScene/Orbs/orbs.png'
-
-import tokenHud from '../assets/Images/HUD/Information.png'
-import tokens from '../assets/Images/HUD/Tokens.png'
-
-import Burrito_Relampago from '../assets/Images/Burritos/Burrito Relampago.png';
-import Burrito_Planta from '../assets/Images/Burritos/Burrito Planta.png';
-import Burrito_Fuego from '../assets/Images/Burritos/Burrito Fuego.png';
-import Burrito_Agua from '../assets/Images/Burritos/Burrito Agua.png';
-import cards from '../assets/Images/Cards/cards.png';
-
-import alertImg from '../assets/Images/Información 1.png'
-import miniAlertImg from '../assets/Images/Informacion_small.png'
-
 export default class Silo extends Phaser.Scene{
     constructor(){
         super("MinarBurrito");
@@ -35,8 +12,8 @@ export default class Silo extends Phaser.Scene{
         this.alertVisible = false;
     }
     preload(){
-        this.load.image("tokenHud", tokenHud);
-        this.load.spritesheet("tokenIcon", tokens, {frameWidth: 49, frameHeight: 50});
+        this.load.image("tokenHud", '../src/assets/Images/HUD/Information.png');
+        this.load.spritesheet("tokenIcon", '../src/assets/Images/HUD/Tokens.png', {frameWidth: 49, frameHeight: 50});
         
         this.loadingScreen = new LoadingScreen(this);
     }
@@ -47,29 +24,26 @@ export default class Silo extends Phaser.Scene{
         this.LoadSpritesheet();  
     }
     LoadSpritesheet(){;
-        this.load.image("mintBurritoBackground", siloBackground);
-        this.load.image("silo", silo);
-        this.load.spritesheet("Silo_start", siloAnimation, {frameWidth: 1920, frameHeight: 4000});
-        this.load.image("clouds", nubes);
-        this.load.spritesheet("cofre", cofre, {frameWidth: 1920, frameHeight: 1080})
+        this.load.image("mintBurritoBackground", '../src/assets/Images/SiloScene/background.png');
+        this.load.image("silo", '../src/assets/Images/SiloScene/Silo.webp');
+        this.load.spritesheet("Silo_start", '../src/assets/Images/SiloScene/Silo animacion.webp', {frameWidth: 1920, frameHeight: 4000});
+        this.load.image("clouds", '../src/assets/Images/SiloScene/Loop nubes.webp');
+        this.load.spritesheet("cofre", '../src/assets/Images/SiloScene/Cofre_abierto.webp', {frameWidth: 1920, frameHeight: 1080})
 
-        this.load.image("tienda1", tienda1);
-        this.load.image("tienda2", tienda2);
-        this.load.image("burrito", burrito);
+        this.load.image("tienda1", '../src/assets/Images/SiloScene/Tienda1.png');
+        this.load.image("tienda2",  '../src/assets/Images/SiloScene/Tienda2.png');
+        this.load.image("burrito", '../src/assets/Images/SiloScene/Burrito.png');
 
-        this.load.spritesheet("elements", elements, {frameWidth: 290, frameHeight: 290});
-        this.load.spritesheet("orbs", orbs, {frameWidth: 218, frameHeight: 218 })
+        this.load.spritesheet("elements", '../src/assets/Images/SiloScene/Elements/Elementos.png', {frameWidth: 290, frameHeight: 290});
+        this.load.spritesheet("orbs", '../src/assets/Images/SiloScene/Orbs/orbs.png', {frameWidth: 218, frameHeight: 218 })
 
-        this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", Burrito_Relampago);
-        this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", Burrito_Planta);
-        this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", Burrito_Fuego);
-        this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", Burrito_Agua);
+        this.load.image("QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq", '../src/assets/Images/Burritos/Burrito Relampago.png');
+        this.load.image("QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D", '../src/assets/Images/Burritos/Burrito Planta.png');
+        this.load.image("QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6", '../src/assets/Images/Burritos/Burrito Fuego.png');
+        this.load.image("QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk", '../src/assets/Images/Burritos/Burrito Agua.png');
 
         this.textures.remove("cards")
-        this.load.spritesheet("cards", cards, {frameWidth: 1080, frameHeight: 1080});
-
-        this.load.image('alert', alertImg);
-        this.load.image("miniAlert", miniAlertImg);
+        this.load.spritesheet("cards", '../src/assets/Images/Cards/cards.png', {frameWidth: 1080, frameHeight: 1080});
 
         this.load.once("complete", this.Start, this);
         this.load.start();
