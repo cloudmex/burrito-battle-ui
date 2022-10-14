@@ -1,0 +1,31 @@
+{ 
+    "Testnet": {
+        "CONTRACT_BURRITOS": "dev-1662497209670-35450562637719",
+        "CONTRACT_STRW_TOKENS": "bb-strw.testnet",
+        "CONTRACT_ITEMS": "bb-items.testnet",
+        "CONTRACT_PVEBATTLE": "pve-bb.testnet",
+        "CONTRACT_INCURSION": "bb-incursions.testnet",
+        "CONTRACT_HOSPITAL": "dev-1663091906107-11804226544868",
+
+        "NODE_URL": "https://rpc.testnet.near.org",
+        "WALLET_URL": "https://wallet.testnet.near.org",
+        "HELPER_URL": "https://helper.testnet.near.org",
+        "EXPLORER_URL": "https://explorer.testnet.near.org",
+
+        "ARCHIVAL_RPC": "https://archival-rpc.testnet.near.org"
+    },
+    "Mainnet": {
+        "CONTRACT_BURRITOS": "nft.burritobattle.near",
+        "CONTRACT_STRW_TOKENS": "strw.burritobattle.near",
+        "CONTRACT_ITEMS": "bb-items.testnet",
+        "CONTRACT_PVEBATTLE": "pve.burritobattle.near",
+        "CONTRACT_INCURSION": "incursion.burritobattle.near",
+        "CONTRACT_HOSPITAL": "dev-1663091906107-11804226544868",
+
+        "NODE_URL": "https://rpc.mainnet.near.org",
+        "WALLET_URL": "https://wallet.mainnet.near.org",
+        "HELPER_URL": "https://helper.mainnet.near.org",
+        "EXPLORER_URL": "https://explorer.mainnet.near.org",
+        "ARCHIVAL_RPC": "https://archival-rpc.mainnet.near.org"
+    }
+}

@@ -1,25 +1,17 @@
-import * as nearAPI from 'near-api-js'
-const { connect, keyStores, WalletConnection, Contract, utils, providers, KeyPair, transactions } = nearAPI;
+import * as nearAPI from "../src/near-api-js.js"
 
-const config = {
-    networkId: 'testnet',
-    keyStore: typeof window === "undefined"
-    ? new keyStores.InMemoryKeyStore()
-    : new keyStores.BrowserLocalStorageKeyStore(),
-    nodeUrl: process.env.NODE_URL,
-    walletUrl: process.env.WALLET_URL,
-    helperUrl: process.env.HELPER_URL,
-    explorerUrl: process.env.EXPLORER_URL
-}
+import { Config } from './Config.js';
 
-const provider = new providers.JsonRpcProvider(process.env.ARCHIVAL_RPC);
+const { connect, keyStores, WalletConnection, Contract, utils, providers, KeyPair, transactions } = nearApi;
 
-const contract_id_burritos = process.env.CONTRACT_BURRITOS;
-const contract_id_strw_tokens = process.env.CONTRACT_STRW_TOKENS;
-const contract_id_items = process.env.CONTRACT_ITEMS;
-const contract_id_PVEBattle = process.env.CONTRACT_PVEBATTLE;
-const contract_id_incursion = process.env.CONTRACT_INCURSION;
-const contract_id_hospital = process.env.CONTRACT_HOSPITAL;
+let provider;
+
+let contract_id_burritos; 
+let contract_id_strw_tokens;
+let contract_id_items;
+let contract_id_PVEBattle ;
+let contract_id_incursion;
+let contract_id_hospital;
 
 let near;
 let wallet;
@@ -32,7 +24,27 @@ let contract_incursion;
 let contract_hospital;
 
 export async function Initialize(){
+    await Config.LoadJson();
+    contract_id_burritos = Config.Get("CONTRACT_BURRITOS"); 
+    contract_id_strw_tokens = Config.Get("CONTRACT_STRW_TOKENS");
+    contract_id_items = Config.Get("CONTRACT_ITEMS");
+    contract_id_PVEBattle = Config.Get("CONTRACT_PVEBATTLE") ;
+    contract_id_incursion = Config.Get("CONTRACT_INCURSION");
+    contract_id_hospital = Config.Get("CONTRACT_HOSPITAL");
+    
+    let config = {
+        networkId: 'testnet',
+        keyStore: typeof window === "undefined"
+        ? new keyStores.InMemoryKeyStore()
+        : new keyStores.BrowserLocalStorageKeyStore(),
+        nodeUrl:Config.Get("NODE_URL"),
+        walletUrl:Config.Get("WALLET_URL"),
+        helperUrl:Config.Get("HELPER_URL"),
+        explorerUrl:Config.Get("EXPLORER_URL")
+    }
+
     near = await connect(config);
+    provider = new providers.JsonRpcProvider(Config.Get("ARCHIVAL_RPC"));
     wallet = new WalletConnection(near, 'ncd-ii');
     contract_burritos = new Contract(wallet.account(), contract_id_burritos, {
         viewMethods: [ 'get_burrito', "nft_tokens_for_owner", "nft_tokens", "account_id", "nft_supply_for_owner", "nft_token" ],
@@ -286,10 +298,7 @@ export async function BattlePlayerCPU(typeMove){
     
     let result = await contract_PVEBattle.create_battle_player_cpu(
         {
-            burrito_id: localStorage.getItem("burrito_selected"),
-            accesorio1_id: "0", 
-            accesorio2_id: "0",
-            accesorio3_id: "0"
+            burrito_id: localStorage.getItem("burrito_selected")
         },
         300000000000000
     )

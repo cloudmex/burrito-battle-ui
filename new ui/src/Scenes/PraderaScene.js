@@ -3,80 +3,7 @@ import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 import { Cactus } from '../Helpers/Objects.js';
 
-import C1Img from '../assets/Images/Pradera/C1/C1.png';
-import C1_Details1_Img from '../assets/Images/Pradera/C1/Details 1.png';
-import C1_Details2_Img from '../assets/Images/Pradera/C1/Details 2.png';
-import C2Img from '../assets/Images/Pradera/C2/C2.png';
-import C2_Details1_Img from '../assets/Images/Pradera/C2/Details 1.png';
-import C2_Details2_Img from '../assets/Images/Pradera/C2/Details 2.png';
-import C3Img from '../assets/Images/Pradera/C3/C3.png';
-import C3_Details1_Img from '../assets/Images/Pradera/C3/Details 1.png';
-import C3_Details2_Img from '../assets/Images/Pradera/C3/Details 2.png';
-import C4Img from '../assets/Images/Pradera/C4/C4.png';
-import C4_Details1_Img from '../assets/Images/Pradera/C4/Details 1.png';
-import C4_Details2_Img from '../assets/Images/Pradera/C4/Details 2.png';
-import C4_Hospital_Img from '../assets/Images/Pradera/C4/hospital.png';
-import C5Img from '../assets/Images/Pradera/C5/C5.png';
-import C5_Details1_Img from '../assets/Images/Pradera/C5/Details 1.png';
-import C5_Details2_Img from '../assets/Images/Pradera/C5/Details 2.png';
-import C6Img from '../assets/Images/Pradera/C6/C6.png';
-import C6_Details1_Img from '../assets/Images/Pradera/C6/Details 1.png';
-import C6_Details2_Img from '../assets/Images/Pradera/C6/Details 2.png';
-import C7Img from '../assets/Images/Pradera/C7/C7.png';
-import C7_Details1_Img from '../assets/Images/Pradera/C7/Details 1.png';
-import C7_Details2_Img from '../assets/Images/Pradera/C7/Details 2.png';
-import C8Img from '../assets/Images/Pradera/C8/C8.png';
-import C8_Details1_Img from '../assets/Images/Pradera/C8/Details 1.png';
-import C8_Details2_Img from '../assets/Images/Pradera/C8/Details 2.png';
-import C9Img from '../assets/Images/Pradera/C9/C9.png';
-import C9_Details1_Img from '../assets/Images/Pradera/C9/Details 1.png';
-import C10Img from '../assets/Images/Pradera/C10/C10.png';
-import C10_coliseo_incursion_Img from '../assets/Images/Pradera/C10/coliseo_incursion.webp';
-import C10_coliseo_normal_Img from '../assets/Images/Pradera/C10/coliseo_normal.png';
-import C10_coliseo_reconstruccion_Img from '../assets/Images/Pradera/C10/coliseo_reconstruccion.png';
-import C10_coliseo_roto_Img from '../assets/Images/Pradera/C10/coliseo_roto.png';
-import C11Img from '../assets/Images/Pradera/C11/C11.png';
-import C11_Details1_Img from '../assets/Images/Pradera/C11/Details 1.png';
-import C12Img from '../assets/Images/Pradera/C12/C12.png';
-import C12_Details1_Img from '../assets/Images/Pradera/C12/Details 1.png';
-import C12_Details2_Img from '../assets/Images/Pradera/C12/Details 2.png';
-import C12_Hospital_Img from '../assets/Images/Pradera/C12/hospital.png';
-import C13Img from '../assets/Images/Pradera/C13/C13.png';
-import C13_Details1_Img from '../assets/Images/Pradera/C13/Details 1.png';
-import C14Img from '../assets/Images/Pradera/C14/C14.png';
-import C14_Coliseo_animacion_down from '../assets/Images/Pradera/C14/Coliseo_animacion_down 1.webp';
-import C14_Coliseo_animacion_up from '../assets/Images/Pradera/C14/Coliseo_animacion_up 1.webp';
-import C14_coliseo_incursion from '../assets/Images/Pradera/C14/coliseo_incursion.webp';
-import C14_coliseo_normal from '../assets/Images/Pradera/C14/coliseo_normal.png';
-import C14_coliseo_reconstruccion from '../assets/Images/Pradera/C14/coliseo_reconstruccion.png';
-import C14_coliseo_roto from '../assets/Images/Pradera/C14/coliseo_roto.png';
-import C15Img from '../assets/Images/Pradera/C15/C15.png';
-import C15_Details1_Img from '../assets/Images/Pradera/C15/Details 1.png';
-import C16_Img from '../assets/Images/Pradera/C16/C16.png';
-import C16_Details1_Img from '../assets/Images/Pradera/C15/Details 1.png';
-
-import desert_Img from '../assets/Images/Pradera/Desert.png'; 
-import cactus1_Img from '../assets/Images/Pradera/Cactus 1.png'; 
-import cactus2_Img from '../assets/Images/Pradera/Cactus 2.png';
-import sand_storm1_Img from '../assets/Images/Pradera/Sand Storm_1.webp';
-import sand_storm2_Img from '../assets/Images/Pradera/Sand Storm_2.webp';
-
-import burrito_fuego_img from '../assets/Images/Pradera/burrito_fuego.png'
-import burrito_agua_img from '../assets/Images/Pradera/burrito_agua.png'
-import burrito_planta_img from '../assets/Images/Pradera/burrito_planta.png'
-import burrito_electrico_img from '../assets/Images/Pradera/burrito_electrico.png'
-
-import burritoHud_Img from "../assets/Images/HUD/Burritos.png";
-import hud_Img from "../assets/Images/HUD/HUD.png";
-import tokenHud from '../assets/Images/HUD/Information.png';
-import tokens from '../assets/Images/HUD/Tokens.png';
-import shader_img from '../assets/Images/Pradera/Shader.png';
-
-import praderaSong_audio from '../assets/audio/Pradera.ogg'
-import footSteps_audio from '../assets/audio/Footsteps.ogg';
-
 export default class Pradera extends Phaser.Scene{
-
     constructor(){
         super("Pradera");
         this.tmpX = 0;
@@ -572,7 +499,7 @@ export default class Pradera extends Phaser.Scene{
         }
     }
     SetBurritoLocation(){
-        if(localStorage.getItem("lastPosition") !== null){
+        if(localStorage.getItem("lastPosition") != 'undefined'){
             this.lastPosition = JSON.parse(localStorage.getItem("lastPosition"));
             localStorage.removeItem("lastPosition")
         }
@@ -697,118 +624,92 @@ export default class Pradera extends Phaser.Scene{
     async loadAssets(){
         if(localStorage.getItem("burrito_selected") != null){
             let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-            let burrito_img;
-            switch (this.burritoMediaToSkin(burritoPlayerSkin.media)) {
-                case "agua":
-                    burrito_img = burrito_agua_img;
-                    break;
-                case "fuego":
-                    burrito_img = burrito_fuego_img;
-                    break;
-                case "planta":
-                    burrito_img = burrito_planta_img;
-                    break;
-                case "electrico":
-                    burrito_img = burrito_electrico_img;
-                    break;
-            }
-            this.load.spritesheet("miniBurrito", burrito_img, {frameWidth: 51, frameHeight: 53});
+            this.load.spritesheet("miniBurrito", `../src/assets/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
 
-        this.load.image("cell_1", C1Img);
-        this.load.image("cell_1_details_1", C1_Details1_Img);
-        this.load.image("cell_1_details_2", C1_Details2_Img);
+        this.load.image("cell_1", '../src/assets/Images/Pradera/C1/C1.png');
+        this.load.image("cell_1_details_1", '../src/assets/Images/Pradera/C1/Details 1.png');
+        this.load.image("cell_1_details_2", '../src/assets/Images/Pradera/C1/Details 2.png');
 
-        this.load.image("cell_2", C2Img);
-        this.load.image("cell_2_details_1", C2_Details1_Img);
-        this.load.image("cell_2_details_2", C2_Details2_Img);
+        this.load.image("cell_2", '../src/assets/Images/Pradera/C2/C2.png');
+        this.load.image("cell_2_details_1", '../src/assets/Images/Pradera/C2/Details 1.png');
+        this.load.image("cell_2_details_2", '../src/assets/Images/Pradera/C2/Details 2.png');
 
-        this.load.image("cell_3", C3Img);
-        this.load.image("cell_3_details_1", C3_Details1_Img);
-        this.load.image("cell_3_details_2", C3_Details2_Img);
+        this.load.image("cell_3", '../src/assets/Images/Pradera/C3/C3.png');
+        this.load.image("cell_3_details_1", '../src/assets/Images/Pradera/C3/Details 1.png');
+        this.load.image("cell_3_details_2", '../src/assets/Images/Pradera/C3/Details 2.png');
 
-        this.load.image("cell_4", C4Img);
-        this.load.image("cell_4_details_1", C4_Details1_Img);
-        this.load.image("cell_4_details_2", C4_Details2_Img);
+        this.load.image("cell_4", '../src/assets/Images/Pradera/C4/C4.png');
+        this.load.image("cell_4_details_1", '../src/assets/Images/Pradera/C4/Details 1.png');
+        this.load.image("cell_4_details_2", '../src/assets/Images/Pradera/C4/Details 2.png');
 
-        this.load.image("cell_5", C5Img);
-        this.load.image("cell_5_details_1", C5_Details1_Img);
-        this.load.image("cell_5_details_2", C5_Details2_Img);
+        this.load.image("cell_5", '../src/assets/Images/Pradera/C5/C5.png');
+        this.load.image("cell_5_details_1", '../src/assets/Images/Pradera/C5/Details 1.png');
+        this.load.image("cell_5_details_2", '../src/assets/Images/Pradera/C5/Details 2.png');
 
-        this.load.image("cell_6", C6Img);
-        this.load.image("cell_6_details_1", C6_Details1_Img);
-        this.load.image("cell_6_details_2", C6_Details2_Img);
+        this.load.image("cell_6",  '../src/assets/Images/Pradera/C6/C6.png');
+        this.load.image("cell_6_details_1", '../src/assets/Images/Pradera/C6/Details 1.png');
+        this.load.image("cell_6_details_2", '../src/assets/Images/Pradera/C6/Details 2.png');
 
-        this.load.image("cell_7", C7Img);
-        this.load.image("cell_7_details_1", C7_Details1_Img);
-        this.load.image("cell_7_details_2", C7_Details2_Img);
+        this.load.image("cell_7", '../src/assets/Images/Pradera/C7/C7.png');
+        this.load.image("cell_7_details_1", '../src/assets/Images/Pradera/C7/Details 1.png');
+        this.load.image("cell_7_details_2", '../src/assets/Images/Pradera/C7/Details 2.png');
 
-        this.load.image("cell_8", C8Img);
-        this.load.image("cell_8_details_1", C8_Details1_Img);
-        this.load.image("cell_8_details_2", C8_Details2_Img);
+        this.load.image("cell_8", '../src/assets/Images/Pradera/C8/C8.png');
+        this.load.image("cell_8_details_1", '../src/assets/Images/Pradera/C8/Details 1.png');
+        this.load.image("cell_8_details_2", '../src/assets/Images/Pradera/C8/Details 2.png');
 
-        this.load.image("cell_9", C9Img);
-        this.load.image("cell_9_details_1", C9_Details1_Img);
+        this.load.image("cell_9", '../src/assets/Images/Pradera/C9/C9.png');
+        this.load.image("cell_9_details_1", '../src/assets/Images/Pradera/C9/Details 1.png');
 
-        this.load.image("cell_10", C10Img);
+        this.load.image("cell_10", '../src/assets/Images/Pradera/C10/C10.png');
 
-        this.load.image("cell_11", C11Img);
-        this.load.image("cell_11_details_1", C11_Details1_Img);
+        this.load.image("cell_11", '../src/assets/Images/Pradera/C11/C11.png');
+        this.load.image("cell_11_details_1", '../src/assets/Images/Pradera/C11/Details 1.png');
 
-        this.load.image("cell_12", C12Img);
-        this.load.image("cell_12_details_1", C12_Details1_Img);
-        this.load.image("cell_12_details_2", C12_Details2_Img);
+        this.load.image("cell_12", '../src/assets/Images/Pradera/C12/C12.png');
+        this.load.image("cell_12_details_1", '../src/assets/Images/Pradera/C12/Details 1.png');
+        this.load.image("cell_12_details_2", '../src/assets/Images/Pradera/C12/Details 2.png');
 
-        this.load.image("cell_13", C13Img);
-        this.load.image("cell_13_details_1", C13_Details1_Img);
+        this.load.image("cell_13", '../src/assets/Images/Pradera/C13/C13.png');
+        this.load.image("cell_13_details_1", '../src/assets/Images/Pradera/C13/Details 1.png');
 
-        this.load.image("cell_14", C14Img);
+        this.load.image("cell_14", '../src/assets/Images/Pradera/C14/C14.png');
 
-        this.load.image("cell_15", C15Img);
-        this.load.image("cell_15_details_1", C15_Details1_Img);
+        this.load.image("cell_15", '../src/assets/Images/Pradera/C15/C15.png');
+        this.load.image("cell_15_details_1", '../src/assets/Images/Pradera/C15/Details 1.png');
 
-        this.load.image("cell_16", C16_Img);
-        this.load.image("cell_16_details_1", C16_Details1_Img);
+        this.load.image("cell_16", '../src/assets/Images/Pradera/C16/C16.png');
+        this.load.image("cell_16_details_1", '../src/assets/Images/Pradera/C15/Details 1.png');
 
-        /*for (let index = 1; index <= 16; index++) {
-            this.load.image(`cell_${index}`, `./src/images/new Pradera/C${index}/C${index}.png`);
-            try{
-                this.load.image(`cell_${index}_details_1`, `./src/images/new Pradera/C${index}/Details 2.png`);
-            } catch{}
-            try{ 
-                this.load.image(`cell_${index}_details_2`, `./src/images/new Pradera/C${index}/Details 1.png`);
-            } catch{}
-        }*/
+        this.load.image("hospital", '../src/assets/Images/Pradera/C12/hospital.png')
 
+        this.load.image("desert", '../src/assets/Images/Pradera/Desert.png');
+        this.load.image("cactus1", '../src/assets/Images/Pradera/Cactus 1.png');
+        this.load.image("cactus2", '../src/assets/Images/Pradera/Cactus 2.png');
 
-        this.load.image("hospital", C12_Hospital_Img)
+        this.load.spritesheet("coliseo_up_incursion",  '../src/assets/Images/Pradera/C10/coliseo_incursion.webp', {frameWidth:1920, frameHeight: 1080});
+        this.load.image("coliseo_up_normal", '../src/assets/Images/Pradera/C10/coliseo_normal.png');
+        this.load.image("coliseo_up_reconstruccion", '../src/assets/Images/Pradera/C10/coliseo_reconstruccion.png');
+        this.load.image("coliseo_up_roto", '../src/assets/Images/Pradera/C10/coliseo_roto.png');
 
-        this.load.image("desert", desert_Img);
-        this.load.image("cactus1", cactus1_Img);
-        this.load.image("cactus2", cactus2_Img);
-
-        this.load.spritesheet("coliseo_up_incursion", C10_coliseo_incursion_Img, {frameWidth:1920, frameHeight: 1080});
-        this.load.image("coliseo_up_normal", C10_coliseo_normal_Img);
-        this.load.image("coliseo_up_reconstruccion", C10_coliseo_reconstruccion_Img);
-        this.load.image("coliseo_up_roto", C10_coliseo_roto_Img);
-
-        this.load.spritesheet("coliseo_down_incursion", C14_coliseo_incursion, {frameWidth:1920, frameHeight: 1080});
-        this.load.image("coliseo_down_normal", C14_coliseo_normal);
-        this.load.image("coliseo_down_reconstruccion", C14_coliseo_reconstruccion);
-        this.load.image("coliseo_down_roto", C14_coliseo_roto);
+        this.load.spritesheet("coliseo_down_incursion", '../src/assets/Images/Pradera/C14/coliseo_incursion.webp', {frameWidth:1920, frameHeight: 1080});
+        this.load.image("coliseo_down_normal", '../src/assets/Images/Pradera/C14/coliseo_normal.png');
+        this.load.image("coliseo_down_reconstruccion", '../src/assets/Images/Pradera/C14/coliseo_reconstruccion.png');
+        this.load.image("coliseo_down_roto", '../src/assets/Images/Pradera/C14/coliseo_roto.png');
         
-        this.load.spritesheet("sand_storm_1", sand_storm1_Img, {frameWidth:1920, frameHeight: 1080});
-        this.load.spritesheet("sand_storm_2", sand_storm2_Img, {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("sand_storm_1", '../src/assets/Images/Pradera/Sand Storm_1.webp', {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("sand_storm_2", '../src/assets/Images/Pradera/Sand Storm_2.webp', {frameWidth:1920, frameHeight: 1080});
 
-        this.load.spritesheet("burritoHud", burritoHud_Img, {frameWidth: 215, frameHeight: 305});
-        this.load.spritesheet("hud", hud_Img, {frameWidth: 390, frameHeight: 226});
-        this.load.image("tokenHud", tokenHud);
-        this.load.spritesheet("tokenIcon", tokens, {frameWidth: 49, frameHeight: 50});
+        this.load.spritesheet("burritoHud", "../src/assets/Images/HUD/Burritos.png", {frameWidth: 215, frameHeight: 305});
+        this.load.spritesheet("hud", "../src/assets/Images/HUD/HUD.png", {frameWidth: 390, frameHeight: 226});
+        this.load.image("tokenHud", '../src/assets/Images/HUD/Information.png');
+        this.load.spritesheet("tokenIcon", '../src/assets/Images/HUD/Tokens.png', {frameWidth: 49, frameHeight: 50});
 
-        this.load.image("light volumetric", shader_img);
+        this.load.image("light volumetric", '../src/assets/Images/Pradera/Shader.png');
 
-        this.load.audio("praderaSong", praderaSong_audio)
-        this.load.audio("footSteps", footSteps_audio);
+        this.load.audio("praderaSong", '../src/assets/audio/Pradera.ogg')
+        this.load.audio("footSteps", '../src/assets/audio/Footsteps.ogg');
 
         this.load.once("complete", this.start, this);
         this.load.start(); 

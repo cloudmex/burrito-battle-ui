@@ -2,20 +2,6 @@ import *  as Near from '../Near.js';
 import { Button, Alert, SettingsButton } from '../Helpers/Helpers.js'
 import { Translate } from '../Language/Translate.js'
 
-import loading_bg from '../assets/Images/loading_bg.png';
-import loading_screen_1 from '../assets/Images/loading_screen_1.webp';
-import loading_screen_2 from '../assets/Images/loading_screen_2.webp';
-
-import logoImg from '../assets/Images/Logo.png';
-import backgroundImg from '../assets/Images/ConnectionScene/connection_background.png';
-import button from '../assets/Images/button.png'
-import alertImg from '../assets/Images/Información 1.png'
-import miniAlertImg from '../assets/Images/Informacion_small.png'
-
-import acoustic_motivation from '../assets/audio/acoustic-motivation.ogg'
-import button_hover from '../assets/audio/button-hover.ogg'
-import button_click from '../assets/audio/button-click.ogg'
-
 export default class Connection extends Phaser.Scene {
     constructor(){
         super("Connection");
@@ -23,20 +9,20 @@ export default class Connection extends Phaser.Scene {
     preload(){
     }
     create () {
-        this.load.image("loading_bg", loading_bg);
-        this.load.spritesheet("loading_screen_1", loading_screen_1, { frameWidth: 720, frameHeight: 512 });
-        this.load.spritesheet("loading_screen_2", loading_screen_2, { frameWidth: 512, frameHeight: 512 });
+        this.load.image("loading_bg", '../src/assets/Images/loading_bg.png');
+        this.load.spritesheet("loading_screen_1",  '../src/assets/Images/loading_screen_1.webp', { frameWidth: 720, frameHeight: 512 });
+        this.load.spritesheet("loading_screen_2", '../src/assets/Images/loading_screen_2.webp', { frameWidth: 512, frameHeight: 512 });
         
-        this.load.image('logo', logoImg);
-        this.load.image("buttonContainer", button);
+        this.load.image('logo', '../src/assets/Images/Logo.png');
+        this.load.image("buttonContainer", '../src/assets/Images/button.png');
         
-        this.load.image('alert', alertImg);
-        this.load.image("miniAlert", miniAlertImg);
+        this.load.image('alert', '../src/assets/Images/Información 1.png');
+        this.load.image("miniAlert", '../src/assets/Images/Informacion_small.png');
 
-        this.load.audio("acoustic-motivation", acoustic_motivation); 
-        this.load.audio("button-hover", button_hover);
-        this.load.audio("button-click", button_click);
-        this.load.image('connection_background', backgroundImg);
+        this.load.audio("acoustic-motivation", '../src/assets/audio/acoustic-motivation.ogg'); 
+        this.load.audio("button-hover", '../src/assets/audio/button-hover.ogg');
+        this.load.audio("button-click", '../src/assets/audio/button-click.ogg');
+        this.load.image('connection_background', '../src/assets/Images/ConnectionScene/connection_background.png');
         
         this.load.once("complete", this.start, this);
         this.load.start(); 
@@ -44,10 +30,7 @@ export default class Connection extends Phaser.Scene {
       
     async start () {
         if(Near.IsConnected()){
-            if(true)
-                this.scene.start('MainMenu');
-            else
-                this.scene.start('Battle');
+            this.scene.start('MainMenu');
         }
 
         this.add.image(this.game.config.width / 2, this.game.config.height / 2, 'connection_background');

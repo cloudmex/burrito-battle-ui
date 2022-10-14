@@ -1,6 +1,6 @@
 import 'regenerator-runtime/runtime'
 import *  as Near from '../Near.js';
-import {Translate} from '../Language/Translate.js'
+import { Translate } from '../Language/Translate.js'
 
 export class Button {
     constructor(x, y, scale, img, label, scene, downCallback, fontStyle, useScrollFactor = true, setPixelPerfect = true) {
@@ -60,6 +60,7 @@ export class Alert{
             this.scene = scene;
             this.isAlert = true;
             let isMini = title == null;
+            
             this.alertResult = scene.add.container(scene.game.config.width / 2, scene.game.config.height * 1.5).setScrollFactor(0).setDepth(5);
             this.alertResult.add(scene.add.image(0, 0, isMini ? "miniAlert" : "alert"));
             this.alertResult.add(scene.add.text(0, -360, title, { fontSize:70 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
