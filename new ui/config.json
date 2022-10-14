@@ -1,6 +1,6 @@
 { 
     "Testnet": {
-        "CONTRACT_BURRITOS": "dev-1662497209670-35450562637719",
+        "CONTRACT_BURRITOS": "bb-burritos.testnet",
         "CONTRACT_STRW_TOKENS": "bb-strw.testnet",
         "CONTRACT_ITEMS": "bb-items.testnet",
         "CONTRACT_PVEBATTLE": "pve-bb.testnet",
