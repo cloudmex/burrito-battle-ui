@@ -6,7 +6,8 @@ export class Config{
         this.#json = this.Data = await fetch(`/config.json`).then(response => {
             return response.json();
         });
-        this.network = window.location.origin.includes("mainnet") ? "Mainnet" : "Testnet";
+        const domain = window.location.origin;
+        this.network = domain.includes("testnet") || domain.includes("localhost") ? "Testnet" : "Mainnet";    
     }
     static Config = ()=> {
         return this.json;
