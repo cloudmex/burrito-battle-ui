@@ -4,7 +4,7 @@ import { Translate } from '../src/Language/Translate.js'
 import connection from './Scenes/ConnectionScene.js'
 import mainMenu from './Scenes/MainMenuScene.js';
 import establo from './Scenes/EstabloScene.js';
-import pradera from './Scenes/PraderaScene';
+import pradera from './Scenes/PraderaScene.js';
 import battle from './Scenes/BattleScene.js';
 import silo from './Scenes/SiloScene.js'
 import coliseo from './Scenes/ColiseoScene.js';
