@@ -7,7 +7,7 @@ export class Config{
             return response.json();
         });
         const domain = window.location.origin;
-        this.network = domain.includes("testnet") || domain.includes("localhost") ? "Testnet" : "Mainnet";    
+        this.network = domain.includes("play.burritobattle.app") ? "Mainnet" : "Testnet";    
     }
     static Config = ()=> {
         return this.json;

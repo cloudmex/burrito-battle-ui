@@ -69,7 +69,7 @@ export default class MainMenu extends Phaser.Scene{
         new Button(450, 750, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, {fontSize: 60, fontFamily: "BangersRegular"});
         new Button(450, 900, 0.75, "buttonContainer", Translate.Translate("BtnBarn"), this, ()=>{ this, this.ChangeScene("Establo")}, {fontSize: 60, fontFamily: "BangersRegular"});
         
-        this.sound.add("acoustic-motivation", { loop: true, volume: 1/*SettingsButton.GetVolume()*/}).play();
+        this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }
     
