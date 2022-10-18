@@ -7,7 +7,7 @@ export class Translate {
         if(localStorage.getItem("language") == null)
             language = "en";
 
-        this.json = await fetch(`../src//Language/${language}.json`).then(response => {
+        this.json = await fetch(`../src/Language/${language}.json`).then(response => {
             return response.json();
         });
     }
