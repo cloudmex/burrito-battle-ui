@@ -1,4 +1,3 @@
-import 'regenerator-runtime/runtime'
 import *  as Near from '../Near.js';
 import { Translate } from '../Language/Translate.js'
 
