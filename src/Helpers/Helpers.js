@@ -596,24 +596,13 @@ export class BattleEnd{
             if(!isIncursion){
                 this.resultUI.add(scene.add.text(245, 390, `+${STRWTokens}`, {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
                 this.resultUI.add(scene.add.text(-255, 390, isVictoria ? "+1" : "-1", {fontSize:40, fontFamily:"BangersRegular"}).setOrigin(0.5));
-                this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-            
-                this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
-                this.burrito.play(isVictoria ? "victoria_Player" : "derrota_Player");
-            } else{
-                scene.anims.create({ key: "finishAnim", frames: scene.anims.generateFrameNumbers( isVictoria ? "victoria_incursion" : "derrota_incursion", { frames: scene.Range(0, 18)}), frameRate: 24, repeat: 0 });
-                this.resultUI.add(this.animation = scene.add.sprite(0, 0));
-                this.animation.play("finishAnim");
+            } 
+            this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+            this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
+            if(isVictoria)
+                    this.burrito.play("victoria_Player");
 
-                setTimeout(() => {
-                    this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-                    this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
-                    if(isVictoria){
-                        this.burrito.play("victoria_Player");
-                    }
-                }, 1000);
-            }
-        }, 1000);        
+        }, 1000);  
     }
 }
 export class DialogueBox{

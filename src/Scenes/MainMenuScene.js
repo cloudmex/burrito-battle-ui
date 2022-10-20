@@ -1,4 +1,4 @@
-import { Button, Alert, LoadingScreen, SettingsButton } from '../Helpers/Helpers.js'
+import { Button, Alert, LoadingScreen, SettingsButton, BattleEnd } from '../Helpers/Helpers.js'
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 
@@ -71,6 +71,10 @@ export default class MainMenu extends Phaser.Scene{
         
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
+        
+        this.anims.create({ key: `derrota_Player`, frames: this.anims.generateFrameNumbers(`burrito_derrota_Player`, { frames: this.Range(0, 23) }), frameRate: 24, repeat: 0 });
+        this.anims.create({ key: `victoria_Player`, frames: this.anims.generateFrameNumbers(`burrito_victoria_Player`, { frames: this.Range(0, 23) }), frameRate: 24, repeat: -1 });
+        new BattleEnd(this.game.config.width/2, this.game.config.height/2, this, true, 0, true)
     }
     
     LogOut = async () => {
@@ -86,5 +90,9 @@ export default class MainMenu extends Phaser.Scene{
     ChangeScene (scene){ 
         if(!Alert.isAlert) 
             this.scene.start(scene)
+    }
+    
+    Range(start, end) {
+        return Array(end - start + 1).fill().map((_, idx) => start + idx);
     }
 }
