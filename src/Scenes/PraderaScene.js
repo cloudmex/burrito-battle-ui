@@ -623,7 +623,7 @@ export default class Pradera extends Phaser.Scene{
     async loadAssets(){
         if(localStorage.getItem("burrito_selected") != null){
             let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-            this.load.spritesheet("miniBurrito", `../src/assets/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
+            this.load.spritesheet("miniBurrito", `../src/assets/Images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
 
         this.load.image("cell_1", '../src/assets/Images/Pradera/C1/C1.png');
