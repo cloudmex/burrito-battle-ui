@@ -100,14 +100,6 @@ export default class Coliseo extends Phaser.Scene{
             this.CreatePanelIncursion();
         }
         new Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", Translate.Translate("BtnMeadow"), this, this.BackToPradera, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar Incursion", this, async()=>{ 
-            let _loadingScreen = await new LoadingScreen(this);
-            await Near.WithdrawBurritoOwner();
-            await Near.DeleteAllIncursions() 
-            _loadingScreen.OnComplete();
-            location.reload();
-        }, {fontSize: 30, fontFamily: "BangersRegular"});
-        console.error("quitar el boton de eliminar")
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }
@@ -232,7 +224,7 @@ export default class Coliseo extends Phaser.Scene{
             .setOrigin(0.5).setScale(player.is_alive ? 0.55 : 0.2).setInteractive()
             .on("pointerover", (pointer)=>{ incursionContainer.add(this.playerNameText = this.add.text((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2, player.player_name, {fontSize: 18, fontFamily: "BangersRegular", align: "center", strokeThickness:5, stroke: "#000"}).setOrigin(0.5).setDepth(2)); })
             .on("pointermove", (pointer) => { 
-                if(this.playerNameText !== null)n
+                if(this.playerNameText !== null)
                     this.playerNameText.setPosition((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2)
                 })
             .on("pointerout", ()=>{

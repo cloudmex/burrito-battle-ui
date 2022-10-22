@@ -71,10 +71,6 @@ export default class MainMenu extends Phaser.Scene{
         
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
-        
-        this.anims.create({ key: `derrota_Player`, frames: this.anims.generateFrameNumbers(`burrito_derrota_Player`, { frames: this.Range(0, 23) }), frameRate: 24, repeat: 0 });
-        this.anims.create({ key: `victoria_Player`, frames: this.anims.generateFrameNumbers(`burrito_victoria_Player`, { frames: this.Range(0, 23) }), frameRate: 24, repeat: -1 });
-        new BattleEnd(this.game.config.width/2, this.game.config.height/2, this, true, 0, true)
     }
     
     LogOut = async () => {
