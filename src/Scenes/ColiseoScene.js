@@ -54,6 +54,7 @@ export default class Coliseo extends Phaser.Scene{
         this.loadingScreen = new LoadingScreen(this);
         this.incursion = await Near.GetActiveIncursion();
         console.log(this.incursion);
+
         if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
             new Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", Translate.Translate("BtnStartIncursion"), this, this.ConfirmIncursion, {fontSize: 40, fontFamily: "BangersRegular"});
@@ -99,13 +100,6 @@ export default class Coliseo extends Phaser.Scene{
             this.CreatePanelIncursion();
         }
         new Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", Translate.Translate("BtnMeadow"), this, this.BackToPradera, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar Incursion", this, async()=>{ 
-            let _loadingScreen = await new LoadingScreen(this);
-            await Near.WithdrawBurritoOwner();
-            await Near.DeleteAllIncursions() 
-            _loadingScreen.OnComplete();
-            location.reload();
-        }, {fontSize: 30, fontFamily: "BangersRegular"});
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }
@@ -217,19 +211,20 @@ export default class Coliseo extends Phaser.Scene{
         mega.hp = mega.win /*= mega.attack = mega.defense = mega.level = mega.speed*/ = "?";
         mega.cards = "mega_cards"
         let incursionContainer = this.add.container(this.game.config.width / 2, this.game.config.height / 2 ).setScale(0.75);
-        this.incursionContainer.add(this.add.image(0, 0, "informacion_incursion"));
-        this.incursionContainer.add(this.add.text(22, 494, Translate.Translate("SingPlayer"), {fontSize: 50, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
-        this.incursionContainer.add(this.add.text(0, -430, Translate.Translate("SingIncursion"), {fontSize: 120, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        incursionContainer.add(this.add.image(0, 0, "informacion_incursion"));
+        incursionContainer.add(this.add.text(22, 494, Translate.Translate("SingPlayer"), {fontSize: 50, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
+        incursionContainer.add(this.add.text(0, -430, Translate.Translate("SingIncursion"), {fontSize: 120, fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
         incursionContainer.add(new Card(- 280, - 100, mega, this, false, false, false, false).setScale(.45).GetComponents());
-        incursionContainer.add(this.countDownInfoText = this.add.text(200, -200, Translate.Translate("MsgFinishIncursion0"), {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
+        incursionContainer.add(this.countDownText = this.add.text(200, -200, Translate.Translate("MsgFinishIncursion0"), {fontSize: 45, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));//this.countDownInfoText = 
         incursionContainer.add(new BossSlider(175, 70, this).SetValue(mega.health / mega.start_health).SetScale(0.6).GetComponent());
+
         info.forEach(async(player, i) => {
             let ownerOffset = {x: 0, y:35}
             incursionContainer.add(this.add.sprite(-300+ (150 * (i % 5)), 265 + (130 * Math.floor(i / 5)), player.is_alive ? "burritos_heads" : "burrito_muerto", this.burritoMediaToSkinHead(player.media))
             .setOrigin(0.5).setScale(player.is_alive ? 0.55 : 0.2).setInteractive()
             .on("pointerover", (pointer)=>{ incursionContainer.add(this.playerNameText = this.add.text((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2, player.player_name, {fontSize: 18, fontFamily: "BangersRegular", align: "center", strokeThickness:5, stroke: "#000"}).setOrigin(0.5).setDepth(2)); })
             .on("pointermove", (pointer) => { 
-                if(this.playerNameText !== null)n
+                if(this.playerNameText !== null)
                     this.playerNameText.setPosition((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2)
                 })
             .on("pointerout", ()=>{
@@ -322,9 +317,10 @@ export default class Coliseo extends Phaser.Scene{
         let hour = time;
         let minutes = (hour % 1) * 60;
         let seconds = (minutes % 1) * 60;
-        if(remainToBuy != 0 && this.countDownText !== null)
-            this.countDownText.setText(Translate.Translate("MsgFinishIncursion") + parseInt(hour).toString().padStart(2, '0') + ":" + parseInt(minutes).toString().padStart(2, '0') + ":" + parseInt(seconds).toString().padStart(2, '0'));
+        if(remainToBuy != 0){
+            this.countDownText?.setText(Translate.Translate("MsgFinishIncursion") + parseInt(hour).toString().padStart(2, '0') + ":" + parseInt(minutes).toString().padStart(2, '0') + ":" + parseInt(seconds).toString().padStart(2, '0'));
         
+        }
         if(remainToBuy < timeNow){
             localStorage.setItem("lastScene", "Coliseo");
             location.reload();

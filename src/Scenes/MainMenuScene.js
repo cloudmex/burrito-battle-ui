@@ -1,4 +1,4 @@
-import { Button, Alert, LoadingScreen, SettingsButton } from '../Helpers/Helpers.js'
+import { Button, Alert, LoadingScreen, SettingsButton, BattleEnd } from '../Helpers/Helpers.js'
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 
@@ -86,5 +86,9 @@ export default class MainMenu extends Phaser.Scene{
     ChangeScene (scene){ 
         if(!Alert.isAlert) 
             this.scene.start(scene)
+    }
+    
+    Range(start, end) {
+        return Array(end - start + 1).fill().map((_, idx) => start + idx);
     }
 }

@@ -4,7 +4,7 @@
         "CONTRACT_STRW_TOKENS": "bb-strw.testnet",
         "CONTRACT_ITEMS": "bb-items.testnet",
         "CONTRACT_PVEBATTLE": "pve-bb.testnet",
-        "CONTRACT_INCURSION": "bb-incursions.testnet",
+        "CONTRACT_INCURSION": "incursiones-bb.testnet",
         "CONTRACT_HOSPITAL": "dev-1663091906107-11804226544868",
 
         "NODE_URL": "https://rpc.testnet.near.org",
