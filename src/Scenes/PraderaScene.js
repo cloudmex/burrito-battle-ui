@@ -1,4 +1,4 @@
-import { Button, Alert, LoadingScreen, SettingsButton, TokenHud, BurritoHud } from '../Helpers/Helpers.js'
+import { Button, Alert, LoadingScreen, SettingsButton, TokenHud, BurritoHud, BackMainMenuHud } from '../Helpers/Helpers.js'
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 import { Cactus } from '../Helpers/Objects.js';
@@ -407,9 +407,9 @@ export default class Pradera extends Phaser.Scene{
         this.physics.add.overlap(this.burrito, this.zoneBattles_desierto, this.Battle_Desierto, null, this);
         //this.input.on("pointerdown", (pointer)=>{console.log(`X: ${pointer.downX.toFixed()}, Y:${pointer.downY.toFixed()}`)});
 
-        this.button = new Button(this.sys.game.scale.gameSize.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnGoMainMenu"), this, this.BackToMainMenu, {fontSize: 24, fontFamily: "BangersRegular"});
-        this.hudTokens = new TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
-        this.hudBurrito = new BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this);
+        this.button = new BackMainMenuHud(this.sys.game.scale.gameSize.width / 2, 60, this, this.burrito);
+        this.hudTokens = new TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken(), this.burrito);
+        this.hudBurrito = new BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this, this.burrito);
         await this.loadingScreen.OnComplete();
     }
     InsertImageInQuadrant(data){
@@ -450,8 +450,12 @@ export default class Pradera extends Phaser.Scene{
     update(){
         if(Alert.isAlert || this.burrito == null || this.target == null)
             return;
-        if(true)
-            this.CameraLerp();
+            
+        this.CameraLerp();
+
+        this.hudTokens?.Update();
+        this.hudBurrito?.Update();
+        this.button?.Update();
 
         if(window["barn"] != null && window["silo"] != null && window["coliseum"] != null/* && window["hospital"]*/)
             this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["barn"].getBounds()) 

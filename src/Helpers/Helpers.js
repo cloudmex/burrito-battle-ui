@@ -350,22 +350,28 @@ export class Card{
 }
 export class TokenHud{
     TokenHud;
-    constructor(x, y, scene, currentNEAR, currentSTRW){
-        this.TokenHud = {x, y, scene};
+    burritoOverHUD = false;
+    constructor(x, y, scene, currentNEAR, currentSTRW, player){
+        this.TokenHud = {x, y, scene, player};
 
-        this.hudResult = scene.add.container(x, y).setScrollFactor(0).setDepth(5);
-        this.nearHud = scene.add.image(-40, -150, "tokenHud");
-        this.strwHud = scene.add.image(-40, -80, "tokenHud");
-        this.hudResult.add(this.nearHud);
-        this.hudResult.add(this.strwHud);
-        this.nearToken = scene.add.image(-140, -150, "tokenIcon", 1);// Icono de NEAR Token
-        this.strwToken = scene.add.image(-140, -80, "tokenIcon", 0);// Icono de STRW Token
-        this.hudResult.add(this.nearToken);
-        this.hudResult.add(this.strwToken);
+        this.hudResult = scene.add.container(x, y).setDepth(5);
+        this.hudResult.add(this.nearHud = scene.add.image(-40, -150, "tokenHud"));
+        this.hudResult.add(this.strwHud = scene.add.image(-40, -80, "tokenHud"));
+        this.hudResult.add(this.nearToken = scene.add.image(-140, -150, "tokenIcon", 1));
+        this.hudResult.add(this.strwToken = scene.add.image(-140, -80, "tokenIcon", 0));
         this.hudResult.add(this.strwText = scene.add.text(-56, -100, currentSTRW, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de STRW Tokens del usuario
         this.hudResult.add(this.nearText = scene.add.text(-56, -171, currentNEAR, { fontSize: 34, fontFamily: "BangersRegular" }));// cantidad de NEAR Tokens del usuario
-    }
 
+        this.hudResult.add(this.zone = scene.add.zone(-40, -115, this.nearHud.width, this.nearHud.height * 2.5));
+        scene.physics.world.enable(this.zone);
+    }
+    Update(){
+        this.hudResult.setPosition(this.TokenHud.scene.cameras.main.scrollX + this.TokenHud.x, this.TokenHud.scene.cameras.main.scrollY + this.TokenHud.y)
+        if(this.burritoOverHUD != this.CheckOverlap()){
+            this.burritoOverHUD = this.CheckOverlap();
+            this.SetAlpha(this.burritoOverHUD ? 0.1 : 1)
+        }
+    }
     GetComponents () { 
         return this.hudResult;
     }
@@ -375,23 +381,72 @@ export class TokenHud{
         this.strwText.setText(strw);
         this.nearText.setText(nears)
     }
+    
+    CheckOverlap() {
+        var boundsA = this.zone.getBounds();
+        var boundsB = this.TokenHud.player.getBounds();
+    
+        return Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB);
+    }
+    SetAlpha(alpha){
+        this.hudResult.setAlpha(alpha);
+    }
+}
+export class BackMainMenuHud{
+    burritoOverHUD = false;
+    constructor(x, y, scene, player){
+        this.ButtonHud = {x, y, scene, player};
+        this.hudcontainer = new Button(0, 0, 0.5, "buttonContainer", Translate.Translate("BtnGoMainMenu"), scene, scene.BackToMainMenu, {fontSize: 24, fontFamily: "BangersRegular"}, false, false).GetComponents().setDepth(5);
+        this.hudcontainer.add(this.zone = scene.add.zone(0, 0, 300, 80));
+        scene.physics.world.enable(this.zone);
+    }
+    Update(){
+        this.hudcontainer.setPosition(this.ButtonHud.scene.cameras.main.scrollX + this.ButtonHud.x, this.ButtonHud.scene.cameras.main.scrollY + this.ButtonHud.y)
+        if(this.burritoOverHUD != this.CheckOverlap()){
+            this.burritoOverHUD = this.CheckOverlap();
+            this.SetAlpha(this.burritoOverHUD ? 0.1 : 1)
+        }
+    }
+    
+    CheckOverlap() {
+        var boundsA = this.hudcontainer.getBounds();
+        var boundsB = this.ButtonHud.player.getBounds();
+    
+        return Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB);
+    }
+    SetAlpha(alpha){
+        this.hudcontainer.setAlpha(alpha);
+    }
 }
 export class BurritoHud{
     BurritoHud;
-    constructor(x, y, burrito, scene){
-        this.BurritoHud = {x, y, burrito, scene };
+    burritoOverHUD = false;
+    constructor(x, y, burrito, scene, player){
+        this.BurritoHud = {x, y, burrito, scene, player };
 
-        this.hudResult = scene.add.container(x, y).setScrollFactor(0).setDepth(5);
-        this.hud = scene.add.image(0, 0, "hud", this.GetIndexByType(burrito.burrito_type));   //HUD segun el tipo
-        this.hudResult.add(this.hud);
-        this.burrito = scene.add.image(-83, -51, "burritoHud", this.GetSkinBurrito(burrito.media));  //Imagen del burrito en HUD     
-        this.hudResult.add(this.burrito);
+        this.hudResult = scene.add.container(x, y).setDepth(5);
+        this.hudResult.add(this.hud = scene.add.image(0, 0, "hud", this.GetIndexByType(burrito.burrito_type)));
+        this.hudResult.add(this.burrito = scene.add.image(-83, -51, "burritoHud", this.GetSkinBurrito(burrito.media)));//Imagen del burrito en HUD     
         this.hudResult.add(scene.add.text(130, -82, burrito.hp, { fontSize: 50, fontFamily: "BangersRegular" }));//health
         this.hudResult.add(scene.add.text(130, 26, burrito.win, { fontSize: 50, fontFamily: "BangersRegular" }));//wins
         this.hudResult.add(this.zone = scene.add.zone(0, 0, this.hud.width, this.hud.height));
-        scene.physics.world.enable(this.zone);
-    }
 
+        scene.physics.world.enable(this.zone);
+
+    }
+    Update(){
+        this.hudResult.setPosition(this.BurritoHud.scene.cameras.main.scrollX + this.BurritoHud.x, this.BurritoHud.scene.cameras.main.scrollY + this.BurritoHud.y)
+        if(this.burritoOverHUD != this.CheckOverlap()){
+            this.burritoOverHUD = this.CheckOverlap();
+            this.SetAlpha(this.burritoOverHUD ? 0.1 : 1)
+        }
+    }
+    CheckOverlap() {
+        var boundsA = this.zone.getBounds();
+        var boundsB = this.BurritoHud.player.getBounds();
+    
+        return Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB);
+    }
     GetIndexByType(type){
         switch(type){
             case "Agua": return 0;
@@ -418,8 +473,7 @@ export class BurritoHud{
     }
 
     SetAlpha(alpha){
-        this.hud.setAlpha(alpha);
-        this.burrito.setAlpha(alpha)
+        this.hudResult.setAlpha(alpha);
     }
 }
 export class BossSlider{
