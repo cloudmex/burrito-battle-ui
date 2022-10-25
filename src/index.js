@@ -38,7 +38,7 @@ const config = {
             gravity:{
                 y: 0
             },
-            debug: false
+            debug: window.location.origin.includes("localhost")   
         },
     },
     autorRound: false,
