@@ -54,20 +54,23 @@ export default class Pradera extends Phaser.Scene{
         }
 
         this.incursion = await Near.GetActiveIncursion();
+        console.log(this.incursion);
+        console.log(Date.now())
+        console.log(parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000);
 
-        if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
+        if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 2})
-        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0})
+        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_reconstruccion"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 2})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 0})
         
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_roto"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_roto"}, offset: {x: 0, y:0}, depth : 2})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_roto"}, offset: {x: 0, y:0}, depth : 0})
         }else{
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_incursion"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_incursion"}, offset: {x: 0, y:0}, depth : 2})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_incursion"}, offset: {x: 0, y:0}, depth : 0})
         }
         
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);

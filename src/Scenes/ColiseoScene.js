@@ -55,10 +55,10 @@ export default class Coliseo extends Phaser.Scene{
         this.incursion = await Near.GetActiveIncursion();
         console.log(this.incursion);
 
-        if(this.incursion.status == "Null" || parseInt(Date.now()) > (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
+        if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
             new Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", Translate.Translate("BtnStartIncursion"), this, this.ConfirmIncursion, {fontSize: 40, fontFamily: "BangersRegular"});
-        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < (parseInt(this.incursion.finish_time).toString().substring(0, 13) + 108000000)){
+        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
             await this.loadingScreen.OnComplete();
             await Alert.Fire(this, Translate.Translate("TleColiseumDestroyAlert"), Translate.Translate("MsgColiseumDestroyAlert"), Translate.Translate("BtnAccept"));
@@ -138,7 +138,7 @@ export default class Coliseo extends Phaser.Scene{
     Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
     BackToPradera = () =>{ 
         clearInterval(this.counterInterval); 
-        this.scene.start("newMap"); 
+        this.scene.start("Pradera"); 
     }
     ConfirmIncursion = async() => {
         await Alert.Fire(this, Translate.Translate("TleStartIncursionAlert"), Translate.Translate("MsgStartIncursionAlert"), Translate.Translate("BtnStartIncursion"), Translate.Translate("BtnCancelAlert"))
