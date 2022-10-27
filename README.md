@@ -1,139 +1,138 @@
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/src/assets/Images/Logo.png)
 
-## Descripción 📄
-Burrito Battle es un videojuego hecho en Phaser y conectado a la blockchain con el protocolo de NEAR, el cual permite adquirir burritos (NFTs) y equiparlos con diferentes accesorios intercambiables que les permite aumentar sus habilidades en batalla.
+## Description 📄
+Burrito Battle is a decentralized game made in Phaser and based on the NEAR Protocol, which allows the community to acquire burritos (NFTs) and use them in combat with other burritos.
 
-Elige uno de tus burritos, equípalo con hasta 3 accesorios y enfréntalo contra los de tus rivales.
-
-### Minar un burrito
-Para poder adquirir un burrito debemos ingresar a la opción de "Silo", la cual nos llevará a la sección donde podemos adquirir burritos.
+### Buy Burrito
+In order to acquire a Burrito we must enter the "Silo" option, which will take us to the section where we can acquire Burritos.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_1.png)
 
-Una vez dentro del silo, hacemos clic en "Obtener nuevo burrito" para iniciar el proceso de adquisición de un nuevo burrito.
+Once inside the Silo, we click on "Get new burrito" to start the process of acquiring a new Burrito.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_2.png)
 
-Se mostrará una alerta la cual nos hará saber el costo que se tendrá que pagar para obtener un nuevo burrito, si estamos de acuerdo tendremos que hacer clic en "Minar", esta acción nos costara 5 NEAR y 50,000 $STRW Tokens.
+An alert will be displayed which will give us knowledge of the cost that will have to be pay to mint a new Burrito, if we agree we will have to click on "Mint", this action will cost 5 NEAR and 50,000 $STRW Tokens.
+Once the animations and the minting process are finished, the card of our Burrito will be shown where all its attributes will be shown.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_3.png)
 
 ## Burrito
-Este tipo de NFT almacenará la información principal de los burritos dentro del juego, cada burrito tiene varios atributos o características, las cuales serán utilizadas al momento de la pelea.
+This type of NFT will store the main information of the Burritos within the game, each Burrito has various attributes or characteristics which will be used at the time of the fight. 
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_33.png)
 
-Las propiedades de cada burrito son las siguientes:
+The properties that each burrito has are the following: 
 
-Tipo: este es uno de los 5 tipos el cual el burrito puede pertenecer.
-HP: este Será el contador de vida que tenga el burrito hasta un máximo de 5. 
-Ataque: Serán los puntos de ataque que tiene el burrito.
-Defensa: Será los puntos de defensa que tiene el burrito.
-Velocidad: Será los puntos de velocidad que el burrito tiene.
-Victorias: será el contador de victorias el cual tendrá un máximo de 10.
-Nivel: Será el nivel que tiene el burrito hasta un máximo de 40.
-Media: Contendrá la imagen del burrito
+Type: It is one of the 5 types to which the Burrito can belong. 
+HP: It will be the life counter that the Burrito has up to a maximum of 5. 
+Attack: They will be the attack points that the burrito has. 
+Defense: They will be the defense points that the burrito has. 
+Speed: They will be the speed points that the burrito has. 
+Win: Will be the win counter to evolve which will have a maximum of 10. 
+Level: Will be the level that the Burrito has up to a maximum of 40. 
+Media: Will contain the image of the Burrito. 
 
-### Comprar $STRW Tokens
-Para poder obtener $STRW debemos ingresar a la opción del "Silo".
+### Buy $STRW Tokens
+In order to acquire $STRW Tokens we must enter the "Silo" option.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_1.png)
 
-En el lado izquierdo de la pantalla veremos un comerciante que puede vendernos $STRW Tokens, solo debemos hacer clic en "Comprar".
+On the left side of the screen we will be shown the merchant who can sell us $STRW Tokens, we just have to click on "Buy".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_4.png)
 
-Se mostrará una alerta la cual nos hará saber del costo que se debe pagar para obtener $STRW Tokens (1 Near) si estamos de acuerdo deberemos hacer clic en "Comprar".
+An alert will be displayed which will give us knowledge of the cost that will have to be pay to get $STRW Tokens (1 NEAR), if we agree we will have to click on "Buy".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_5.png)
 
-Después se mostrara la animación que nos mostrara la cantidad de $STRW Tokens que hemos adquirido, cabe mencionar que se obtendrá una cantidad aleatoria en un rango de 1,000 a 10,000 $STRW Tokens.
+After showing the animations we will be shown the amount of $STRW Tokens that we have acquired, it is worth mentioning that the amount of Tokens will be obtained randomly in a range of 1,000 to 10,000 Tokens.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_6.png)
 
-Una vez que hayamos comprado nuestro $STRW Tokens, el comerciante desaparecerá, por lo que tendremos que esperar 12 horas desde la última compra para volver a adquirir $STRW Tokens.
+Once our $STRW Tokens have been purchased, the merchant will disappear, so we will have to wait 12 hours from the last purchase to purchase $STRW Tokens again.
 
-### Navegar en el mapa
-Para poder navegar por el mapa de Burrito Battle lo primero que debemos hacer es seleccionar uno de nuestro burrito, para ello debemos acceder al "Establo" desde el menú.
+### Navigate in the map
+In order to navigate the Burrito Battle map, the first thing we must do is select one of our Burritos, for this we must access to the "Barn" from the menu.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_1.png)
 
-En esta sección se mostrarán todos nuestros burritos comprados, debemos hacer clic en uno de ellos y en la tarjeta grande hacer clic en "Seleccionar burrito".
+In this section all our purchased Burritos will be shown, we must click on one of them and on the big card click on "Select Burrito".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_7.png)
 
-Ahora se nos muestra una ventana que dirá que el burrito está seleccionado.
+Now we are shown a window that will tell us that the Burrito is selected.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_8.png)
 
-Una vez que uno de nuestros burritos ha sido seleccionado, en el menú principal debemos acceder a la opción de "Pradera".
+Once one of our Burritos has been selected, in the main menu we must access the "Meadow" option.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_1.png)
 
-Ahora podrás navegar por el mapa entero con tu burrito.
+Now You will be able to navigate the entire map with your Burrito.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_9.png)
 
-### Pelear con burritos salvajes
-Para pelear contra burritos salvajes debes navegar por el mapa hasta encontrar uno.
+### Fight with wild Burritos
+To fight against wild Burritos you must navigate the entire map until you find one.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_10.png)
 
-Una vez que encuentres uno, se mostrara una advertencia donde podemos elegir si luchar o no, en caso de huir del combate podemos seguir navegando normalmente por el mapa, pero si decides entrar al combate entonces tendrás que finalizarlo o abandonar la batalla.
+Once you find one, a warning will be displayed where we can choose whether to fight or not, in case of fleeing the combat we can continue navigate normally for the map, but if we decide to enter the combat then we will have to finish or give up the battle.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_11.png)
 
-Una vez dentro del combate, dependiendo la velocidad de cada burrito se decidirá quien ataca primero, la batalla consiste en un sistema basado en turnos, donde tendremos que elegir entre un ataque débil y un ataque fuerte (limitado a 3) o en caso de defender podemos usar un máximo de 3 escudos para evitar el ataque, este proceso se repetirá hasta que algún burrito pierda la batalla.
+Once inside the combat, depending on the speed of each Burrito it will be the one who attacks first, the battle consists of a turn-based system, where we will have to choose between a weak attack and a heavy one (maximum 3) or in the case of defending we can use up to a maximum of 3 shields to evade the attack, this process will be repeated until some Burrito loses the battle.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_12.png)
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_13.png)
 
-En caso de no querer pelear, entonces podemos elegir la opción de rendirnos, entonces se mostrara una ventana advirtiendo que rendirse costara una vida a nuestro burrito.
+In the case of not wanting to fight, then we can choose to surrender, so a window will be displayed warning that giving up the battle will cost one life of our Burrito.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_14.png)
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_15.png)
 
-En caso de que nuestro burrito sea el ganador, con base en los niveles de los burritos que pelearon, será la recompensa obtenida en $STRW Tokens.
+In the event that our Burrito is the winner, based on the levels of the burritos that fought, it will be the reward obtained in $STRW Tokens.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_16.png)
 
-Si perdimos la batalla, nuestro burrito perderá una vida y recibiremos solo 300 $STRW Tokens.
+If we lose the fight, our burrito will lose a life and we will receive only 300 $STRW Tokens.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_17.png)
 
-### Evolucionar un burrito
-Para evolucionar un burrito debemos acceder al "Establo".
+### Evolve Burrito
+To evolve one of our Burrito we must access to the "Barn".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_18.png)
 
-Ahora procedemos a seleccionar uno de nuestros burritos que cumpla con 10 victorias y damos clic en "Subir de nivel".
+Now we proceed to select one of our Burrito that meets 10 victories and click on "Level up".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_19.png)
 
-Se mostrará una advertencia pidiendo confirmación para evolucionar nuestro burrito, esta acción costará 2 NEAR y 70,000 $STRW Tokens.
+A warning will be displayed asking for confirmation to evolve our burrito, this action will cost 2 NEAR and 70,000 $STRW Tokens.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_20.png)
 
-Al finalizar, se mostrarán las características actualizadas de nuestro burrito.
+At the end of this, the updated characteristics of our Burrito will be shown.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_21.png)
 
-### Curar un burrito
-Para restaurar uno de nuestros burritos debemos acceder al "Establo".
+### Restore Burrito
+To restore one of our Burrito we must access to the "Barn".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_18.png)
 
-Seleccionamos uno de nuestros burritos que no tengan vida para que recupere su salud.
+We will select one of our Burrito that has no life in order to restore its health.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_22.png)
 
-Se mostrará una advertencia pidiendo confirmación para restaurar la vida de nuestro burrito, esta acción costará 1 NEAR y 30,000 $STRW Tokens.
+A warning will be displayed asking for confirmation to restore our burrito, this action will cost 1 NEAR and 30,000 $STRW Tokens.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_23.png)
 
-Una vez restaurado nuestro burrito, la ilustración de la carta cambiará y el contador de vidas aumentara a 5.
+Once our burrito is restored, the illustration on the card will change and the life counter will increase to 5 again.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_24.png)
 
-### Participar en una incursión
+### Participate in Incursion
 
-Para participar en una incursión primero debemos acceder a la "Pradera".
+To participate in a raid we must first access the meadow.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_1.png)
 
-Debemos buscar el área del coliseo y acercarse a él para interactuar.
+We must look for the coliseum area and approach it to interact.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_25.png)
 
-Si hay una incursión activa, se nos mostrará los detalles de los jugadores que ya están dentro, si hay espacio, podemos registrar uno de nuestros burritos haciendo clic en el botón de "seleccionar burrito", hasta un máximo de 10 jugadores pueden participar en cada incursión.
+If there is an active Incursion we will be shown the details of the players that are already inside, if there is space then we can register one of our Burritos by clicking on the "Select Burrito" button, up to a maximum of 10 players can participate in each Incursion.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_26.png)
 
-Se mostrará una ventana donde debemos seleccionar uno de nuestros burritos para participar en la incursión.
+We will be shown a window where we must select one of our Burritos to participate in the Incursion.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_27.png)
 
-Ahora solo debemos esperar a que la incursión inicie, una vez el tiempo haya terminado seremos redirigidos a la batalla.
+Now we just have to wait for the Incursion to start, once this time is over we will be redirected to the battle.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_28.png)
 
-Una vez dentro de la batalla, tendremos que seguir la misma dinámica como una batalla contra un burrito salvaje, solo debemos elegir el tipo de ataque o en caso de defender, debemos elegir si queremos usar uno de nuestros escudos, la vida del "Mega burrito" está compartida entre todos los jugadores, así que cuanto más jugadores participen, mayor será la probabilidad de ganar.
+Once inside the battle, we will follow the same dynamics as the battle against wild burritos, we will have to choose what type of attack to carry out or in case of defending we choose if we want to use one of our shields. The life of the "Mega Burrito" will be shared between all players, so the more players participating, will be more likely to beat the "Mega Burrito".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_29.png)
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_30.png)
 
-Al finalizar la incursión, un mensaje se mostrará mencionando que el coliseo fue destruido en la batalla y que se debe esperar un tiempo para reconstruirlo y poder participar de nuevo.
+At the end of the Incursion, a message will be displayed mentioning that the coliseum was destroyed by the battle and that we will have to wait a while for it to be rebuilt and be able to participate again.
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_31.png)
 
-Una última ventana se mostrará donde nos dirá que recuperaremos nuestro burrito al hacer clic en "Aceptar" en caso de haber ganado la incursión también nos otorgaran las recompensas, eso depende del daño que hicimos al "Mega burrito" con nuestro burrito.
+A last window will be shown where it will tell us that to recover our Burrito we must click "Accept", in case of winning the Incursion then we will also be granted the rewards, these depend on the damage by our Burrito done to the "Mega Burrito".
 ![Image text](https://github.com/cloudmex/burrito-battle-ui/blob/main/assets/screenshot_32.png)
 
-## Construido con 🛠️
-* [Phaser 3](https://phaser.io/phaser3) - Motor Gráfico
+## Built with 🛠️
+* [Phaser 3](https://phaser.io/phaser3) - Game Engine
