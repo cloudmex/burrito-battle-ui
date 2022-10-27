@@ -202,6 +202,7 @@ export default class Establo extends Phaser.Scene{
 
     infoBigCard(burrito){
         if(this.info_bigCard == false){
+            console.log(burrito);
             this.infoCard = new InfoCard(this.sys.game.scale.gameSize.width / 2 + 490, this.sys.game.scale.gameSize.height / 2 - 50, burrito, this).setScale(0.7);
             this.bigCard.PointerOver();
             this.info_bigCard = true;

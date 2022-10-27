@@ -654,7 +654,9 @@ export class BattleEnd{
             this.resultUI.add(scene.add.text(10, -305, isVictoria ? Translate.Translate("MsgVictory") : Translate.Translate("MsgDefeat"), {fontSize: 100, fontFamily:"BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center"}).setOrigin(0.5));
             this.resultUI.add(this.burrito = scene.add.sprite(0, 30).setScale(0.75));
             if(isVictoria)
-                    this.burrito.play("victoria_Player");
+                this.burrito.play("victoria_Player");
+            else if(!isIncursion)
+                this.burrito.play("derrota_Player");
 
         }, 1000);  
     }
@@ -709,7 +711,8 @@ export class InfoCard{
 
         this.cardResult = scene.add.container(x, y).setScrollFactor(0)
         this.numBurrito = burrito.name.split("#", 2);
-        this.cardResult.add(scene.add.text(-100, -235, "Burrito #" + this.numBurrito[1] + "\n" + Translate.Translate("Type") + Translate.Translate(burrito.burrito_type) + "\n" + Translate.Translate("Level") + burrito.level+ "\n" + Translate.Translate("Wins") + burrito.win + "\n" + Translate.Translate("Lifes") + burrito.hp + "\n" + Translate.Translate("Strength") + burrito.attack + "\n" + Translate.Translate("Defense") + burrito.defense + "\n" + Translate.Translate("Speed") + burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
+        console.log(Translate.Translate(burrito.burrito_type));
+        this.cardResult.add(scene.add.text(-100, -235, "Burrito #" + this.numBurrito[1] + "\n" + Translate.Translate("Type") + burrito.burrito_type + "\n" + Translate.Translate("Level") + burrito.level+ "\n" + Translate.Translate("Wins") + burrito.win + "\n" + Translate.Translate("Lifes") + burrito.hp + "\n" + Translate.Translate("Strength") + burrito.attack + "\n" + Translate.Translate("Defense") + burrito.defense + "\n" + Translate.Translate("Speed") + burrito.speed, { fontSize: 45, fontFamily: "BangersRegular", color: 'white' }));
     }
     
     setScale(value){

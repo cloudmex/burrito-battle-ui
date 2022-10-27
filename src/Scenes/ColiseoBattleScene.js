@@ -116,8 +116,8 @@ export default class ColiseoBattle extends Phaser.Scene{
             location.reload();
         }
     }
-    Animation(animPlayer, animCPU){if(
-        this.megaburritoData.health <= 0){
+    Animation(animPlayer, animCPU){
+        if(this.megaburritoData.health <= 0){
             console.error("Megaburrito ha perdido");
             this.BackToPradera("Player");
         }

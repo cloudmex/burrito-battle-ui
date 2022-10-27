@@ -190,7 +190,7 @@ export default class Battle extends Phaser.Scene{
     }
     BackToPradera = (winner) => {
         let isWinner = winner == "Player";
-        new BattleEnd(this.game.config.width / 2, this.game.config.height / 2, this, isWinner, this.currentBattle.rewards);
+        new BattleEnd(this.game.config.width / 2, this.game.config.height / 2, this, isWinner, this.currentBattle.rewards, false);
         setTimeout(() => {
             this.BackToField();
         }, 10000);
