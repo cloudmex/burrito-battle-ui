@@ -62,10 +62,10 @@ export default class Coliseo extends Phaser.Scene{
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
             await this.loadingScreen.OnComplete();
             await Alert.Fire(this, Translate.Translate("TleColiseumDestroyAlert"), Translate.Translate("MsgColiseumDestroyAlert"), Translate.Translate("BtnAccept"));
-            this.loadingScreen = new LoadingScreen(this);
+            let _loadingScreen = new LoadingScreen(this);
             let playerIncursion = await Near.GetPlayerIncursion();
             let canWithdrawBurrito = await Near.CanWithdrawBurrito();
-            await this.loadingScreen.OnComplete();
+            await _loadingScreen.OnComplete();
             if(playerIncursion.player.burrito_id != null && parseInt(playerIncursion.incursion.finish_time).toString().substring(0,13) < parseInt(Date.now()) && canWithdrawBurrito){
                 await Alert.Fire(this, Translate.Translate("TleTakeBackBurritoAlert"), Translate.Translate("MsgTakeBackBurritoAlert"), Translate.Translate("BtnAccept"))
                 .then(async (result) =>{ 
@@ -100,14 +100,25 @@ export default class Coliseo extends Phaser.Scene{
             this.CreatePanelIncursion();
         }
         new Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", Translate.Translate("BtnMeadow"), this, this.BackToPradera, {fontSize: 30, fontFamily: "BangersRegular"});
+
+        if(window.location.origin.includes("localhost")){
+            new Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar Incursion", this, async()=>{ 
+                let _loadingScreen = await new LoadingScreen(this);
+                await Near.WithdrawBurritoOwner();
+                await Near.DeleteAllIncursions() 
+                _loadingScreen.OnComplete();
+                location.reload();
+            }, {fontSize: 30, fontFamily: "BangersRegular"});
+        }
+
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }
     GetRewards = async() =>{
         this.canNavigate = false;
-        this.loadingScreen = new LoadingScreen(this);
+        let loadingScreen = new LoadingScreen(this);
         let result = await Near.WithdrawBurritoOwner();
-        await this.loadingScreen.OnComplete();
+        await loadingScreen.OnComplete();
         if(result.complete){
             if(result.win == "MegaBurrito")
                 await Alert.Fire(this, Translate.Translate("TleLosersAlert"), Translate.Translate("MsgLosersAlert"), Translate.Translate("BtnAccept"));
@@ -145,9 +156,9 @@ export default class Coliseo extends Phaser.Scene{
         .then(async (result) =>{ 
             if(result){
                 localStorage.setItem("lastScene", "Coliseo");
-                this.loadingScreen = new LoadingScreen(this);
+                let loadingScreen = new LoadingScreen(this);
                 await Near.CreateIncursion();
-                await this.loadingScreen.OnComplete();
+                await loadingScreen.OnComplete();
                 location.reload();
             }
         });
@@ -182,13 +193,13 @@ export default class Coliseo extends Phaser.Scene{
                     if(burrito.token_id == localStorage.getItem("burrito_selected"))
                         localStorage.removeItem("burrito_selected");
                     
-                    this.loadingScreen = new LoadingScreen(this);
+                    let loadingScreen = new LoadingScreen(this);
                     await Near.RegisterInIncursion(burrito.token_id);
                     localStorage.setItem("lastScene", "Coliseo");
                     this.incursion = await Near.GetActiveIncursion();
                     this.panelContainer.destroy();
                     this.CreatePanelIncursion();
-                    await this.loadingScreen.OnComplete();
+                    await loadingScreen.OnComplete();
                 }
             });
         }
@@ -205,6 +216,7 @@ export default class Coliseo extends Phaser.Scene{
         }
     }
     async CreateIncursionInfo(){
+        let loadingScreen = new LoadingScreen(this); 
         let incursion = await Near.GetPlayerIncursion();
         let mega = incursion.incursion.mega_burrito;
         let info = await Near.BurritosIncursionInfo(incursion.incursion.id);
@@ -224,9 +236,8 @@ export default class Coliseo extends Phaser.Scene{
             .setOrigin(0.5).setScale(player.is_alive ? 0.55 : 0.2).setInteractive()
             .on("pointerover", (pointer)=>{ incursionContainer.add(this.playerNameText = this.add.text((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2, player.player_name, {fontSize: 18, fontFamily: "BangersRegular", align: "center", strokeThickness:5, stroke: "#000"}).setOrigin(0.5).setDepth(2)); })
             .on("pointermove", (pointer) => { 
-                if(this.playerNameText !== null)
-                    this.playerNameText.setPosition((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2)
-                })
+                this.playerNameText?.setPosition((pointer.worldX + ownerOffset.x) - this.game.config.width/2, (pointer.worldY + ownerOffset.y) - this.game.config.height/2)
+            })
             .on("pointerout", ()=>{
                 if(this.playerNameText !== null)
                     this.playerNameText.destroy();
@@ -235,6 +246,7 @@ export default class Coliseo extends Phaser.Scene{
         
         let result = incursion.incursion.finish_time.toString();
         this.counterInterval = setInterval(() => {this.ContdownInfo(result == 0 ? result : parseInt(result.substring(0, result.length - 6))) }, 1000);
+        loadingScreen.OnComplete();
     }
     CreatePanelIncursion(){
         let mega = this.incursion.mega_burrito;
@@ -252,7 +264,7 @@ export default class Coliseo extends Phaser.Scene{
                 this.CreatePanel() 
             }, {fontSize: 24, fontFamily: "BangersRegular"}).GetComponents());
         } else{
-            incursionContainer.add(this.add.text(200, 0, Translate.Translate("MsgRegisteredIncursion"), {fontSize: 30, fontFamily: "BangersRegular", align: "center"}).setOrigin(0.5));
+            incursionContainer.add(this.add.text(200, 0, Translate.Translate("MsgRegisteredIncursion"), {fontSize: 30, fontFamily: "BangersRegular", align: "center", wordWrap: { width: 600 }}).setOrigin(0.5));
         }
         let playersTest = this.incursion.players;
         playersTest.forEach(async(player, i) => {

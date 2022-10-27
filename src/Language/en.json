@@ -129,7 +129,7 @@
     "MsgUseBurritoAlert": "Do you want to use this burrito for the Incursion?",
     "BtnSelect": "Select",
     "MsgFinishIncursion0": "The Incursion ends at \n00: 00: 00",
-    "MsgRegisteredIncursion": "You are already registered in the incursion\nWait for it to start!",
+    "MsgRegisteredIncursion": "You are already registered in the incursion.\nWait for it to start!",
     "MsgStartIncursion": "The Incursion starts at:\n",
     "MsgFinishIncursion": "The Incursion ends at:\n",
     "MsgFinishBattle": "The battle ends at:\n",
