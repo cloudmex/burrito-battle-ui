@@ -20,14 +20,14 @@ This type of NFT will store the main information of the Burritos within the game
 
 The properties that each burrito has are the following: 
 
-Type: It is one of the 5 types to which the Burrito can belong. 
-HP: It will be the life counter that the Burrito has up to a maximum of 5. 
-Attack: They will be the attack points that the burrito has. 
-Defense: They will be the defense points that the burrito has. 
-Speed: They will be the speed points that the burrito has. 
-Win: Will be the win counter to evolve which will have a maximum of 10. 
-Level: Will be the level that the Burrito has up to a maximum of 40. 
-Media: Will contain the image of the Burrito. 
+* Type: It is one of the 5 types to which the Burrito can belong. 
+* HP: It will be the life counter that the Burrito has up to a maximum of 5. 
+* Attack: They will be the attack points that the burrito has. 
+* Defense: They will be the defense points that the burrito has. 
+* Speed: They will be the speed points that the burrito has. 
+* Win: Will be the win counter to evolve which will have a maximum of 10. 
+* Level: Will be the level that the Burrito has up to a maximum of 40. 
+* Media: Will contain the image of the Burrito. 
 
 ### Buy $STRW Tokens
 In order to acquire $STRW Tokens we must enter the "Silo" option.
