@@ -7,7 +7,7 @@ export default class Pradera extends Phaser.Scene{
     tmpX = 0;
     tmpY = 0;
     canMove = true;
-    speed = 150;
+    speed = 650;
     target = new Phaser.Math.Vector2();
     showAlert = false;
     lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
@@ -244,10 +244,10 @@ export default class Pradera extends Phaser.Scene{
                 {x: 1686, y: 667, w: 44, h: 7},//tree
 
                 {x: 1620, y: 1090, w: 620, h: 500},//wall
-                //{x: 1700, y: 450, w: 450, h: 600},//wall
+                {x: 1700, y: 450, w: 450, h: 600},//wall
             ], 
             triggers:[
-                //{x: 1430, y: 480, w: 60, h: 400, variable: "hospital", event: ()=>{this.ShowAlert("Hospital", "Aqui puedes ingresar a tus burritos para recuperar su salud", "Hospital")}},
+                {x: 1430, y: 480, w: 60, h: 400, variable: "hospital", event: ()=>{this.ShowAlert("Hospital", "Aqui puedes ingresar a tus burritos para recuperar su salud", "Hospital")}},
             ],
             wildBurritos: {num: 3, background: "desierto"},
         };
@@ -373,7 +373,7 @@ export default class Pradera extends Phaser.Scene{
             })
         });
 
-        //this.InsertImageInQuadrant({quadrant: {x: 3, y: 2}, image: {path:"hospital"}, offset: {x:0, y: 0}, depth : 2});
+        this.InsertImageInQuadrant({quadrant: {x: 3, y: 2}, image: {path:"hospital"}, offset: {x:0, y: 0}, depth : 2});
 
         this.add.image(0,0, "light volumetric").setDepth(2).setOrigin(0).setScrollFactor(0)
 
@@ -454,11 +454,11 @@ export default class Pradera extends Phaser.Scene{
         this.hudBurrito?.Update();
         this.button?.Update();
 
-        if(window["barn"] != null && window["silo"] != null && window["coliseum"] != null/* && window["hospital"]*/)
+        if(window["barn"] != null && window["silo"] != null && window["coliseum"] != null && window["hospital"])
             this.showAlert = Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["barn"].getBounds()) 
                             | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["silo"].getBounds()) 
                             | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["coliseum"].getBounds())
-                            //| Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["hospital"].getBounds());
+                            | Phaser.Geom.Intersects.RectangleToRectangle(this.burrito.getBounds(), window["hospital"].getBounds());
         
         if(this.canMove){
             let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);

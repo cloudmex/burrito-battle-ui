@@ -21,10 +21,9 @@ export default class Hospital extends Phaser.Scene{
     }
     async loadAssets(){
         if(localStorage.getItem("burrito_selected") != null){
-            //let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-            //this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
+            let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+            this.load.spritesheet("miniBurrito", `../src/assets/Images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
-        this.load.spritesheet("miniBurrito", '../src/assets/Images/Pradera/burrito_agua.png', {frameWidth: 51, frameHeight: 53});
 
         this.load.spritesheet("capsulas", '../src/assets/Images/Hospital/capsulas.png', {frameWidth:239, frameHeight:294});
         this.load.image("hospital_background", '../src/assets/Images/Hospital/Interior Hospital.png');
@@ -49,7 +48,6 @@ export default class Hospital extends Phaser.Scene{
 
         this.load.once("complete", this.start, this);
         this.load.start(); 
-        console.log(this.asd);
     }
     GetCapsuleStatus(capsule){
         if(capsule.burrito_id == "")
@@ -80,7 +78,7 @@ export default class Hospital extends Phaser.Scene{
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: 0 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: 0 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: 0 });
-        this.burrito = this.physics.add.sprite(400, this.sys.game.scale.gameSize.height / 2 + 50, "miniBurrito", 0).setOrigin(0.5).setScale(3).setCollideWorldBounds(true);
+        this.burrito = this.physics.add.sprite(500, this.sys.game.scale.gameSize.height / 2 + 50, "miniBurrito", 0).setOrigin(0.5).setScale(3).setCollideWorldBounds(true);
         
         //this.burrito.onWorldBounds = false;
         
@@ -152,7 +150,6 @@ export default class Hospital extends Phaser.Scene{
     ViewCapsule = async (capsule) => {
         if(!this.showAlert){
             this.showAlert = true;
-            console.log("stopasd");
             this.burrito.body.stop();
             this.burrito.stop();
             //await Alert.Fire(this, "title", "description", Translate.Translate("BtnGoSiteAlert"), Translate.Translate("BtnCancelAlert"))
@@ -252,36 +249,35 @@ export default class Hospital extends Phaser.Scene{
         }
     }
     async UseCapsule(capsule){
-            if(this.isPanel) return ;
-            this.isPanel = true;
+        if(this.isPanel) return ;
+        this.isPanel = true;
 
-            let capsuleUI = this.capsules[capsule - 1]
-            let selectedCapsule = this.capsulesStatus[`capsule${capsule}`];
-            let now = Date.now() /1000 |0
-            let finish = parseInt(selectedCapsule.finish_time.toString().substring(0, selectedCapsule.finish_time.toString().length - 9));
-            this.capsulesStatus = await Near.GetPlayerCapsules();
+        let capsuleUI = this.capsules[capsule - 1]
+        let selectedCapsule = this.capsulesStatus[`capsule${capsule}`];
+        let now = Date.now() /1000 |0
+        let finish = parseInt(selectedCapsule.finish_time.toString().substring(0, selectedCapsule.finish_time.toString().length - 9));
+        this.capsulesStatus = await Near.GetPlayerCapsules();
 
-            if(selectedCapsule.burrito_id != "" && now > finish){            
-                this.loadingScreen = new LoadingScreen(this);
-                await Near.WithdrawBurritoOwnerHospital(capsule);
-                await this.loadingScreen.OnComplete();
-                new DialogueBox(this, 700, 500, ["¡Tu burrito está listo!, ya volverá a tu establo para que puedas volver a usarlo"], true, 0.8, ()=>{this.isPanel = false;});
-                capsuleUI.setTexture("capsulas", 0);
-                return;
-                
-            } else if(now < finish || window["isCapsule" + capsule]){
-                let text = [this.Contdown(parseInt(selectedCapsule.finish_time.toString().substring(0, selectedCapsule.finish_time.toString().length - 6)))]
-                new DialogueBox(this, 700, 500, text, true, 0.8, ()=>{this.isPanel = false;});
-                return;
-
-            }
+        if(selectedCapsule.burrito_id != "" && now > finish){            
+            this.loadingScreen = new LoadingScreen(this);
+            await Near.WithdrawBurritoOwnerHospital(capsule);
+            await this.loadingScreen.OnComplete();
+            new DialogueBox(this, 700, 500, ["¡Tu burrito está listo!, ya volverá a tu establo para que puedas volver a usarlo"], true, 0.8, ()=>{this.isPanel = false;});
+            capsuleUI.setTexture("capsulas", 0);
+            return;
             
-            if( await Near.GetSTRWToken() >= this.requiredSTRW){
-                this.CreatePanel(capsule);
-            }
-            else{
-                new DialogueBox(this, 700, 500, ["No tienes suficientes $STRW para ingresar a tu burrito"], true, 0.8, ()=>{this.isPanel = false;});
-            }
+        } else if(now < finish || window["isCapsule" + capsule]){
+            let text = [this.Contdown(parseInt(selectedCapsule.finish_time.toString().substring(0, selectedCapsule.finish_time.toString().length - 6)))]
+            new DialogueBox(this, 700, 500, text, true, 0.8, ()=>{this.isPanel = false;});
+            return;
+        }
+        
+        if( await Near.GetSTRWToken() >= this.requiredSTRW){
+            this.CreatePanel(capsule);
+        }
+        else{
+            new DialogueBox(this, 700, 500, ["No tienes suficientes $STRW para ingresar a tu burrito"], true, 0.8, ()=>{this.isPanel = false;});
+        }
     }
     async CreatePanel(capsule){
         this.isPanel =true;
@@ -294,6 +290,15 @@ export default class Hospital extends Phaser.Scene{
         this.panelContainer.add(new Button(500, 85, 1, "right_arrow", null, this, ()=>{ this.Navigate(1); }).GetComponents());
         this.panelContainer.add(new Button(600, -500, 0.25, "cerrar", null, this, ()=>{ this.panelContainer.destroy(); this.isPanel = false; }).GetComponents());
         this.SpawnCards(capsule);
+    }
+    Navigate = async(nav) => {
+        if(this.counter + nav >= 0 && this.counter + nav < this.totalTokens / 6){
+            this.canNavigate = false;
+            this.counter += nav;
+            this.cards.forEach(card => card.GetComponents().destroy());
+            this.SpawnCards();
+            this.canNavigate = true;
+        }
     }
     SpawnCards = async(capsule) => {
         this.cards = [];
@@ -314,7 +319,7 @@ export default class Hospital extends Phaser.Scene{
         this.panelContainer.destroy(); 
         this.isPanel = false; 
         await this.loadingScreen.OnComplete();
-        new DialogueBox(this, 700, 500, ["Listo, ahora debes esperar una época para volver por tu burrito"], true, 0.8, ()=>{this.isPanel = true;});
+        new DialogueBox(this, 700, 500, ["Listo, ahora debes esperar una época para volver por tu burrito"], true, 0.8, ()=>{this.isPanel = false;});
         this.capsules[capsule - 1].setTexture("capsulas", 1);
         window["isCapsule" + capsule] = true;
     }
@@ -324,5 +329,13 @@ export default class Hospital extends Phaser.Scene{
         let seconds = (minutes % 1) * 60;
 
         return `Tu burrito estará listo en ${parseInt(hour).toString().padStart(2, '0')} horas, ${parseInt(minutes).toString().padStart(2, '0')} minutos y ${parseInt(seconds).toString().padStart(2, '0')} segundos`;
+    }
+    burritoMediaToSkin = (media) => {
+        switch(media){
+            case "QmULzZNvTGrRxEMvFVYPf1qaBc4tQtz6c3MVGgRNx36gAq": return "electrico";
+            case "QmZEK32JEbJH3rQtXL9BqQJa2omXfpjuXGjbFXLiV2Ge9D": return "planta";
+            case "QmQcTRnmdFhWa1j47JZAxr5CT1Cdr5AfqdhnrGpSdr28t6": return "fuego";
+            case "QmbMS3P3gn2yivKDFvHSxYjVZEZrBdxyZtnnnJ62tVuSVk": return "agua";
+        }
     }
 }
