@@ -22,6 +22,7 @@ export default class Hospital extends Phaser.Scene{
     async loadAssets(){
         if(localStorage.getItem("burrito_selected") != null){
             let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+            console.log(burritoPlayerSkin);
             this.load.spritesheet("miniBurrito", `../src/assets/Images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
 
@@ -68,19 +69,16 @@ export default class Hospital extends Phaser.Scene{
         new Button(this.game.config.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnBackToMeadow"), this, () => {this.scene.start("newMap")}, {fontSize: 24, fontFamily: "BangersRegular"});
         this.capsulesStatus = await Near.GetPlayerCapsules();
         this.requiredSTRW = await Near.GetStrwCost();
-        console.log(this.capsulesStatus);
 
-        let capsule1 = this.add.sprite(this.game.config.width / 2 - 455, 250, "capsulas", this.GetCapsuleStatus(this.capsulesStatus.capsule1)).setOrigin(0.5)//.setInteractive(this.input.makePixelPerfect()).on("pointerdown", ()=>{ this.UseCapsule(1) });
-        let capsule2 = this.add.sprite(this.game.config.width/ 2 + 30, 250, "capsulas", this.GetCapsuleStatus(this.capsulesStatus.capsule2)).setOrigin(0.5)//.setInteractive(this.input.makePixelPerfect()).on("pointerdown", ()=>{ this.UseCapsule(2) });
-        let capsule3 = this.add.sprite(this.game.config.width / 2 + 455, 250, "capsulas", this.GetCapsuleStatus(this.capsulesStatus.capsule3)).setOrigin(0.5)//.setInteractive(this.input.makePixelPerfect()).on("pointerdown", ()=>{ this.UseCapsule(3) });
+        let capsule1 = this.add.sprite(this.game.config.width / 2 - 455, 250, "capsulas", this.GetCapsuleStatus(this.capsulesStatus.capsule1)).setOrigin(0.5);
+        let capsule2 = this.add.sprite(this.game.config.width/ 2 + 30, 250, "capsulas", this.GetCapsuleStatus(this.capsulesStatus.capsule2)).setOrigin(0.5);
+        let capsule3 = this.add.sprite(this.game.config.width / 2 + 455, 250, "capsulas", this.GetCapsuleStatus(this.capsulesStatus.capsule3)).setOrigin(0.5);
         this.capsules = [capsule1, capsule2, capsule3];
 
         this.anims.create({ key: 'walkUp', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [0, 1, 2] }), frameRate: 12, repeat: 0 });
         this.anims.create({ key: "walkRight", frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [3, 4, 5] }), frameRate: 12, repeat: 0 })
         this.anims.create({ key: 'walkDown', frames: this.anims.generateFrameNumbers('miniBurrito', { frames: [6, 7, 8] }), frameRate: 12, repeat: 0 });
         this.burrito = this.physics.add.sprite(500, this.sys.game.scale.gameSize.height / 2 + 50, "miniBurrito", 0).setOrigin(0.5).setScale(3).setCollideWorldBounds(true);
-        
-        //this.burrito.onWorldBounds = false;
         
         this.Cursors = this.input.keyboard.createCursorKeys();
         this.velocity = {x: 0, y: 0};
@@ -103,7 +101,6 @@ export default class Hospital extends Phaser.Scene{
             { x: this.game.config.width/2 + 30, y: 200, w: 150, h: 80 },//capsule 2
             { x: this.game.config.width/2 + 455, y: 200, w: 150, h: 80 },//capsule 3
             { x: this.game.config.width/2 - 700, y: this.game.config.height/2 + 50, w: 100, h: 180 },//exit
-            
         ];
         
         let triggers = [
@@ -117,10 +114,11 @@ export default class Hospital extends Phaser.Scene{
             let zone = this.add.zone(c.x, c.y, c.w, c.h);
             this.physics.world.enable(zone);
             zone.body.setImmovable(true);
-            this.physics.add.collider(this.burrito, zone, (burrito, _)=>{ burrito.body.stop(); this.burrito.stop();});
+            this.physics.add.collider(this.burrito, zone, (burrito, _) => { burrito.body.stop(); this.burrito.stop();});
         })
         let circle = this.physics.add.staticSprite(this.game.config.width/2 - 135, this.game.config.height/2 - 5).setCircle(150)//.setCollideWorldBounds(true);
         this.physics.add.collider(this.burrito, circle);
+
         triggers.forEach(c =>{
             let zone = this.add.zone(c.x, c.y, c.w, c.h);
             if(c.variable !== 'undefined')
@@ -131,8 +129,9 @@ export default class Hospital extends Phaser.Scene{
         })
 
         await this.loadingScreen.OnComplete();
+        this.isPanel = true;
         let text = ["Bienvenido al hospital", "Puedes dejar a tus burritos aqui para que se recuperen", `El precio de cada cápsula es de $${this.requiredSTRW} STRW`, "Selecciona alguna cápsula que esté disponible para ingresar a tu burrito"];
-        //new DialogueBox(this, 700, 500, text, true, .8, ()=>{this.isPanel = false;});
+        new DialogueBox(this, 700, 500, text, true, .8, ()=>{this.isPanel = false;});
     }
     ShowAlert = async(title, description, scene) => {
         if(!this.showAlert){
@@ -236,16 +235,14 @@ export default class Hospital extends Phaser.Scene{
                 this.burrito.flipX = false;
                 this.burrito.play("walkRight");
             }
-            if(angle >= 45 && angle < 135){
+            if(angle >= 45 && angle < 135)
                 this.burrito.play("walkUp");
-            }
             if(angle >= 135 && angle < 225){
                 this.burrito.flipX = true;
                 this.burrito.play("walkRight");
             }
-            if(angle >= 225 && angle < 315){
+            if(angle >= 225 && angle < 315)
                 this.burrito.play("walkDown");
-            }
         }
     }
     async UseCapsule(capsule){
@@ -272,12 +269,10 @@ export default class Hospital extends Phaser.Scene{
             return;
         }
         
-        if( await Near.GetSTRWToken() >= this.requiredSTRW){
+        if( await Near.GetSTRWToken() >= this.requiredSTRW)
             this.CreatePanel(capsule);
-        }
-        else{
+        else
             new DialogueBox(this, 700, 500, ["No tienes suficientes $STRW para ingresar a tu burrito"], true, 0.8, ()=>{this.isPanel = false;});
-        }
     }
     async CreatePanel(capsule){
         this.isPanel =true;
@@ -310,12 +305,8 @@ export default class Hospital extends Phaser.Scene{
         });
     }
     async EnterBurrito(burrito, capsule){
-        /*this.loadingScreen = new LoadingScreen(this);
-        await Near.DecreaseAllBurritoHp(burrito.token_id);
-        await this.loadingScreenOnComplete();
-        return;*/
         this.loadingScreen = new LoadingScreen(this);
-        let result = await Near.RegisterInHospital(burrito.token_id, capsule);
+        await Near.RegisterInHospital(burrito.token_id, capsule);
         this.panelContainer.destroy(); 
         this.isPanel = false; 
         await this.loadingScreen.OnComplete();

@@ -45,7 +45,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu, establo, silo, pradera, battle, coliseo, coliseoBattle, hospital]
+    scene: [ connection, mainMenu, establo, silo, pradera, battle, coliseo, coliseoBattle, hospital, ]
 };
 
 (async()=>await Translate.LoadJson())();

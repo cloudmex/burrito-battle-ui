@@ -31,6 +31,7 @@ export default class Connection extends Phaser.Scene {
     async start () {
         if(Near.IsConnected()){
             this.scene.start('MainMenu');
+            //this.Scene.start('Hospital');
         }
 
         this.add.image(this.game.config.width / 2, this.game.config.height / 2, 'connection_background');
