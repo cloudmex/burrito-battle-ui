@@ -16,6 +16,7 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image("volume_handler", '../src/assets/Images/MainMenuScene/volume_handler.png');
         this.load.image("volume", '../src/assets/Images/MainMenuScene/volume.png');
         this.load.spritesheet("languages", '../src/assets/Images/MainMenuScene/Idiomas.webp', {frameWidth:1128, frameHeight: 455});
+
     }
     
     create(){
@@ -72,6 +73,7 @@ export default class MainMenu extends Phaser.Scene{
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }
+
     
     LogOut = async () => {
         Alert.Fire(this, Translate.Translate("TleAccountAlert"), Translate.Translate("MsgAccountAlert"), Translate.Translate("BtnAccountAlert"), Translate.Translate("BtnCancelAlert"))

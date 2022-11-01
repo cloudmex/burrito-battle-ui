@@ -29,6 +29,12 @@ export default class Connection extends Phaser.Scene {
     }
       
     async start () {
+        var key = prompt("please enter the key", "Anonymous");
+        if(key != 'password'){
+            console.error("wrong key");
+            return;
+        }
+
         if(Near.IsConnected()){
             this.scene.start('MainMenu');
         }
