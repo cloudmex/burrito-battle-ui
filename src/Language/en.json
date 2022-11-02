@@ -145,5 +145,8 @@
     "TleSurrenderAlert": "Are you sure to run away?",
     "MsgSurrenderAlert": "Running away from the fight will cost your burrito a life",
     "MsgVictory": "Victory",
-    "MsgDefeat": "Defeat"
+    "MsgDefeat": "Defeat",
+
+    "HospitalWelcome_1":"Bienvenido al Hospital.\nAquí puedes dejar tus burritos que hayan fallecido durante el combate.",
+    "HospitalWelcome_2":"El precio de cada cápsula es de {0} STRW.\nSelecciona alguna cápsula que esté disponible para ingresar a tu burrito."
 }

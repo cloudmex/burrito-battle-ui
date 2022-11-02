@@ -22,7 +22,6 @@ export default class Hospital extends Phaser.Scene{
     async loadAssets(){
         if(localStorage.getItem("burrito_selected") != null){
             let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-            console.log(burritoPlayerSkin);
             this.load.spritesheet("miniBurrito", `../src/assets/Images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
 
@@ -66,7 +65,7 @@ export default class Hospital extends Phaser.Scene{
         this.loadingScreen = new LoadingScreen(this);
         this.add.image(0,0, "hospital_background").setOrigin(0);
         this.hudTokens = new TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
-        new Button(this.game.config.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnBackToMeadow"), this, () => {this.scene.start("newMap")}, {fontSize: 24, fontFamily: "BangersRegular"});
+        new Button(this.game.config.width / 2,  60, 0.5, "buttonContainer", Translate.Translate("BtnBackToMeadow"), this, () => {this.scene.start("Pradera")}, {fontSize: 24, fontFamily: "BangersRegular"});
         this.capsulesStatus = await Near.GetPlayerCapsules();
         this.requiredSTRW = await Near.GetStrwCost();
 
@@ -107,7 +106,7 @@ export default class Hospital extends Phaser.Scene{
             { x: this.game.config.width/2 - 455, y: 300, w: 100, h: 80, variable: "capsule1", event: ()=>{ this.ViewCapsule(1)} },//capusle 1
             { x: this.game.config.width/2 + 30, y: 300, w: 100, h: 80, variable: "capsule2", event: ()=>{ this.ViewCapsule(2); } },//capsule 2
             { x: this.game.config.width/2 + 455, y: 300, w: 100, h: 80, variable: "capsule3", event: ()=>{ this.ViewCapsule(3); } },//capsule 3
-            { x: this.game.config.width/2 - 650, y: this.game.config.height / 2 + 50, w: 100, h: 180, variable: "exit", event:()=>{ this.ShowAlert("Regresar a la pradera", "¿Quieres regresar a la pradera?", "newMap") } },//exit
+            { x: this.game.config.width/2 - 650, y: this.game.config.height / 2 + 50, w: 100, h: 180, variable: "exit", event:()=>{ this.ShowAlert(Translate.Translate("BtnBackToMeadow"), "¿Quieres regresar a la pradera?", "Pradera") } },//exit
         ];
 
         colliders.forEach(c =>{
@@ -130,7 +129,10 @@ export default class Hospital extends Phaser.Scene{
 
         await this.loadingScreen.OnComplete();
         this.isPanel = true;
-        let text = ["Bienvenido al hospital", "Puedes dejar a tus burritos aqui para que se recuperen", `El precio de cada cápsula es de $${this.requiredSTRW} STRW`, "Selecciona alguna cápsula que esté disponible para ingresar a tu burrito"];
+        let text = [
+            Translate.Translate("HospitalWelcome_1"), 
+            Translate.Translate("HospitalWelcome_2").format(this.requiredSTRW)
+        ];
         new DialogueBox(this, 700, 500, text, true, .8, ()=>{this.isPanel = false;});
     }
     ShowAlert = async(title, description, scene) => {
@@ -138,7 +140,7 @@ export default class Hospital extends Phaser.Scene{
             this.showAlert = true;
             this.burrito.body.stop();
             this.burrito.stop();
-            await Alert.Fire(this, title, description, "Ir a pradera", "Cancelar")
+            await Alert.Fire(this, title, description, Translate.Translate("BtnAccept"), Translate.Translate("BtnCancelAlert"))
             .then(async (result) => {
                 if(result && scene != null) {
                     this.scene.start(scene);
@@ -146,6 +148,7 @@ export default class Hospital extends Phaser.Scene{
             });
         }
     }
+    
     ViewCapsule = async (capsule) => {
         if(!this.showAlert){
             this.showAlert = true;
@@ -167,7 +170,7 @@ export default class Hospital extends Phaser.Scene{
 
         if(this.canMove){
             let distance = Phaser.Math.Distance.Between(this.burrito.x, this.burrito.y, this.target.x, this.target.y);
-            if(this.burrito.body.speed > 0){
+            if(this.burrito.body?.speed > 0){
                 this.PlayAnimation();
                 //this.footStepsSFX.setMute(false); 
                 if(distance < 4 && !this.isKeyboard)
@@ -330,3 +333,10 @@ export default class Hospital extends Phaser.Scene{
         }
     }
 }
+String.prototype.format = function () {
+    var args = arguments;
+    return this.replace(/{([0-9]+)}/g, function (match, index) {
+      return typeof args[index] == 'undefined' ? match : args[index];
+    });
+  };
+  
