@@ -16,7 +16,6 @@ export default class MainMenu extends Phaser.Scene{
         this.load.image("volume_handler", '../src/assets/Images/MainMenuScene/volume_handler.png');
         this.load.image("volume", '../src/assets/Images/MainMenuScene/volume.png');
         this.load.spritesheet("languages", '../src/assets/Images/MainMenuScene/Idiomas.webp', {frameWidth:1128, frameHeight: 455});
-
     }
     
     create(){
@@ -31,6 +30,21 @@ export default class MainMenu extends Phaser.Scene{
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
         this.add.image(50, 50, "logo").setOrigin(0).setScale(0.75);
 
+        let json = this.Data = await fetch(`/Testers.json`).then(response => {
+            return response.json();
+        });
+        console.log(json.Testers);
+        if(!json.Testers.some(t => t.Tester == Near.GetAccountId())){
+            this.loadingScreen.OnComplete()
+            await Alert.Fire(this, "Test version", "Esta version es solo para testers seleccionados, te invitamos a probar la version testnet", "Ir a Testnet").
+            then(async(result) =>{
+                if(result){
+                    window.location.replace("https://testnet.burritobattle.app/");
+                }
+            })
+            return;
+        }
+
         if(localStorage.getItem("lastScene")) {
             let lastScene = localStorage.getItem("lastScene");
             localStorage.removeItem("lastScene");
@@ -40,7 +54,7 @@ export default class MainMenu extends Phaser.Scene{
             let isInBattle = await Near.IsInBattle();
             if(isInBattle){
                 await this.loadingScreen.OnComplete();
-                await Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBattleAlert"), Translate.Translate("MsgBattleAlert"), Translate.Translate("BtnKeepFighting"), Translate.Translate("BtnSurrender"))
+                await Alert.Fire(this, Translate.Translate("TleBattleAlert"), Translate.Translate("MsgBattleAlert"), Translate.Translate("BtnKeepFighting"), Translate.Translate("BtnSurrender"))
                 .then(async (result) =>{ 
                     if (result)
                         this.scene.start("Battle");

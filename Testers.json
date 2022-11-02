@@ -1,0 +1,15 @@
+{
+    "Testers":[
+        {
+            "Tester":"jesusrobles.testnet"
+        },{
+            "Tester":"Example2.Near"
+        },{
+            "Tester":"Example3.Near"
+        },{
+            "Tester":"Example4.Near"
+        },{
+            "Tester":"Example5.Near"
+        }
+    ]
+}
