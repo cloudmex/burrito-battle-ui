@@ -30,6 +30,16 @@ export default class MainMenu extends Phaser.Scene{
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
         this.add.image(50, 50, "logo").setOrigin(0).setScale(0.75);
 
+        if(await Near.GetCurrentNears() < 0.2){
+            await this.loadingScreen.OnComplete();
+            await Alert.Fire(this, "Nears insuficientes", "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones, transfiere la cantidad suficiente para poder jugar", "Aceptar").then(
+                async(r) =>{
+                    location.replace("https://wallet.testnet.near.org/");
+                }
+            )
+            return;
+        }
+
         if(localStorage.getItem("lastScene")) {
             let lastScene = localStorage.getItem("lastScene");
             localStorage.removeItem("lastScene");
@@ -39,7 +49,7 @@ export default class MainMenu extends Phaser.Scene{
             let isInBattle = await Near.IsInBattle();
             if(isInBattle){
                 await this.loadingScreen.OnComplete();
-                await Alert.Fire(this, this.game.config.width / 2, this.game.config.height / 2, Translate.Translate("TleBattleAlert"), Translate.Translate("MsgBattleAlert"), Translate.Translate("BtnKeepFighting"), Translate.Translate("BtnSurrender"))
+                await Alert.Fire(this, Translate.Translate("TleBattleAlert"), Translate.Translate("MsgBattleAlert"), Translate.Translate("BtnKeepFighting"), Translate.Translate("BtnSurrender"))
                 .then(async (result) =>{ 
                     if (result)
                         this.scene.start("Battle");

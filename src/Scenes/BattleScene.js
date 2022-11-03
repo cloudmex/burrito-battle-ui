@@ -1,4 +1,4 @@
-import { Button, Alert, LoadingScreen, SettingsButton, Card, TokenHud, Slider, Actions, BattleEnd } from '../Helpers/Helpers.js'
+import { Button, Alert, LoadingScreen, SettingsButton, Slider, Actions, BattleEnd } from '../Helpers/Helpers.js'
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 
@@ -49,6 +49,19 @@ export default class Battle extends Phaser.Scene{
     }
     
     async GetBattle(){
+        if(await Near.GetCurrentNears() < 0.2){
+            await this.loadingScreen.OnComplete();
+            await Alert.Fire(this, "Nears insuficientes", "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones", "Aceptar").then(
+                async(r) =>{
+                    localStorage.removeItem("tempBattle");    
+                    localStorage.removeItem("battle_background"); 
+                    localStorage.removeItem("lastScene");
+                    location.reload();
+                }
+            )
+            return;
+        }
+        
         let info = await Near.GetInfoByURL();
         if(info != null){
             try{
@@ -159,6 +172,19 @@ export default class Battle extends Phaser.Scene{
         new Actions(this.game.config.width / 2 - 600, this.game.config.height - 400, this, this.currentBattle, { Action1: ()=>{ this.Action("Player", 1); }, Action2: ()=> { this.Action("Player", 2); }});
     }
     Action = async(player, index) => {
+        if(await Near.GetCurrentNears() < 0.2){
+            await this.loadingScreen.OnComplete();
+            await Alert.Fire(this, "Nears insuficientes", "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones", "Aceptar").then(
+                async(r) =>{
+                    localStorage.removeItem("tempBattle");    
+                    localStorage.removeItem("battle_background"); 
+                    localStorage.removeItem("lastScene");
+                    location.reload();
+                }
+            )
+            return;
+        }
+        
         let tempBattle = this.currentBattle;
         localStorage.setItem("tempBattle", JSON.stringify(tempBattle));
         let result = await Near.BattlePlayerCPU(this.ActionIndex(index, player));
