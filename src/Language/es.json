@@ -150,5 +150,9 @@
     "TleSurrenderAlert": "¿Está seguro de huir?",
     "MsgSurrenderAlert": "El huir de la pelea le costará una vida a tu burrito",
     "MsgVictory": "Victoria",
-    "MsgDefeat": "Derrota"
+    "MsgDefeat": "Derrota",
+
+    "TleInsufficientNears": "Insuficientes nears",
+    "MsgInsufficientNears": "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones.",
+    "MsgInsufficientNearsMainMenu": "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones.\nTransfiere la cantidad suficiente para poder jugar."
 }

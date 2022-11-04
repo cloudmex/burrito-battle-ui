@@ -108,7 +108,7 @@
     "MsgHeavyAttack": "Heavy\nAttack",
     "MsgDefense": "Shield",
 
-    "TleColiseumDestroyAlert": "The Coliseum is in recontruption",
+    "TleColiseumDestroyAlert": "The Coliseum is in reconstruction",
     "MsgColiseumDestroyAlert":	"The Coliseum suffered a lot of damage to the latest incursion so it is in reconstruction for the next incursion.",
     "BtnStartIncursion": "Start Incursion",
     "TleTakeBackBurritoAlert": "Recover your burrito",
@@ -145,5 +145,9 @@
     "TleSurrenderAlert": "Are you sure to run away?",
     "MsgSurrenderAlert": "Running away from the fight will cost your burrito a life",
     "MsgVictory": "Victory",
-    "MsgDefeat": "Defeat"
+    "MsgDefeat": "Defeat",
+
+    "TleInsufficientNears": "Insufficient nears",
+    "MsgInsufficientNears": "Currently you don't have enough $Nears to realize a battle, you need at least 0.2 $Nears to realize transactions.",
+    "MsgInsufficientNearsMainMenu": "Currently you don't have enough $Nears to realize a battle, you need at least 0.2 $Nears to realize transactions.\nTransfer the enough amount to be able to play."
 }
