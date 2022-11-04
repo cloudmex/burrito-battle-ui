@@ -351,10 +351,11 @@ export class Card{
 export class TokenHud{
     TokenHud;
     burritoOverHUD = false;
-    constructor(x, y, scene, currentNEAR, currentSTRW, player){
+    constructor(x, y, scene, currentNEAR, currentSTRW, player, useScrollFactor = false){
         this.TokenHud = {x, y, scene, player};
 
-        this.hudResult = scene.add.container(x, y).setDepth(5);
+        this.hudResult = scene.add.container(x, y).setDepth(5).setScrollFactor(useScrollFactor ? 0 : 1);
+        
         this.hudResult.add(this.nearHud = scene.add.image(-40, -150, "tokenHud"));
         this.hudResult.add(this.strwHud = scene.add.image(-40, -80, "tokenHud"));
         this.hudResult.add(this.nearToken = scene.add.image(-140, -150, "tokenIcon", 1));

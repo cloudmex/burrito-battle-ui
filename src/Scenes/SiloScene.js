@@ -45,6 +45,11 @@ export default class Silo extends Phaser.Scene{
         this.textures.remove("cards")
         this.load.spritesheet("cards", '../src/assets/Images/Cards/cards.png', {frameWidth: 1080, frameHeight: 1080});
 
+
+        this.load.audio("silo_spin", '../src/assets/audio/silo_spin.wav');
+        this.load.audio("silo_stop", '../src/assets/audio/silo_stop.ogg');
+        this.load.audio("silo_win", '../src/assets/audio/silo_win.ogg');
+
         this.load.once("complete", this.Start, this);
         this.load.start();
     }
@@ -57,7 +62,7 @@ export default class Silo extends Phaser.Scene{
         this.isPrevScene = localStorage.getItem("prevScene") != null;
         localStorage.removeItem("prevScene");
         new Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", this.isPrevScene ? Translate.Translate("BtnBackToMeadow") : Translate.Translate("BtnMainMenu"), this, this.BackToMainMenu, {fontSize: 30, fontFamily: "BangersRegular"});
-        this.hudTokens = new TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken());
+        this.hudTokens = new TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken(), null, true);
         this.mintButton = new Button(this.sys.game.scale.gameSize.width / 2 + 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer", Translate.Translate("BtnMintBurrito"), this, this.ConfirmMint, {fontSize: 38, fontFamily: "BangersRegular"});
         this.barnButton = new Button(this.sys.game.scale.gameSize.width / 2 - 300, this.sys.game.scale.gameSize.height - 75, 0.75, "buttonContainer", Translate.Translate("BtnGoBarn"), this, this.GoToEstablo,  {fontSize: 40, fontFamily: "BangersRegular"});
         
@@ -173,6 +178,8 @@ export default class Silo extends Phaser.Scene{
             repeat: 0
         });
         this.silo.play("loop1");
+        this.silo_spin = this.sound.add("silo_spin", { loop: true, volume: SettingsButton.GetVolume()});
+        this.silo_spin.play()
         let timeline = this.tweens.createTimeline();
         timeline.add({
             targets: this.cameras.main,
@@ -180,6 +187,7 @@ export default class Silo extends Phaser.Scene{
             duration: 6000,
             delay: 1000,
             onComplete: ()=>{ this.time.delayedCall(1000, () => { 
+                this.sound.add("silo_stop", { loop: false, volume: SettingsButton.GetVolume()}).play();
                 this.sprites.push(this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 1500, "elements", this.GetElementFromType(minar.burrito_type)).setScale(0.5));
                 }, [], this); }
         });
@@ -189,6 +197,7 @@ export default class Silo extends Phaser.Scene{
             duration: 3000,
             delay: 1000,
             onComplete: ()=>{ this.time.delayedCall(700, () => {
+                this.sound.add("silo_stop", { loop: false, volume: SettingsButton.GetVolume()}).play();
                 this.sprites.push(this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2250, "orbs", this.GetStadistic(minar).index).setScale(0.5));
             }, [], this)}
         });
@@ -199,6 +208,8 @@ export default class Silo extends Phaser.Scene{
             duration: 3000,
             delay: 1000,
             onComplete: () => {
+                this.sound.add("silo_stop", { loop: false, volume: SettingsButton.GetVolume()}).play();
+                this.silo_spin.stop();
                 this.time.delayedCall(300, () =>{ this.sprites.push((this.add.image(this.sys.game.scale.gameSize.width/2 + 60, this.sys.game.scale.gameSize.height/2 + 2990, minar.media).setScale(0.125))); }, [], this);
                 this.time.delayedCall(2000, () =>{ this.GetCard(minar) }, [], this);
             }
@@ -215,7 +226,10 @@ export default class Silo extends Phaser.Scene{
             y: this.sys.game.scale.gameSize.height / 2 - 100,
             duration: 1500,
             rotation: 360 * 10 * Math.PI / 180, 
-            onComplete: ()=> timeline.pause()
+            onComplete: ()=> {
+                timeline.pause();
+                this.sound.add("silo_win", { loop: false, volume: SettingsButton.GetVolume()}).play();
+            }
         });
         timeline.play();
         this.input.on("pointerdown", () =>{
