@@ -51,7 +51,7 @@ export default class Battle extends Phaser.Scene{
     async GetBattle(){
         if(await Near.GetCurrentNears() < 0.2){
             await this.loadingScreen.OnComplete();
-            await Alert.Fire(this, "Nears insuficientes", "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones", "Aceptar").then(
+            await Alert.Fire(this, Translate.Translate("TleInsufficientNears"), Translate.Translate("MseInsufficientNears"), Translate.Translate("BtnAccept")).then(
                 async(r) =>{
                     localStorage.removeItem("tempBattle");    
                     localStorage.removeItem("battle_background"); 
@@ -174,7 +174,7 @@ export default class Battle extends Phaser.Scene{
     Action = async(player, index) => {
         if(await Near.GetCurrentNears() < 0.2){
             await this.loadingScreen.OnComplete();
-            await Alert.Fire(this, "Nears insuficientes", "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones", "Aceptar").then(
+            await Alert.Fire(this, Translate.Translate("TleInsufficientNears"), Translate.Translate("MseInsufficientNears"), Translate.Translate("BtnAccept")).then(
                 async(r) =>{
                     localStorage.removeItem("tempBattle");    
                     localStorage.removeItem("battle_background"); 

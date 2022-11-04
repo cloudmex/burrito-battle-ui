@@ -32,7 +32,8 @@ export default class MainMenu extends Phaser.Scene{
 
         if(await Near.GetCurrentNears() < 0.2){
             await this.loadingScreen.OnComplete();
-            await Alert.Fire(this, "Nears insuficientes", "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones, transfiere la cantidad suficiente para poder jugar", "Aceptar").then(
+            
+            await Alert.Fire(this, Translate.Translate("TleInsufficientNears"), Translate.Translate("MsgInsufficientNearsMainMenu"), Translate.Translate("BtnAccept")).then(
                 async(r) =>{
                     location.replace("https://wallet.testnet.near.org/");
                 }
