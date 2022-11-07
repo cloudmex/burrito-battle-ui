@@ -38,17 +38,19 @@ export default class Connection extends Phaser.Scene {
         new Button(this.sys.game.scale.gameSize.width / 2 + 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", Translate.Translate("BtnConnect"), this, async () => {
             await Alert.Fire(this, Translate.Translate("TleConnectAlert"), Translate.Translate("MsgConnectAlert"), Translate.Translate("BtnConnectAlert"), Translate.Translate("BtnCancelAlert"))
             .then((result) =>{ 
-                if (result)
+                if (result){
                     localStorage.setItem("accessType", "safeMode");
                     Near.Login(); 
+                }
             });
         }, { fontSize: 56, fontFamily: "BangersRegular" });
         new Button(this.sys.game.scale.gameSize.width / 2 - 350, this.sys.game.scale.gameSize.height - 150, 1, "buttonContainer", Translate.Translate("BtnConnectFullAccess"), this, async () => {
             await Alert.Fire(this, Translate.Translate("TleConnectFullAccessAlert"), Translate.Translate("MsgConnectFullAccessAlert"), Translate.Translate("BtnConnectAlert"), Translate.Translate("BtnCancelAlert"))
             .then((result) =>{
-                if (result)
-                localStorage.setItem("accessType", "fullMode");
+                if (result){
+                    localStorage.setItem("accessType", "fullMode");
                     Near.LoginFullAccess(); 
+                }
             });
         }, { fontSize: 56, fontFamily: "BangersRegular" });
 
