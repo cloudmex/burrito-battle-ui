@@ -33,9 +33,16 @@ export default class MainMenu extends Phaser.Scene{
         if(await Near.GetCurrentNears() < 0.2){
             await this.loadingScreen.OnComplete();
             
-            await Alert.Fire(this, Translate.Translate("TleInsufficientNears"), Translate.Translate("MsgInsufficientNearsMainMenu"), Translate.Translate("BtnAccept")).then(
+            await Alert.Fire(this, Translate.Translate("TleInsufficientNears"), Translate.Translate("MsgInsufficientNearsMainMenu"), Translate.Translate("BtnAccept"), "Disconnect").then(
                 async(r) =>{
-                    location.replace("https://wallet.testnet.near.org/");
+                    if(r)
+                        location.replace("https://wallet.near.org/buy");
+                    else {
+                        localStorage.clear();
+                        Near.LogOut();
+                        this.scene.start('Connection');
+                    }
+
                 }
             )
             return;
