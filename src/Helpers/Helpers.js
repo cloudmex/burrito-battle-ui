@@ -62,7 +62,7 @@ export class Alert{
             
             this.alertResult = scene.add.container(scene.game.config.width / 2, scene.game.config.height * 1.5).setScrollFactor(0).setDepth(5);
             this.alertResult.add(scene.add.image(0, 0, isMini ? "miniAlert" : "alert"));
-            this.alertResult.add(scene.add.text(0, -360, title, { fontSize:70 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
+            this.alertResult.add(scene.add.text(0, -360, title, { fontSize:64 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5));
             this.alertResult.add(this.descriptionText = scene.add.text(0, isMini ? -180 : -240, description, { fontSize:45 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5, align: "center", wordWrap: { width: 800 } }).setOrigin(0.5, 0));
             
             this.alertResult.add(new Button(cancelBtn == null ? 0 : -220 , isMini ? 135 : 350, 0.6, "buttonContainer", acceptBtn, scene, async()=> {await this.Hide(); await result(true);}, { fontSize:40 , fontFamily: "BangersRegular", stroke: 0x000000, strokeThickness: 5 } ).GetComponents());
