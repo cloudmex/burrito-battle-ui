@@ -147,7 +147,7 @@
     "MsgVictory": "Victory",
     "MsgDefeat": "Defeat",
 
-    "TleInsufficientNears": "Insufficient nears",
-    "MsgInsufficientNears": "Currently you don't have enough $Nears to realize a battle, you need at least 0.2 $Nears to realize transactions.",
-    "MsgInsufficientNearsMainMenu": "Currently you don't have enough $Nears to realize a battle, you need at least 0.2 $Nears to realize transactions.\nTransfer the enough amount to be able to play."
+    "TleInsufficientNears": "You don't have enough NEAR tokens.",
+    "MsgInsufficientNears": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions",
+    "MsgInsufficientNearsMainMenu": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions.\nTransfer the enough amount to be able to play."
 }

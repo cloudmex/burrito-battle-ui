@@ -153,6 +153,6 @@
     "MsgDefeat": "Derrota",
 
     "TleInsufficientNears": "Insuficientes nears",
-    "MsgInsufficientNears": "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones.",
-    "MsgInsufficientNearsMainMenu": "Actualmente no cuentas con $Nears suficientes para poder realizar una batalla, necesitas al menos 0.2 $Nears para realizar transacciones.\nTransfiere la cantidad suficiente para poder jugar."
+    "MsgInsufficientNears": "Actualmente, tienes {0} $NEARS tokens y el mínimo  requerido es de 0.2 $NEARs Tokens para poder hacer transacciones.",
+    "MsgInsufficientNearsMainMenu": "Actualmente, tienes {0} $NEARS tokens y el mínimo  requerido es de 0.2 $NEARs Tokens para poder hacer transacciones.\nTransfiere la cantidad suficiente para poder jugar."
 }
