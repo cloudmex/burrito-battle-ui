@@ -50,6 +50,8 @@ export default class Silo extends Phaser.Scene{
         this.load.audio("silo_stop", '../src/assets/audio/silo_stop.ogg');
         this.load.audio("silo_win", '../src/assets/audio/silo_win.ogg');
 
+        this.load.audio("chest_open", "../src/assets/audio/Treasure Chest.ogg");
+
         this.load.once("complete", this.Start, this);
         this.load.start();
     }
@@ -301,6 +303,7 @@ export default class Silo extends Phaser.Scene{
         this.anims.create({ key: "cofreAnimIn", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(0, 38) }), frameRate: 24, repeat: 0 });
         this.anims.create({ key: "cofreAnim", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(39, 58) }), frameRate: 24, repeat: 8 });
         this.anims.create({ key: "cofreAnimOut", frames: this.anims.generateFrameNumbers("cofre", { frames: this.Range(59, 64) }), frameRate: 24, repeat: 0 });
+        this.sound.add("chest_open",  { loop: false, volume: SettingsButton.GetVolume()}).play();
         this.cofreAnimation.play("cofreAnimIn")
         .once('animationcomplete', () => { 
             animContainer.add(this.add.text(0, -350, Translate.Translate("MsgBuyStrwCard"), {fontSize: 100, fontFamily: "BangersRegular"}).setOrigin(0.5));
