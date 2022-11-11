@@ -109,7 +109,7 @@
     "MsgDefense": "Shield",
 
     "TleColiseumDestroyAlert": "The Coliseum is in reconstruction",
-    "MsgColiseumDestroyAlert":	"The Coliseum suffered a lot of damage to the latest incursion so it is in reconstruction for the next incursion.",
+    "MsgColiseumDestroyAlert":	"The Coliseum suffered a lot of damage to the latest incursion so it is in reconstruction for the next incursion.\nIt will be ready in {0}.",
     "BtnStartIncursion": "Start Incursion",
     "TleTakeBackBurritoAlert": "Recover your burrito",
     "MsgTakeBackBurritoAlert": "The Incursion in which you registered at the end, will accept to recover your burrito and you can participate in following incursions.",

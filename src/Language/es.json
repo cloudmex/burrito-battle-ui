@@ -114,7 +114,7 @@
     "MsgDefense": "Escudo",
 
     "TleColiseumDestroyAlert": "El coliseo está en reconstrucción",
-    "MsgColiseumDestroyAlert":	"El coliseo sufrió mucho daño en la última incursión, por lo que está en reconstrucción para la siguiente incursión.",
+    "MsgColiseumDestroyAlert":	"El coliseo sufrió mucho daño en la última incursión, por lo que está en reconstrucción para la siguiente incursión.\nEstara listo en {0}.",
     "BtnStartIncursion": "Iniciar Incursión",
     "TleTakeBackBurritoAlert": "Recupera tu burrito",
     "MsgTakeBackBurritoAlert": "La incursión en la cual te registraste ha finalizado, da en aceptar para recuperar tu burrito y puedas participar en siguientes incursiones.",
