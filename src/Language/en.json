@@ -149,5 +149,23 @@
 
     "TleInsufficientNears": "You don't have enough NEAR tokens.",
     "MsgInsufficientNears": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions",
-    "MsgInsufficientNearsMainMenu": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions.\nTransfer the enough amount to be able to play."
+    "MsgInsufficientNearsMainMenu": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions.\nTransfer the enough amount to be able to play.",
+
+    "HTP":"How to play",
+    
+    "HTP_Title_BuySTRW":"Buy $STRW",
+    "HTP_Title_MintBurrito": "Mint Burrito",
+    "HTP_Title_SelectBurrito":"Select Burrito",
+    "HTP_Title_FightWithWildBurritos":"Fight with wild burritos",
+    "HTP_Title_PlayIncursion":"Play Incursions",
+    "HTP_Title_RestoreBurrito":"Restore Burrito",
+    "HTP_Title_EvolveBurrito":"Evolve Burrito",
+
+    "HTP_Description_BuySTRW":"Get $STRW Tokens and use them in different operations within the game.",
+    "HTP_Description_MintBurrito": "Mint and get new Burritos to join the battle",
+    "HTP_Description_SelectBurrito":"Select one of your Burritos to use in the game",
+    "HTP_Description_FightWithWildBurritos":"Fight with wild Burritos throughout the entire map",
+    "HTP_Description_PlayIncursion":"Cooperate with other players to beat the Mega Burrito",
+    "HTP_Description_RestoreBurrito":"Restore the Burrito's lives and keep fighting",
+    "HTP_Description_EvolveBurrito":"Evolve and Increase the Burrito stats"
 }
