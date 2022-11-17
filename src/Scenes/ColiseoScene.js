@@ -28,7 +28,7 @@ export default class Coliseo extends Phaser.Scene{
         this.load.image("coliseo_vacio", "../src/assets/Images/Coliseo/Coliseo_vacio.png");
         this.load.image("coliseo_inicio", "../src/assets/Images/Coliseo/Coliseo_inicio.png");
         this.load.image("coliseo_reconstruccion", "../src/assets/Images/Coliseo/Coliseo_reconstrucción.png");
-        this.load.image("coliseo_destruido", "../src/assets/Images/Coliseo/Coliseo_destruido.png");
+        this.load.image("coliseo_destruido", "../src/assets/Images/Coliseo/Coliseo_destruido.webp");//.png
 
         this.load.image("cerrar", '../src/assets/Images/cerrar.png');
 

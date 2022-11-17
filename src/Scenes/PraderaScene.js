@@ -12,6 +12,7 @@ export default class Pradera extends Phaser.Scene{
     showAlert = false;
     lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
     followCharacter = true;
+    cameraLerpFlag = true;
 
     constructor(){
         super("Pradera");
@@ -212,7 +213,7 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_09 = {
             images: [ { image: "cell_9", depth: -1 }], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 200, y: 260, w: 385, h: 750},//wall
                 {x: 100, y: 830, w: 210, h: 390},//wall
@@ -223,13 +224,13 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_10 = { 
             images: [ { image: "cell_10", depth: -1 },], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 216, y: 322 },{ x: 344, y: 550 },{ x: 320, y: 787 },{ x: 840, y: 435 },{ x: 1013, y: 462 },{ x: 1665, y: 709 }, {x:1560, y:381}]
         };
         let cell_11 = { 
             images: [ { image: "cell_11", depth: -1 }], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             wildBurritos: {num: 3, background: "pradera"},
             cactus:[ { x: 550, y: 260 },{ x: 720, y: 425 },{ x: 455, y: 795 },{ x: 930, y: 853 },{ x: 1315, y: 826 },{ x: 1507, y: 456 }, {x:1750, y:254}, {x:1550, y:940}]
         };
@@ -253,7 +254,7 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_13 = {
             images: [ { image: "cell_13", depth: -1 }], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 205, y: 170, w: 411, h: 440},//wall
                 {x: 110, y: 460, w: 240, h: 160},//wall
@@ -266,8 +267,8 @@ export default class Pradera extends Phaser.Scene{
             cactus:[ { x: 550, y: 260 }, { x: 350, y: 640 },{ x: 980, y: 600 }, { x: 790, y: 1035 } ]
         };
         let cell_14 = { 
-            images: [ { image: "cell_14", depth: -1 }], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            images: [ { image: "cell_14", depth: -1 }, {image: "cell_14_details_1", depth: 1 }, { image: "cell_14_details_2", depth: -1}], 
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders:[
                 {x: 1160, y: 0, w: 400, h: 300},//wall
                 {x: 0, y: 60, w: 1920, h: 420},//wall
@@ -281,7 +282,7 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_15 = { 
             images: [ { image: "cell_15", depth: -1 }, ], 
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 645, y: 300, w: 1700, h: 500},//wall
             ],
@@ -290,7 +291,7 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_16 = { 
             images: [ { image: "cell_16", depth: -1 }],
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders:[
                 {x: 1710, y: 355, w: 440, h: 176},//wall
                 {x: 1670, y: 535, w: 520, h: 180},//wall
@@ -302,7 +303,7 @@ export default class Pradera extends Phaser.Scene{
         };
         let cDesert = {
             images: [ {image: "desert", depth:-1}],
-            animations:[{x: 960, y: 540, spritesheet:"sand_storm_2", depth: 2, end:28, repeat: -1}],
+            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_2", depth: 2, end:28, repeat: -1}],
             triggers:[
                 { x: 960, y: 1070, w: 1920, h: 5, variable: "Desert", event:()=>{ this.DesertEndless("down");} },//wall
                 { x: 5, y: 540, w: 5, h: 1000, variable: "Desert", event:()=>{ this.DesertEndless("left"); } },//wall
@@ -320,6 +321,10 @@ export default class Pradera extends Phaser.Scene{
 
         this.zoneBattles_pradera = this.physics.add.group();
         this.zoneBattles_desierto = this.physics.add.group();
+        this.anims.create({key: "sandStormAnim_1", frameRate:30, frames: this.anims.generateFrameNumbers("sand_storm_1", {start: 0, end:28}), repeat: -1});
+        this.anims.create({key: "sandStormAnim_2", frameRate:30, frames: this.anims.generateFrameNumbers("sand_storm_2", {start: 0, end:28}), repeat: -1});
+        this.sand_1 = this.add.sprite(0, 0).play("sandStormAnim_1").setDepth(2).setOrigin(0).setScrollFactor(0).setVisible(false);
+        this.sand_2 = this.add.sprite(0, 0).play("sandStormAnim_2").setDepth(2).setOrigin(0).setScrollFactor(0).setVisible(false);
         //this.zoneBattles = this.physics.add.group();
         map.forEach((row, y) => {
             row.forEach((cell, x)=>{
@@ -483,7 +488,23 @@ export default class Pradera extends Phaser.Scene{
 
         let x = Math.floor(this.burrito.x / 1920) * 1920;
         let y = Math.floor(this.burrito.y / 1080) * 1080;
-        if(x != this.tmpX || y != this.tmpY){
+        if(x != this.tmpX || y != this.tmpY || this.cameraLerpFlag){
+            this.cameraLerpFlag = false;
+            let currentQuadrant = {x : x/1920, y: y/1080};
+
+            let quadrantsWithSand = [{x: 0,y: 2},{x: 1,y: 2},{x: 2,y: 2}, {x: 0,y: 3},{x: 1,y: 3},{x: 2,y: 3},{x: 3, y: 3}];
+            let quadrantsWithSand2 = [{x: 0,y: 4},{x: 1,y: 4},{x: 2,y: 4},{x: 3,y: 4}, ];
+
+            if(quadrantsWithSand.some(element => { return element.x === currentQuadrant.x && element.y === currentQuadrant.y;}))
+                this.sand_1.setVisible(true);
+            else
+                this.sand_1.setVisible(false);
+
+            if(quadrantsWithSand2.some(element => { return element.x === currentQuadrant.x && element.y === currentQuadrant.y; }))
+                this.sand_2.setVisible(true);
+            else
+                this.sand_2.setVisible(false);
+
             this.burrito.body.stop();
             this.followCharacter = false;
             this.StopAnimation();
@@ -678,6 +699,8 @@ export default class Pradera extends Phaser.Scene{
         this.load.image("cell_13_details_1", '../src/assets/Images/Pradera/C13/Details 1.png');
 
         this.load.image("cell_14", '../src/assets/Images/Pradera/C14/C14.png');
+        this.load.image("cell_14_details_1", '../src/assets/Images/Pradera/C14/Details 1.png');
+        this.load.image("cell_14_details_2", '../src/assets/Images/Pradera/C14/Details 2.png');
 
         this.load.image("cell_15", '../src/assets/Images/Pradera/C15/C15.png');
         this.load.image("cell_15_details_1", '../src/assets/Images/Pradera/C15/Details 1.png');
