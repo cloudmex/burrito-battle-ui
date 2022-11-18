@@ -151,21 +151,21 @@
     "MsgInsufficientNears": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions",
     "MsgInsufficientNearsMainMenu": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions.\nTransfer the enough amount to be able to play.",
 
-    "HTP":"How to play",
-    
-    "HTP_Title_BuySTRW":"Buy $STRW",
-    "HTP_Title_MintBurrito": "Mint Burrito",
-    "HTP_Title_SelectBurrito":"Select Burrito",
-    "HTP_Title_FightWithWildBurritos":"Fight with wild burritos",
-    "HTP_Title_PlayIncursion":"Play Incursions",
-    "HTP_Title_RestoreBurrito":"Restore Burrito",
-    "HTP_Title_EvolveBurrito":"Evolve Burrito",
-
-    "HTP_Description_BuySTRW":"Get $STRW Tokens and use them in different operations within the game.",
-    "HTP_Description_MintBurrito": "Mint and get new Burritos to join the battle",
-    "HTP_Description_SelectBurrito":"Select one of your Burritos to use in the game",
-    "HTP_Description_FightWithWildBurritos":"Fight with wild Burritos throughout the entire map",
-    "HTP_Description_PlayIncursion":"Cooperate with other players to beat the Mega Burrito",
-    "HTP_Description_RestoreBurrito":"Restore the Burrito's lives and keep fighting",
-    "HTP_Description_EvolveBurrito":"Evolve and Increase the Burrito stats"
+    "HTP":"How to Play",
+    "HTP_Title_BuySTRW":"Buy $STRW Tokens",
+    "HTP_Title_MintBurrito":"Mint more Burritos",
+    "HTP_Title_SelectBurrito":"Select one of your Burritos",
+    "HTP_Title_FightWithWildBurritos":"Fight With Wild Burritos",
+    "HTP_Title_PlayIncursion":"Participate in Raids",
+    "HTP_Title_RestoreBurrito":"Restore your Burritos",
+    "HTP_Title_EvolveBurrito":"Evolve your Burritos",
+    "HTP_Title_Navigate":"Explore the map",
+    "HTP_Description_BuySTRW":"Enter the Silo where you can find the merchant and purchase $STRW Tokens once every 24 hours.",
+    "HTP_Description_MintBurrito":"Enter the Silo where you can get new Burritos and join the battle",
+    "HTP_Description_SelectBurrito":"Enter in the barn where you can check your purchased Burritos and select them to use in the game.",
+    "HTP_Description_FightWithWildBurritos":"Enter the meadow where you can find Wild Burritos all over the map and fight them.",
+    "HTP_Description_PlayIncursion":"Enter the prairie and head to the coliseum section to cooperate with other players and defeat the Mega Burrito.",
+    "HTP_Description_RestoreBurrito":"Enter in the barn and select one of your dead Burritos to restore it and continue fighting.",
+    "HTP_Description_EvolveBurrito":"Enter in the barn and select one of your Burritos with 10 wins to evolve it and increase its stats.",
+    "HTP_Description_Navigate":"Enter the meadow and search the map for Wild Burritos."
 }

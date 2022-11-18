@@ -735,8 +735,8 @@ export class Carousel{
         this.scene = scene;
         this.values = values
         this.Draw(0);
-        new Button(scene.game.config.width / 2 - 600, scene.game.config.height / 2 - 200, 1, "left_arrow", null, scene, ()=>{ this.Navigate(-1); }, {fontSize: 30, fontFamily: "BangersRegular"});
-        new Button(scene.game.config.width / 2 + 600,  scene.game.config.height / 2 - 200, 1, "right_arrow", null, scene, ()=>{ this.Navigate(1); }, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Button(scene.game.config.width / 2 - 450, scene.game.config.height / 2, 1, "left_arrow", null, scene, ()=>{ this.Navigate(-1); }, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Button(scene.game.config.width / 2 + 450,  scene.game.config.height / 2, 1, "right_arrow", null, scene, ()=>{ this.Navigate(1); }, {fontSize: 30, fontFamily: "BangersRegular"});
     }
     Navigate(nav){
         if(this.counter + nav >= 0 && this.counter + nav < this.values.length){
@@ -747,17 +747,15 @@ export class Carousel{
     Draw(value){
         this.scene.anims.create({key: 'currentAnim', frames: this.scene.anims.generateFrameNumbers(this.values[value].image.img, {frames: this.scene.Range(0, this.values[value].image.frames - 1)}), frameRate: 2, repeat: -1 });
 
-        this.image = this.scene.add.sprite(this.scene.game.config.width / 2, this.scene.game.config.height / 2 - 200).setScale(1.5);
+        this.title = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height / 2 - 360, Translate.Translate(this.values[value].title), { fontSize: 80, fontFamily: "BangersRegular", align: "center", wordWrap: { width: 780 }}).setOrigin(0.5);
+        this.image = this.scene.add.sprite(this.scene.game.config.width / 2, this.scene.game.config.height / 2 - 20).setScale(1.25);
         this.image.play("currentAnim");
-        this.title = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height / 2 + 150, Translate.Translate(this.values[value].title), { fontSize: 80, fontFamily: "BangersRegular", align: "center", wordWrap: { width: 900 }}).setOrigin(0.5);
         this.description = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height / 2 + 300, Translate.Translate(this.values[value].description), { fontSize: 40, fontFamily: "BangersRegular", align: "center", wordWrap: { width: 800 }}).setOrigin(0.5);
     }
     Update(){
         this.scene.anims.remove("currentAnim")
         this.scene.anims.create({key: 'currentAnim', frames: this.scene.anims.generateFrameNumbers(this.values[this.counter].image.img, {frames: this.scene.Range(0, this.values[this.counter].image.frames - 1)}), frameRate: 3, repeat: -1 });
         this.image.play("currentAnim");
-
-        //this.image.setTexture(this.values[this.counter].image);
         this.title.setText(Translate.Translate(this.values[this.counter].title));
         this.description.setText(Translate.Translate(this.values[this.counter].description));
     }
