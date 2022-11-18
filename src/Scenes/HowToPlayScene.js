@@ -14,7 +14,7 @@ export default class HowToPlay extends Phaser.Scene{
 
         this.load.spritesheet("image_BuySTRW", "../src/assets/Images/HowToPlay/Buy STRW.png", {frameWidth: 600, frameHeight: 338})
         this.load.spritesheet("image_EvolveBurrito", "../src/assets/Images/HowToPlay/Evolve.png", {frameWidth: 600, frameHeight: 338})
-        this.load.spritesheet("image_PlayIncursions", "../src/assets/Images/HowToPlay/Incursions.png", {frameWidth: 600, frameHeight: 362})
+        this.load.spritesheet("image_PlayIncursions", "../src/assets/Images/HowToPlay/Incursions.png", {frameWidth: 600, frameHeight: 338})
         this.load.spritesheet("image_MintBurrito", "../src/assets/Images/HowToPlay/Mint.png", {frameWidth: 600, frameHeight: 338})
         this.load.spritesheet("image_Navigate", "../src/assets/Images/HowToPlay/Navigate.png", {frameWidth: 600, frameHeight: 361})
 
@@ -73,8 +73,8 @@ export default class HowToPlay extends Phaser.Scene{
                     title: "HTP_Title_PlayIncursion",
                     description: "HTP_Description_PlayIncursion",
                     image: { 
-                        img: "image_PlayIncursions",//poner la de la incursion xd
-                        frames: 25
+                        img: "image_PlayIncursions",
+                        frames: 27
                     }
                 },
                 {
@@ -82,8 +82,6 @@ export default class HowToPlay extends Phaser.Scene{
                     description: "HTP_Description_EvolveBurrito",
                     image: { 
                         img: "image_EvolveBurrito",
-                        width: 600,
-                        height: 338,
                         frames: 14
                     }
                 },

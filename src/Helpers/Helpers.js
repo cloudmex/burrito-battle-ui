@@ -747,7 +747,7 @@ export class Carousel{
     Draw(value){
         this.scene.anims.create({key: 'currentAnim', frames: this.scene.anims.generateFrameNumbers(this.values[value].image.img, {frames: this.scene.Range(0, this.values[value].image.frames - 1)}), frameRate: 2, repeat: -1 });
 
-        this.title = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height / 2 - 360, Translate.Translate(this.values[value].title), { fontSize: 80, fontFamily: "BangersRegular", align: "center", wordWrap: { width: 780 }}).setOrigin(0.5);
+        this.title = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height / 2 - 360, Translate.Translate(this.values[value].title), { fontSize: 74, fontFamily: "BangersRegular", align: "center", wordWrap: { width: 700 }}).setOrigin(0.5);
         this.image = this.scene.add.sprite(this.scene.game.config.width / 2, this.scene.game.config.height / 2 - 20).setScale(1.25);
         this.image.play("currentAnim");
         this.description = this.scene.add.text(this.scene.game.config.width / 2, this.scene.game.config.height / 2 + 300, Translate.Translate(this.values[value].description), { fontSize: 40, fontFamily: "BangersRegular", align: "center", wordWrap: { width: 800 }}).setOrigin(0.5);
