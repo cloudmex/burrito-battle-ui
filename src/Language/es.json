@@ -150,5 +150,9 @@
     "TleSurrenderAlert": "¿Está seguro de huir?",
     "MsgSurrenderAlert": "El huir de la pelea le costará una vida a tu burrito",
     "MsgVictory": "Victoria",
-    "MsgDefeat": "Derrota"
+    "MsgDefeat": "Derrota",
+
+    "TleTestVersion":"Versión de prueba",
+    "DescTestVersion":"Esta versión es solo para testers seleccionados, te invitamos a probar la versión testnet",
+    "BtnTestVersion":"Ir a Testnet"
 }

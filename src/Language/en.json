@@ -145,5 +145,9 @@
     "TleSurrenderAlert": "Are you sure to run away?",
     "MsgSurrenderAlert": "Running away from the fight will cost your burrito a life",
     "MsgVictory": "Victory",
-    "MsgDefeat": "Defeat"
+    "MsgDefeat": "Defeat",
+
+    "TleTestVersion":"Test Version",
+    "DescTestVersion":"This version is only for selected testers, We invite you to try the Testnet version.",
+    "BtnTestVersion":"Go to Testnet."
 }

@@ -30,19 +30,20 @@ export default class MainMenu extends Phaser.Scene{
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
         this.add.image(50, 50, "logo").setOrigin(0).setScale(0.75);
 
-        let json = this.Data = await fetch(`/Testers.json`).then(response => {
-            return response.json();
-        });
-        console.log(json.Testers);
-        if(!json.Testers.some(t => t.Tester == Near.GetAccountId())){
-            this.loadingScreen.OnComplete()
-            await Alert.Fire(this, "Test version", "Esta version es solo para testers seleccionados, te invitamos a probar la version testnet", "Ir a Testnet").
-            then(async(result) =>{
-                if(result){
-                    window.location.replace("https://testnet.burritobattle.app/");
-                }
-            })
-            return;
+        if(window.location.origin.includes("play.burritobattle.app")){
+            let json = this.Data = await fetch(`/Testers.json`).then(response => {
+                return response.json();
+            });
+            
+            if(!json.Testers.some(t => t.Tester == Near.GetAccountId())){
+                this.loadingScreen.OnComplete()
+                await Alert.Fire(this, Translate.Translate("TleTestVersion"), Translate.Translate("DescTestVersion"), Translate.Translate("BtnTestVersion")).
+                then(async(result) =>{
+                    if(result)
+                        window.location.replace("https://testnet.burritobattle.app/");
+                })
+                return;
+            }
         }
 
         if(localStorage.getItem("lastScene")) {
