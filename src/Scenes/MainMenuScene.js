@@ -34,9 +34,8 @@ export default class MainMenu extends Phaser.Scene{
             let json = this.Data = await fetch(`/Testers.json`).then(response => {
                 return response.json();
             });
-            
             if(!json.Testers.some(t => t.Tester == Near.GetAccountId())){
-                this.loadingScreen.OnComplete()
+                this.loadingScreen.OnComplete();
                 await Alert.Fire(this, Translate.Translate("TleTestVersion"), Translate.Translate("DescTestVersion"), Translate.Translate("BtnTestVersion")).
                 then(async(result) =>{
                     if(result)
