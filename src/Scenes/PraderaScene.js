@@ -1,4 +1,4 @@
-import { Button, Alert, LoadingScreen, SettingsButton, TokenHud, BurritoHud, BackMainMenuHud } from '../Helpers/Helpers.js'
+import { Alert, LoadingScreen, SettingsButton, TokenHud, BurritoHud, BackMainMenuHud } from '../Helpers/Helpers.js'
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 import { Cactus } from '../Helpers/Objects.js';
@@ -7,7 +7,7 @@ export default class Pradera extends Phaser.Scene{
     tmpX = 0;
     tmpY = 0;
     canMove = true;
-    speed = 150;
+    speed = 1150;
     target = new Phaser.Math.Vector2();
     showAlert = false;
     lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
