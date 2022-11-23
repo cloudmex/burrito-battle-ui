@@ -21,10 +21,9 @@ export default class Hospital extends Phaser.Scene{
     }
     async loadAssets(){
         if(localStorage.getItem("burrito_selected") != null){
-            //let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
-            //this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
+            let burritoPlayerSkin = await Near.GetNFTToken(localStorage.getItem("burrito_selected"));
+            this.load.spritesheet("miniBurrito", `../src/images/Pradera/burrito_${this.burritoMediaToSkin(burritoPlayerSkin.media)}.png`, {frameWidth: 51, frameHeight: 53});
         }
-        this.load.spritesheet("miniBurrito", '../src/assets/Images/Pradera/burrito_agua.png', {frameWidth: 51, frameHeight: 53});
 
         this.load.spritesheet("capsulas", '../src/assets/Images/Hospital/capsulas.png', {frameWidth:239, frameHeight:294});
         this.load.image("hospital_background", '../src/assets/Images/Hospital/Interior Hospital.png');

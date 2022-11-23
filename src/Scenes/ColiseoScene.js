@@ -55,13 +55,15 @@ export default class Coliseo extends Phaser.Scene{
         this.incursion = await Near.GetActiveIncursion();
         console.log(this.incursion);
 
-        if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
+        let duration = 108_000_000;
+        if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + duration){
             this.add.image(0, 0, "coliseo_vacio").setOrigin(0).setScale(1);
             new Button(this.game.config.width / 2, this.game.config.height / 2 + 400, 1, "buttonContainer", Translate.Translate("BtnStartIncursion"), this, this.ConfirmIncursion, {fontSize: 40, fontFamily: "BangersRegular"});
-        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
+        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + duration){
             this.add.image(0, 0, "coliseo_reconstruccion").setOrigin(0).setScale(1);
             await this.loadingScreen.OnComplete();
-            await Alert.Fire(this, Translate.Translate("TleColiseumDestroyAlert"), Translate.Translate("MsgColiseumDestroyAlert"), Translate.Translate("BtnAccept"));
+            let result = this.incursion.finish_time.toString();
+            await Alert.Fire(this, Translate.Translate("TleColiseumDestroyAlert"), Translate.Translate("MsgColiseumDestroyAlert").format(this.GetCountDown(parseInt(result.substring(0, result.length - 6)) + duration)), Translate.Translate("BtnAccept"));
             let _loadingScreen = new LoadingScreen(this);
             let playerIncursion = await Near.GetPlayerIncursion();
             let canWithdrawBurrito = await Near.CanWithdrawBurrito();
@@ -100,16 +102,6 @@ export default class Coliseo extends Phaser.Scene{
             this.CreatePanelIncursion();
         }
         new Button(this.sys.game.scale.gameSize.width / 2 + 750,  100, 0.5, "buttonContainer", Translate.Translate("BtnMeadow"), this, this.BackToPradera, {fontSize: 30, fontFamily: "BangersRegular"});
-
-        if(window.location.origin.includes("localhost")){
-            new Button(this.sys.game.scale.gameSize.width / 2 - 750,  100, 0.5, "buttonContainer", "Eliminar Incursion", this, async()=>{ 
-                let _loadingScreen = await new LoadingScreen(this);
-                await Near.WithdrawBurritoOwner();
-                await Near.DeleteAllIncursions() 
-                _loadingScreen.OnComplete();
-                location.reload();
-            }, {fontSize: 30, fontFamily: "BangersRegular"});
-        }
 
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
@@ -194,7 +186,7 @@ export default class Coliseo extends Phaser.Scene{
                         localStorage.removeItem("burrito_selected");
                     
                     let loadingScreen = new LoadingScreen(this);
-                    await Near.RegisterInIncursion(burrito.token_id);
+                    await Near.RegisterInIncursion(burrito.token_id, this.incursion.id);
                     localStorage.setItem("lastScene", "Coliseo");
                     this.incursion = await Near.GetActiveIncursion();
                     this.panelContainer.destroy();
@@ -216,6 +208,8 @@ export default class Coliseo extends Phaser.Scene{
         }
     }
     async CreateIncursionInfo(){
+        console.log("player incursion: " + JSON.stringify(await Near.GetPlayerIncursion()))
+        console.log("active incursion: " + JSON.stringify(await Near.GetActiveIncursion()))
         let loadingScreen = new LoadingScreen(this); 
         let incursion = await Near.GetPlayerIncursion();
         let mega = incursion.incursion.mega_burrito;
@@ -322,6 +316,14 @@ export default class Coliseo extends Phaser.Scene{
             localStorage.setItem("lastScene", "Coliseo");
             location.reload();
         }
+    }
+    GetCountDown(remain){
+        let timeNow = Date.now();
+        let time = Math.abs(timeNow - remain) / 36e5;
+        let hour = time;
+        let minutes = (hour % 1) * 60;
+        let seconds = (minutes % 1) * 60;
+        return parseInt(hour).toString().padStart(2, '0') + ":" + parseInt(minutes).toString().padStart(2, '0') + ":" + parseInt(seconds).toString().padStart(2, '0')
     }
     async ContdownInfo(remainToBuy) {
         let timeNow = Date.now();

@@ -5,6 +5,7 @@ import connection from './Scenes/ConnectionScene.js'
 import mainMenu from './Scenes/MainMenuScene.js';
 import establo from './Scenes/EstabloScene.js';
 import pradera from './Scenes/PraderaScene.js';
+import howToPlay from './Scenes/HowToPlayScene.js';
 import battle from './Scenes/BattleScene.js';
 import silo from './Scenes/SiloScene.js'
 import coliseo from './Scenes/ColiseoScene.js';
@@ -45,7 +46,7 @@ const config = {
     width: 1920,
     height: 1080,
     mode: Phaser.Scale.NONE,
-    scene: [ connection, mainMenu, establo, silo, pradera, battle, coliseo, coliseoBattle, hospital]
+    scene: [ connection, mainMenu, establo, silo, pradera, howToPlay, battle, coliseo, coliseoBattle, hospital]
 };
 
 (async()=>await Translate.LoadJson())();
