@@ -30,6 +30,20 @@ export default class MainMenu extends Phaser.Scene{
         this.add.image(0,0, "mainMenubackground").setOrigin(0);
         this.add.image(50, 50, "logo").setOrigin(0).setScale(0.75);
 
+        if(window.location.origin.includes("play.burritobattle.app")){
+            let json = this.Data = await fetch(`/Testers.json`).then(response => {
+                return response.json();
+            });
+            if(!json.Testers.some(t => t.Tester == Near.GetAccountId())){
+                this.loadingScreen.OnComplete();
+                await Alert.Fire(this, Translate.Translate("TleTestVersion"), Translate.Translate("DescTestVersion"), Translate.Translate("BtnTestVersion")).
+                then(async(result) =>{
+                    if(result)
+                        window.location.replace("https://testnet.burritobattle.app/");
+                })
+                return;
+            }
+        }
         if(await Near.GetCurrentNears() < 0.2){
             await this.loadingScreen.OnComplete();
             
@@ -91,6 +105,7 @@ export default class MainMenu extends Phaser.Scene{
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
     }
+
     
     LogOut = async () => {
         Alert.Fire(this, Translate.Translate("TleAccountAlert"), Translate.Translate("MsgAccountAlert"), Translate.Translate("BtnAccountAlert"), Translate.Translate("BtnCancelAlert"))

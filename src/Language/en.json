@@ -147,6 +147,10 @@
     "MsgVictory": "Victory",
     "MsgDefeat": "Defeat",
 
+    "TleTestVersion":"Test Version",
+    "DescTestVersion":"This version is only for selected testers, We invite you to try the Testnet version.",
+    "BtnTestVersion":"Go to Testnet.",
+    
     "TleInsufficientNears": "You don't have enough NEAR tokens.",
     "MsgInsufficientNears": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions",
     "MsgInsufficientNearsMainMenu": "Currently You have {0} $NEAR tokens and the minimum required is 0.2 $NEAR tokens to make transactions.\nTransfer the enough amount to be able to play.",
