@@ -153,9 +153,9 @@
     "MsgDefeat": "Derrota",
 
     "TleTestVersion":"Versión de prueba",
-    "DescTestVersion":"Esta versión es solo para testers seleccionados, te invitamos a probar la versión testnet",
+    "DescTestVersion":"Esta versión es solo para testers seleccionados, te invitamos a probar la versión testnet.",
     "BtnTestVersion":"Ir a Testnet",
-    
+
     "TleInsufficientNears": "Insuficientes nears",
     "MsgInsufficientNears": "Actualmente, tienes {0} $NEARS tokens y el mínimo  requerido es de 0.2 $NEARs Tokens para poder hacer transacciones.",
     "MsgInsufficientNearsMainMenu": "Actualmente, tienes {0} $NEARS tokens y el mínimo  requerido es de 0.2 $NEARs Tokens para poder hacer transacciones.\nTransfiere la cantidad suficiente para poder jugar.",
