@@ -36,10 +36,15 @@ export default class MainMenu extends Phaser.Scene{
             });
             if(!json.Testers.some(t => t.Tester == Near.GetAccountId())){
                 this.loadingScreen.OnComplete();
-                await Alert.Fire(this, Translate.Translate("TleTestVersion"), Translate.Translate("DescTestVersion"), Translate.Translate("BtnTestVersion")).
+                await Alert.Fire(this, Translate.Translate("TleTestVersion"), Translate.Translate("DescTestVersion"), Translate.Translate("BtnTestVersion"), Translate.Translate("BtnAccountAlert")).
                 then(async(result) =>{
                     if(result)
                         window.location.replace("https://testnet.burritobattle.app/");
+                    else{
+                        localStorage.clear();
+                        Near.LogOut();
+                        this.scene.start('Connection');
+                    }
                 })
                 return;
             }
@@ -47,7 +52,7 @@ export default class MainMenu extends Phaser.Scene{
         if(await Near.GetCurrentNears() < 0.2){
             await this.loadingScreen.OnComplete();
             
-            await Alert.Fire(this, Translate.Translate("TleInsufficientNears"), Translate.Translate("MsgInsufficientNearsMainMenu").format(await Near.GetCurrentNears()), Translate.Translate("BtnAccept"), "Disconnect").then(
+            await Alert.Fire(this, Translate.Translate("TleInsufficientNears"), Translate.Translate("MsgInsufficientNearsMainMenu").format(await Near.GetCurrentNears()), Translate.Translate("BtnAccept"), Translate.Translate("BtnAccountAlert")).then(
                 async(r) =>{
                     if(r)
                         location.replace("https://wallet.near.org/buy");
@@ -56,7 +61,6 @@ export default class MainMenu extends Phaser.Scene{
                         Near.LogOut();
                         this.scene.start('Connection');
                     }
-
                 }
             )
             return;
