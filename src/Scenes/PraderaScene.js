@@ -7,12 +7,13 @@ export default class Pradera extends Phaser.Scene{
     tmpX = 0;
     tmpY = 0;
     canMove = true;
-    speed = 1150;
+    speed = 150;
     target = new Phaser.Math.Vector2();
     showAlert = false;
     lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
     followCharacter = true;
     cameraLerpFlag = true;
+    openDoor = true;
 
     constructor(){
         super("Pradera");
@@ -55,25 +56,24 @@ export default class Pradera extends Phaser.Scene{
         }
 
         this.incursion = await Near.GetActiveIncursion();
-        //this.InsertImageInQuadrant({quadrant: {x: 0, y: 0}, animation: {path:"coliseo_puerta", end: 53, repeat: -1}, offset: {x:0, y:0}, depth: 2});
         
 
         if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
+            this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
+            this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
         }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_reconstruccion"}, offset: {x: 0, y:0}, depth : 2});
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 0});
+            this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_reconstruccion"}, offset: {x: 0, y:0}, depth : 2});
+            this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 0});
         
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_up_roto", end: 29, repeat: -1}, offset: {x:0, y:0}, depth: 2});
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
+            this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_up_roto", end: 29, repeat: -1}, offset: {x:0, y:0}, depth: 2});
+            this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
         }else{
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_up_incursion", end: 26, repeat: -1}, offset: {x:0, y:0}, depth: 2});
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
+            this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
 
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_down_incursion", end: 26, repeat: -1}, offset: {x:0, y:0}, depth: 2});
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
+            this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
         }
         
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
@@ -419,13 +419,15 @@ export default class Pradera extends Phaser.Scene{
         this.hudBurrito = new BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this, this.burrito);
         await this.loadingScreen.OnComplete();
     }
-    InsertImageInQuadrant(data){
+    InsertImageInQuadrant(data, play = true){
         let result;
         if(data.image) {
-            result = this.add.image(data.quadrant.x * 1920 + 960 + data.offset.x, data.quadrant.y * 1080 + 540 + data.offset.y, data.image.path).setDepth(data.depth);
+            result = this.add.sprite(data.quadrant.x * 1920 + 960 + data.offset.x, data.quadrant.y * 1080 + 540 + data.offset.y, data.image.path).setDepth(data.depth);
         } else if(data.animation){
             this.anims.create({key: data.animation.path + "_anim", frameRate: 30, frames: this.anims.generateFrameNumbers(data.animation.path, { start: 0, end: data.animation.end }), repeat: data.animation.repeat });
-            result = this.add.sprite(data.quadrant.x * 1920 + 960 + data.offset.x, data.quadrant.y * 1080 + 540 + data.offset.y, data.animation.path, 0).play(data.animation.path+"_anim").setDepth(data.depth);
+            if (play) {
+                result = this.add.sprite(data.quadrant.x * 1920 + 960 + data.offset.x, data.quadrant.y * 1080 + 540 + data.offset.y, data.animation.path, 0).play(data.animation.path+"_anim").setDepth(data.depth);
+            }
         }
         return result;
     }
@@ -510,6 +512,8 @@ export default class Pradera extends Phaser.Scene{
             else
                 this.sand_2.setVisible(false);
 
+            
+
             this.burrito.body.stop();
             this.followCharacter = false;
             this.StopAnimation();
@@ -521,7 +525,21 @@ export default class Pradera extends Phaser.Scene{
                     targets: this.cameras.main,
                     scrollX: x,
                     scrollY: y,
-                    onComplete: () => { this.canMove = true; }
+                    onComplete: () => { 
+                        if(currentQuadrant.x === 1 && currentQuadrant.y == 3 && this.openDoor){
+                            setTimeout(() => {
+                                this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_puerta", end: 53, repeat: 0}, offset: {x:0, y:0}, depth: -1});
+                                this.coliseum_down.play("coliseo_puerta_anim");
+                                this.cameras.main.shake(1200, 0.005);
+                                this.openDoor = false;
+                                setTimeout(() => {
+                                    this.canMove=true;
+                                }, 2000);
+                            }, 500);
+                        } else{
+                            this.canMove = true;
+                        }
+                     }
                 }]
             })
             this.tmpX = x;
