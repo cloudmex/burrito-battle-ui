@@ -1,4 +1,4 @@
-import { Button, Alert, LoadingScreen, SettingsButton, TokenHud, BurritoHud, BackMainMenuHud } from '../Helpers/Helpers.js'
+import { Alert, LoadingScreen, SettingsButton, TokenHud, BurritoHud, BackMainMenuHud } from '../Helpers/Helpers.js'
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 import { Cactus } from '../Helpers/Objects.js';
@@ -7,7 +7,7 @@ export default class Pradera extends Phaser.Scene{
     tmpX = 0;
     tmpY = 0;
     canMove = true;
-    speed = 150;
+    speed = 1150;
     target = new Phaser.Math.Vector2();
     showAlert = false;
     lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
@@ -55,20 +55,25 @@ export default class Pradera extends Phaser.Scene{
         }
 
         this.incursion = await Near.GetActiveIncursion();
+        //this.InsertImageInQuadrant({quadrant: {x: 0, y: 0}, animation: {path:"coliseo_puerta", end: 53, repeat: -1}, offset: {x:0, y:0}, depth: 2});
+        
 
         if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
         }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_reconstruccion"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 0})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_reconstruccion"}, offset: {x: 0, y:0}, depth : 2});
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 0});
         
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_roto"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_roto"}, offset: {x: 0, y:0}, depth : 0})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_up_roto", end: 29, repeat: -1}, offset: {x:0, y:0}, depth: 2});
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
         }else{
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_incursion"}, offset: {x: 0, y:0}, depth : 2})
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_incursion"}, offset: {x: 0, y:0}, depth : 0})
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_up_incursion", end: 26, repeat: -1}, offset: {x:0, y:0}, depth: 2});
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
+
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_down_incursion", end: 26, repeat: -1}, offset: {x:0, y:0}, depth: 2});
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
         }
         
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
@@ -714,12 +719,15 @@ export default class Pradera extends Phaser.Scene{
         this.load.image("cactus1", '../src/assets/Images/Pradera/Cactus 1.png');
         this.load.image("cactus2", '../src/assets/Images/Pradera/Cactus 2.png');
 
-        this.load.spritesheet("coliseo_up_incursion",  '../src/assets/Images/Pradera/C10/coliseo_incursion.webp', {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("coliseo_up_incursion",  '../src/assets/Images/Pradera/C10/incursion_proceso_sup.webp', {frameWidth:1920, frameHeight: 1080});
+        //this.load.spritesheet("coliseo_up_incursion",  '../src/assets/Images/Pradera/C10/coliseo_incursion.webp', {frameWidth:1920, frameHeight: 1080});
         this.load.image("coliseo_up_normal", '../src/assets/Images/Pradera/C10/coliseo_normal.png');
         this.load.image("coliseo_up_reconstruccion", '../src/assets/Images/Pradera/C10/coliseo_reconstruccion.png');
-        this.load.image("coliseo_up_roto", '../src/assets/Images/Pradera/C10/coliseo_roto.png');
+        this.load.spritesheet("coliseo_up_roto", '../src/assets/Images/Pradera/C10/incursion_iniciada.webp', {frameWidth: 1920, frameHeight:1080});
+        //this.load.image("coliseo_up_roto", '../src/assets/Images/Pradera/C10/coliseo_roto.png');
 
-        this.load.spritesheet("coliseo_down_incursion", '../src/assets/Images/Pradera/C14/coliseo_incursion.webp', {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("coliseo_puerta", '../src/assets/Images/Pradera/C14/coliseo_puerta.webp', {frameWidth:1920, frameHeight: 1080});
+        this.load.spritesheet("coliseo_down_incursion", '../src/assets/Images/Pradera/C14/incursion_proceso_inf.webp', {frameWidth:1920, frameHeight: 1080});
         this.load.image("coliseo_down_normal", '../src/assets/Images/Pradera/C14/coliseo_normal.png');
         this.load.image("coliseo_down_reconstruccion", '../src/assets/Images/Pradera/C14/coliseo_reconstruccion.png');
         this.load.image("coliseo_down_roto", '../src/assets/Images/Pradera/C14/coliseo_roto.png');
