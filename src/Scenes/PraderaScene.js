@@ -10,7 +10,7 @@ export default class Pradera extends Phaser.Scene{
     speed = 150;
     target = new Phaser.Math.Vector2();
     showAlert = false;
-    lastPosition = { x:0, y: 0, position: {x:960, y: 540}};
+    lastPosition = { x:0, y: 0, position: { x:960, y: 540 }};
     followCharacter = true;
     cameraLerpFlag = true;
     openDoor = true;
@@ -25,6 +25,7 @@ export default class Pradera extends Phaser.Scene{
     create(){
         this.loadingScreen = new LoadingScreen(this);
         this.loadAssets();
+        this.openDoor = true;
     }
     async start(){
         Alert.isAlert = false;
@@ -56,24 +57,26 @@ export default class Pradera extends Phaser.Scene{
         }
 
         this.incursion = await Near.GetActiveIncursion();
-        
 
         if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
             this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
-        }else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
+            this.mustOpenDoor = true;
+        } else if(parseInt(Date.now()) > parseInt(this.incursion.finish_time).toString().substring(0, 13) && parseInt(Date.now()) < parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_reconstruccion"}, offset: {x: 0, y:0}, depth : 2});
             this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_reconstruccion"}, offset: {x: 0, y:0}, depth : 0});
-        
+            this.mustOpenDoor = false;
         }else if(parseInt(Date.now()) > parseInt(this.incursion.start_time).toString().substring(0, 13)){
-            this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_up_roto", end: 29, repeat: -1}, offset: {x:0, y:0}, depth: 2});
-            this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
+            this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, animation: {path:"coliseo_up_roto", end: 29, repeat: -1}, offset: {x:0, y:0}, depth: 2});
+            this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_roto"}, offset: {x: 0, y:0}, depth : 0});
+            this.mustOpenDoor = false;
         }else{
-            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_up_incursion", end: 26, repeat: -1}, offset: {x:0, y:0}, depth: 2});
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, animation: {path:"coliseo_up_incursion", end: 26, repeat: -1}, offset: {x:0, y:0}, depth: 2});
             this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
 
             this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_down_incursion", end: 26, repeat: -1}, offset: {x:0, y:0}, depth: 2});
             this.coliseum_down = this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_normal"}, offset: {x: 0, y:0}, depth : 0});
+            this.mustOpenDoor = true;
         }
         
         this.burrito = this.physics.add.sprite(this.sys.game.scale.gameSize.width / 2, this.sys.game.scale.gameSize.height / 2, "miniBurrito", 0).setOrigin(0.5).setScale(1.5).setCollideWorldBounds(true);
@@ -218,7 +221,6 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_09 = {
             images: [ { image: "cell_9", depth: -1 }], 
-            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 200, y: 260, w: 385, h: 750},//wall
                 {x: 100, y: 830, w: 210, h: 390},//wall
@@ -229,13 +231,11 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_10 = { 
             images: [ { image: "cell_10", depth: -1 },], 
-            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             wildBurritos: {num: 3, background: "desierto"},
             cactus:[ { x: 216, y: 322 },{ x: 344, y: 550 },{ x: 320, y: 787 },{ x: 840, y: 435 },{ x: 1013, y: 462 },{ x: 1665, y: 709 }, {x:1560, y:381}]
         };
         let cell_11 = { 
             images: [ { image: "cell_11", depth: -1 }], 
-            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             wildBurritos: {num: 3, background: "pradera"},
             cactus:[ { x: 550, y: 260 },{ x: 720, y: 425 },{ x: 455, y: 795 },{ x: 930, y: 853 },{ x: 1315, y: 826 },{ x: 1507, y: 456 }, {x:1750, y:254}, {x:1550, y:940}]
         };
@@ -259,7 +259,6 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_13 = {
             images: [ { image: "cell_13", depth: -1 }], 
-            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 205, y: 170, w: 411, h: 440},//wall
                 {x: 110, y: 460, w: 240, h: 160},//wall
@@ -273,7 +272,6 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_14 = { 
             images: [ { image: "cell_14", depth: -1 }, {image: "cell_14_details_1", depth: 1 }, { image: "cell_14_details_2", depth: -1}], 
-            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders:[
                 {x: 1160, y: 0, w: 400, h: 300},//wall
                 {x: 0, y: 60, w: 1920, h: 420},//wall
@@ -287,7 +285,6 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_15 = { 
             images: [ { image: "cell_15", depth: -1 }, ], 
-            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders: [
                 {x: 645, y: 300, w: 1700, h: 500},//wall
             ],
@@ -296,7 +293,6 @@ export default class Pradera extends Phaser.Scene{
         };
         let cell_16 = { 
             images: [ { image: "cell_16", depth: -1 }],
-            //animations:[{x: 960, y: 540, spritesheet:"sand_storm_1", depth: 2, end:28, repeat: -1}],
             colliders:[
                 {x: 1710, y: 355, w: 440, h: 176},//wall
                 {x: 1670, y: 535, w: 520, h: 180},//wall
@@ -323,6 +319,8 @@ export default class Pradera extends Phaser.Scene{
             [cell_13, cell_14, cell_15, cell_16, ],
             [cDesert, cDesert, cDesert, cDesert, ],
         ];
+
+        this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_puerta", end: 53, repeat: 0}, offset: {x:0, y:0}, depth: -1});
 
         this.zoneBattles_pradera = this.physics.add.group();
         this.zoneBattles_desierto = this.physics.add.group();
@@ -497,22 +495,16 @@ export default class Pradera extends Phaser.Scene{
         let y = Math.floor(this.burrito.y / 1080) * 1080;
         if(x != this.tmpX || y != this.tmpY || this.cameraLerpFlag){
             this.cameraLerpFlag = false;
+            this.footStepsSFX.setMute(true); 
             let currentQuadrant = {x : x/1920, y: y/1080};
 
             let quadrantsWithSand = [{x: 0,y: 2},{x: 1,y: 2},{x: 2,y: 2}, {x: 0,y: 3},{x: 1,y: 3},{x: 2,y: 3},{x: 3, y: 3}];
             let quadrantsWithSand2 = [{x: 0,y: 4},{x: 1,y: 4},{x: 2,y: 4},{x: 3,y: 4}, ];
 
-            if(quadrantsWithSand.some(element => { return element.x === currentQuadrant.x && element.y === currentQuadrant.y;}))
-                this.sand_1.setVisible(true);
-            else
-                this.sand_1.setVisible(false);
-
-            if(quadrantsWithSand2.some(element => { return element.x === currentQuadrant.x && element.y === currentQuadrant.y; }))
-                this.sand_2.setVisible(true);
-            else
-                this.sand_2.setVisible(false);
-
-            
+            let IsInQuadrantsWithSand = quadrantsWithSand.some(element => { return element.x === currentQuadrant.x && element.y === currentQuadrant.y;});
+            this.sand_1.setVisible(IsInQuadrantsWithSand);
+            let IsInQuadrantsWithSand2 = quadrantsWithSand2.some(element => { return element.x === currentQuadrant.x && element.y === currentQuadrant.y; });
+            this.sand_2.setVisible(IsInQuadrantsWithSand2);
 
             this.burrito.body.stop();
             this.followCharacter = false;
@@ -526,9 +518,10 @@ export default class Pradera extends Phaser.Scene{
                     scrollX: x,
                     scrollY: y,
                     onComplete: () => { 
-                        if(currentQuadrant.x === 1 && currentQuadrant.y == 3 && this.openDoor){
-                            setTimeout(() => {
-                                this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_puerta", end: 53, repeat: 0}, offset: {x:0, y:0}, depth: -1});
+                        this.footStepsSFX.setMute(false); 
+                        if(currentQuadrant.x === 1 && currentQuadrant.y == 3 && this.openDoor && this.mustOpenDoor){
+                            setTimeout(() => { 
+                                this.sound.add("open_gates", { loop: false, volume: SettingsButton.GetVolume()}).play();
                                 this.coliseum_down.play("coliseo_puerta_anim");
                                 this.cameras.main.shake(1200, 0.005);
                                 this.openDoor = false;
@@ -731,18 +724,16 @@ export default class Pradera extends Phaser.Scene{
         this.load.image("cell_16", '../src/assets/Images/Pradera/C16/C16.png');
         this.load.image("cell_16_details_1", '../src/assets/Images/Pradera/C15/Details 1.png');
 
-        this.load.image("hospital", '../src/assets/Images/Pradera/C12/hospital.png')
+        //this.load.image("hospital", '../src/assets/Images/Pradera/C12/hospital.png')
 
         this.load.image("desert", '../src/assets/Images/Pradera/Desert.png');
         this.load.image("cactus1", '../src/assets/Images/Pradera/Cactus 1.png');
         this.load.image("cactus2", '../src/assets/Images/Pradera/Cactus 2.png');
 
         this.load.spritesheet("coliseo_up_incursion",  '../src/assets/Images/Pradera/C10/incursion_proceso_sup.webp', {frameWidth:1920, frameHeight: 1080});
-        //this.load.spritesheet("coliseo_up_incursion",  '../src/assets/Images/Pradera/C10/coliseo_incursion.webp', {frameWidth:1920, frameHeight: 1080});
         this.load.image("coliseo_up_normal", '../src/assets/Images/Pradera/C10/coliseo_normal.png');
         this.load.image("coliseo_up_reconstruccion", '../src/assets/Images/Pradera/C10/coliseo_reconstruccion.png');
         this.load.spritesheet("coliseo_up_roto", '../src/assets/Images/Pradera/C10/incursion_iniciada.webp', {frameWidth: 1920, frameHeight:1080});
-        //this.load.image("coliseo_up_roto", '../src/assets/Images/Pradera/C10/coliseo_roto.png');
 
         this.load.spritesheet("coliseo_puerta", '../src/assets/Images/Pradera/C14/coliseo_puerta.webp', {frameWidth:1920, frameHeight: 1080});
         this.load.spritesheet("coliseo_down_incursion", '../src/assets/Images/Pradera/C14/incursion_proceso_inf.webp', {frameWidth:1920, frameHeight: 1080});
@@ -762,6 +753,8 @@ export default class Pradera extends Phaser.Scene{
 
         this.load.audio("praderaSong", '../src/assets/audio/Pradera.ogg')
         this.load.audio("footSteps", '../src/assets/audio/Footsteps.ogg');
+
+        this.load.audio("open_gates", '../src/assets/audio/open_gates.ogg')
 
         this.load.once("complete", this.start, this);
         this.load.start(); 
