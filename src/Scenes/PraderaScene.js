@@ -391,14 +391,16 @@ export default class Pradera extends Phaser.Scene{
         this.Cursors = this.input.keyboard.createCursorKeys();
         this.velocity = {x: 0, y: 0};
 
-        this.input.on("pointerdown", function(pointer){
+        this.firstClickTime = null;
+        this.input.on("pointerdown", (pointer)=>{ this.onDown(pointer); });
+        /*this.input.on("pointerdown", function(pointer){
             if(!this.burrito.anims.isPlaying && ! Alert.isAlert){
                 this.isKeyboard = false;
                 this.target.x = Number(pointer.worldX.toFixed(1));
                 this.target.y = Number(pointer.worldY.toFixed(1));
                 this.physics.moveToObject(this.burrito, this.target, this.speed);
             }
-        }, this);
+        }, this);*/
         
         this.physics.add.overlap(this.burrito, this.zoneBattles_pradera, this.Battle_Pradera, null, this);
         this.physics.add.overlap(this.burrito, this.zoneBattles_desierto, this.Battle_Desierto, null, this);
@@ -408,6 +410,37 @@ export default class Pradera extends Phaser.Scene{
         this.hudTokens = new TokenHud(200, 200, this, await Near.GetCurrentNears(), await Near.GetSTRWToken(), this.burrito);
         this.hudBurrito = new BurritoHud(200, 960, await Near.GetNFTToken(localStorage.getItem("burrito_selected")), this, this.burrito);
         await this.loadingScreen.OnComplete();
+    }
+    getTime = () => {
+        return new Date().getTime();
+    }
+    onDown = (pointer) => {
+        if(/*!this.burrito.anims.isPlaying && */!Alert.isAlert){
+            this.isKeyboard = false;
+            this.target.x = Number(pointer.worldX.toFixed(1));
+            this.target.y = Number(pointer.worldY.toFixed(1));
+
+            if(this.firstClickTime === null){
+                this.firstClickTime = this.getTime();
+                this.walk();
+            } else if(this.firstClickTime !== null){
+                this.elapsed = this.getTime() - this.firstClickTime; 
+                //this.firstClickTime = null;
+                
+                if(this.elapsed < 500) {
+                    this.run();
+                } else{
+                    this.walk();
+                    this.firstClickTime = this.getTime();
+                }
+            } 
+        }
+    }
+    walk(){
+        this.physics.moveToObject(this.burrito, this.target, this.speed);
+    }
+    run(){
+        this.physics.moveToObject(this.burrito, this.target, this.speed * 3);
     }
     InsertImageInQuadrant(data){
         let result;
