@@ -114,7 +114,7 @@
     "MsgDefense": "Escudo",
 
     "TleColiseumDestroyAlert": "El coliseo está en reconstrucción",
-    "MsgColiseumDestroyAlert":	"El coliseo sufrió mucho daño en la última incursión, por lo que está en reconstrucción para la siguiente incursión.",
+    "MsgColiseumDestroyAlert":	"El coliseo sufrió mucho daño en la última incursión, por lo que está en reconstrucción para la siguiente incursión.\nEstara listo en {0}.",
     "BtnStartIncursion": "Iniciar Incursión",
     "TleTakeBackBurritoAlert": "Recupera tu burrito",
     "MsgTakeBackBurritoAlert": "La incursión en la cual te registraste ha finalizado, da en aceptar para recuperar tu burrito y puedas participar en siguientes incursiones.",
@@ -154,5 +154,23 @@
 
     "TleInsufficientNears": "Insuficientes nears",
     "MsgInsufficientNears": "Actualmente, tienes {0} $NEARS tokens y el mínimo  requerido es de 0.2 $NEARs Tokens para poder hacer transacciones.",
-    "MsgInsufficientNearsMainMenu": "Actualmente, tienes {0} $NEARS tokens y el mínimo  requerido es de 0.2 $NEARs Tokens para poder hacer transacciones.\nTransfiere la cantidad suficiente para poder jugar."
+    "MsgInsufficientNearsMainMenu": "Actualmente, tienes {0} $NEARS tokens y el mínimo  requerido es de 0.2 $NEARs Tokens para poder hacer transacciones.\nTransfiere la cantidad suficiente para poder jugar.",
+    
+    "HTP":"Como Jugar",
+    "HTP_Title_BuySTRW":"Compra $STRW Tokens",
+    "HTP_Title_MintBurrito":"Mina más Burritos",
+    "HTP_Title_SelectBurrito":"Selecciona uno de tus Burritos",
+    "HTP_Title_FightWithWildBurritos":"Pelea contra Burritos Salvajes",
+    "HTP_Title_PlayIncursion":"Participa en Incursiones",
+    "HTP_Title_RestoreBurrito":"Restaura tus Burritos",
+    "HTP_Title_EvolveBurrito":"Evoluciona tus Burritos",
+    "HTP_Title_Navigate":"Explora el mapa",
+    "HTP_Description_BuySTRW":"Ingresa al Silo en donde podrás encontrar al comerciante y adquirir $STRW Tokens una vez cada 24 horas.",
+    "HTP_Description_MintBurrito":"Ingresa al Silo en donde podrás conseguir nuevos Burritos y unirte a la batalla.",
+    "HTP_Description_SelectBurrito":"Ingresa al establo en donde podrás consultar tus Burritos adquiridos y seleccionarlos para usarlos en el juego.",
+    "HTP_Description_FightWithWildBurritos":"Ingresa a la pradera en donde podrás encontrar Burritos Salvajes a través de todo el mapa y luchar contra ellos.",
+    "HTP_Description_PlayIncursion":"Ingresa a la pradera y dirígete a la sección del coliseo para cooperar con otros jugadores y vencer al Mega Burrito.",
+    "HTP_Description_RestoreBurrito":"Ingresa al establo y selecciona a uno de tus Burritos sin vidas para restaurarlo y seguir combatiendo.",
+    "HTP_Description_EvolveBurrito":"Ingresa al establo y selecciona a uno de tus Burritos con 10 victorias para evolucionarlo e incrementar sus estadísticas.",
+    "HTP_Description_Navigate":"Ingresa a la pradera y recorre el mapa en busca de Burritos Salvajes."
 }
