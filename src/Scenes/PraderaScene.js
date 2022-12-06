@@ -57,6 +57,7 @@ export default class Pradera extends Phaser.Scene{
         }
 
         this.incursion = await Near.GetActiveIncursion();
+        console.log(this.incursion);
 
         if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
@@ -98,7 +99,7 @@ export default class Pradera extends Phaser.Scene{
                 {x: 960, y: 55, w: 1920, h: 20},//wall
                 {x: 20, y: 1080, w: 5, h: 2000},//fence
             ], 
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
         };
         let cell_02 = { 
             images: [ { image: "cell_2", depth: -1 }, { image: "cell_2_details_1", depth: 1 }, { image: "cell_2_details_2", depth: -1}], 
@@ -120,7 +121,7 @@ export default class Pradera extends Phaser.Scene{
             triggers:[
                 {x: 938, y: 120, w: 512, h: 240, variable: "barn", event: ()=>{this.ShowAlert(Translate.Translate("TleGoBarnAlert"), Translate.Translate("MsgGoBarnAlert"), "Establo")}},//barn
             ], 
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
         };
         let cell_03 = { 
             images: [ { image: "cell_3", depth: -1 }, { image: "cell_3_details_1", depth: 1 }, { image: "cell_3_details_2", depth: -1}], 
@@ -135,7 +136,7 @@ export default class Pradera extends Phaser.Scene{
                 {x: 1762, y: 254, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
             ],
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
         };
         let cell_04 = { 
             images: [ { image: "cell_4", depth: -1 }, { image: "cell_4_details_1", depth: 1 }, { image: "cell_4_details_2", depth: -1}], 
@@ -148,7 +149,7 @@ export default class Pradera extends Phaser.Scene{
                 {x: 1759, y: 247, w: 44, h: 7},//tree
                 {x: 960, y: 55, w: 1920, h: 20},//wall
             ], 
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
         };
         let cell_05 = { 
             images: [ { image: "cell_5", depth: -1 }, { image: "cell_5_details_1", depth: 1 }, { image: "cell_5_details_2", depth: -1}], 
@@ -172,7 +173,7 @@ export default class Pradera extends Phaser.Scene{
             triggers:[
                 {x: 980, y: 480, w: 1400, h: 500, variable: "silo", event: ()=>{ this.ShowAlert(Translate.Translate("TleGoSiloAlert"), Translate.Translate("MsgGoSiloAlert"), "MinarBurrito") }},//silo
             ], 
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
         };
         let cell_06 = { 
             images: [ { image: "cell_6", depth: -1 }, { image: "cell_6_details_1", depth: 1 }, { image: "cell_6_details_2", depth: -1}], 
@@ -188,7 +189,7 @@ export default class Pradera extends Phaser.Scene{
                 {x: 1047, y: 291, w: 44, h: 7},//tree
                 {x: 1648, y: 772, w: 44, h: 7},//tree
             ], 
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
         };
         let cell_07 = { 
             images: [ { image: "cell_7", depth: -1 }, { image: "cell_7_details_1", depth: 1 }, { image: "cell_7_details_2", depth: -1}], 
@@ -217,7 +218,7 @@ export default class Pradera extends Phaser.Scene{
                 {x: 945, y: 650, w: 400, h: 50},//statue
                 {x: 1900, y: 540, w: 5, h: 3000},//fence
             ], 
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
         };
         let cell_09 = {
             images: [ { image: "cell_9", depth: -1 }], 
@@ -226,17 +227,17 @@ export default class Pradera extends Phaser.Scene{
                 {x: 100, y: 830, w: 210, h: 390},//wall
                 {x: 232, y: 985, w: 100, h: 100},//wall
             ], 
-            wildBurritos: {num: 3, background: "desierto"},
+            wildBurritos: {num: 6, background: "desierto"},
             cactus:[ { x: 755, y: 550 },{ x: 755, y: 550 },{ x: 1775, y: 360 },{ x: 1415, y: 770 },{ x: 560, y: 815 },{ x: 1220, y: 415 }]
         };
         let cell_10 = { 
             images: [ { image: "cell_10", depth: -1 },], 
-            wildBurritos: {num: 3, background: "desierto"},
+            wildBurritos: {num: 6, background: "desierto"},
             cactus:[ { x: 216, y: 322 },{ x: 344, y: 550 },{ x: 320, y: 787 },{ x: 840, y: 435 },{ x: 1013, y: 462 },{ x: 1665, y: 709 }, {x:1560, y:381}]
         };
         let cell_11 = { 
             images: [ { image: "cell_11", depth: -1 }], 
-            wildBurritos: {num: 3, background: "pradera"},
+            wildBurritos: {num: 6, background: "pradera"},
             cactus:[ { x: 550, y: 260 },{ x: 720, y: 425 },{ x: 455, y: 795 },{ x: 930, y: 853 },{ x: 1315, y: 826 },{ x: 1507, y: 456 }, {x:1750, y:254}, {x:1550, y:940}]
         };
         let cell_12 = {
@@ -255,7 +256,7 @@ export default class Pradera extends Phaser.Scene{
             triggers:[
                 //{x: 1430, y: 480, w: 60, h: 400, variable: "hospital", event: ()=>{this.ShowAlert("Hospital", "Aqui puedes ingresar a tus burritos para recuperar su salud", "Hospital")}},
             ],
-            wildBurritos: {num: 3, background: "desierto"},
+            wildBurritos: {num: 6, background: "desierto"},
         };
         let cell_13 = {
             images: [ { image: "cell_13", depth: -1 }], 
@@ -276,6 +277,10 @@ export default class Pradera extends Phaser.Scene{
                 {x: 1160, y: 0, w: 400, h: 300},//wall
                 {x: 0, y: 60, w: 1920, h: 420},//wall
                 {x: 2320, y: 60, w: 1920, h: 420},//wall
+
+                
+                {x: 950, y: 350, w: 30, h: 180},//stair
+                {x: 1420, y: 350, w: 30, h: 180},//stair
             ],
             triggers:[
                 {x: 1160, y: 200, w: 400, h: 100, variable: "coliseum", event:()=>{ this.ShowAlert(Translate.Translate("TleGoColiseumAlert"), Translate.Translate("MsgGoColiseumAlert"), "Coliseo");}},//wall
