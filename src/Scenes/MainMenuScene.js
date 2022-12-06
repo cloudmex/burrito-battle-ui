@@ -100,7 +100,7 @@ export default class MainMenu extends Phaser.Scene{
         }
 
         new Button(450, 550, 0.75, "buttonContainer", Translate.Translate("HTP"), this, ()=>{ this, this.ChangeScene("HowToPlay")}, {fontSize: 60, fontFamily: "BangersRegular"});
-        new Button(this.sys.game.scale.gameSize.width -  290, 70, 0.5, "buttonContainer", Near.GetAccountId(), this,this.LogOut, {fontSize: 30, fontFamily: "BangersRegular"});
+        new Button(this.sys.game.scale.gameSize.width -  290, 70, 0.5, "buttonContainer", this.ShortName(Near.GetAccountId()), this,this.LogOut, {fontSize: 30, fontFamily: "BangersRegular"});
         new SettingsButton(1850, 60, this, 0.25, null);
         new Button(450, 700, 0.75, "buttonContainer", Translate.Translate("BtnGoMintBurrito"), this, ()=>{ this.ChangeScene("MinarBurrito")}, {fontSize: 60, fontFamily: "BangersRegular"});
         new Button(450, 850, 0.75, "buttonContainer", Translate.Translate("BtnMeadow"), this, ()=>{ this, this.ChangeScene("Pradera")}, {fontSize: 60, fontFamily: "BangersRegular"});
@@ -108,6 +108,7 @@ export default class MainMenu extends Phaser.Scene{
         
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
+        console.log(this.ShortName("6a47bcdc8b65d1e20c2dd96984489ab974a3c79efb725d556060a918288f44b0"))
     }
 
     
@@ -128,6 +129,9 @@ export default class MainMenu extends Phaser.Scene{
     
     Range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
+    }
+    ShortName(name){
+        return name.length > 17 ? name.substring(0, 7) + "..." + name.substring(name.length - 7) : name;
     }
 }
 String.prototype.format = function () {
