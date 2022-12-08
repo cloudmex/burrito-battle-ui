@@ -53,7 +53,6 @@ export default class Coliseo extends Phaser.Scene{
     async Start(){
         this.loadingScreen = new LoadingScreen(this);
         this.incursion = await Near.GetActiveIncursion();
-        console.log(this.incursion);
 
         let duration = 108_000_000;
         if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + duration){
@@ -87,7 +86,6 @@ export default class Coliseo extends Phaser.Scene{
                     if(battleIncursion.room.health <= 0){
                         await this.loadingScreen.OnComplete();
                         await Alert.Fire(this, Translate.Translate("TleDeadBurrito"), Translate.Translate("MsgDeadBurrito"), Translate.Translate("BtnAccept"));
-                    
                         this.CreateIncursionInfo();
                     } else
                         this.scene.start("ColiseoBattle");
@@ -141,6 +139,7 @@ export default class Coliseo extends Phaser.Scene{
     Range = (start, end) => Array(end - start + 1).fill().map((_, idx) => start + idx);
     BackToPradera = () =>{ 
         clearInterval(this.counterInterval); 
+        localStorage.setItem("openDoor", true);
         this.scene.start("Pradera"); 
     }
     ConfirmIncursion = async() => {

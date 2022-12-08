@@ -2,6 +2,7 @@ import { Alert, LoadingScreen, SettingsButton, TokenHud, BurritoHud, BackMainMen
 import *  as Near from '../Near.js';
 import {Translate} from '../Language/Translate.js'
 import { Cactus } from '../Helpers/Objects.js';
+import Coliseo from './ColiseoScene.js';
 
 export default class Pradera extends Phaser.Scene{
     tmpX = 0;
@@ -21,6 +22,7 @@ export default class Pradera extends Phaser.Scene{
     preload(){ 
         this.game.sound.stopAll();
         this.sound.removeAll();
+        
      }
     create(){
         this.loadingScreen = new LoadingScreen(this);
@@ -36,7 +38,6 @@ export default class Pradera extends Phaser.Scene{
         this.footStepsSFX.play();
 
         if(localStorage.getItem("burrito_selected") == null){
-            console.log("no burrito");
             await this.loadingScreen.OnComplete();
             this.add.image(0, 0, "cell_1").setOrigin(0,0)
             this.add.image(0, 0, "cell_1_details_1").setOrigin(0,0)
@@ -57,7 +58,6 @@ export default class Pradera extends Phaser.Scene{
         }
 
         this.incursion = await Near.GetActiveIncursion();
-        console.log(this.incursion);
 
         if(this.incursion.status == "Null" || parseInt(Date.now()) > parseInt(this.incursion.finish_time.toString().substring(0, 13)) + 108000000){
             this.coliseum_top = this.InsertImageInQuadrant({quadrant: {x: 1, y: 2}, image: {path:"coliseo_up_normal"}, offset: {x: 0, y:0}, depth : 2});
@@ -324,9 +324,12 @@ export default class Pradera extends Phaser.Scene{
             [cell_13, cell_14, cell_15, cell_16, ],
             [cDesert, cDesert, cDesert, cDesert, ],
         ];
-
-        this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_puerta", end: 53, repeat: 0}, offset: {x:0, y:0}, depth: -1});
-
+        if(localStorage.getItem("openDoor") == null){
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, animation: {path:"coliseo_puerta", end: 53, repeat: 0}, offset: {x:0, y:0}, depth: -1});
+        } else{
+            this.InsertImageInQuadrant({quadrant: {x: 1, y: 3}, image: {path:"coliseo_down_roto" }, offset: {x:0, y:0}, depth: 1});
+        }
+            
         this.zoneBattles_pradera = this.physics.add.group();
         this.zoneBattles_desierto = this.physics.add.group();
         this.anims.create({key: "sandStormAnim_1", frameRate:30, frames: this.anims.generateFrameNumbers("sand_storm_1", {start: 0, end:28}), repeat: -1});
@@ -514,32 +517,40 @@ export default class Pradera extends Phaser.Scene{
             this.burrito.body.stop();
             this.followCharacter = false;
             this.StopAnimation();
-            this.canMove =false;
-            this.tweens.timeline({
-                duration:1500,
-                delay:100,
-                tweens:[{
-                    targets: this.cameras.main,
-                    scrollX: x,
-                    scrollY: y,
-                    onComplete: () => { 
-                        this.footStepsSFX.setMute(false); 
-                        if(currentQuadrant.x === 1 && currentQuadrant.y == 3 && this.openDoor && this.mustOpenDoor){
-                            setTimeout(() => { 
-                                this.sound.add("open_gates", { loop: false, volume: SettingsButton.GetVolume()}).play();
-                                this.coliseum_down.play("coliseo_puerta_anim");
-                                this.cameras.main.shake(1200, 0.005);
-                                this.openDoor = false;
-                                setTimeout(() => {
-                                    this.canMove=true;
-                                }, 2000);
-                            }, 500);
-                        } else{
-                            this.canMove = true;
+                this.canMove =false;
+                this.tweens.timeline({
+                    duration:1500,
+                    delay:100,
+                    tweens:[{
+                        targets: this.cameras.main,
+                        scrollX: x,
+                        scrollY: y,
+                        onComplete: () => { 
+                            this.footStepsSFX.setMute(false); 
+                            if(currentQuadrant.x === 1 && currentQuadrant.y == 3 && this.openDoor && this.mustOpenDoor){
+                                if(!localStorage.getItem("openDoor") || localStorage.getItem("openDoor") == null){
+                                    setTimeout(() => { 
+                                        this.sound.add("open_gates", { loop: false, volume: SettingsButton.GetVolume()}).play();
+                                        this.coliseum_down.play("coliseo_puerta_anim");
+                                        this.cameras.main.shake(1200, 0.005);
+                                        this.openDoor = false;
+                                        setTimeout(() => {
+                                            this.canMove=true;
+                                        }, 2000);
+                                    }, 2000);
+                                } else{
+                                    localStorage.removeItem("openDoor");
+                                    this.canMove = true;
+                                    this.openDoor = false;
+                                }
+                            } else{
+                                this.canMove = true;
+                                
+                            }
                         }
-                     }
-                }]
-            })
+                    }]
+                })
+            
             this.tmpX = x;
             this.tmpY = y;
         }

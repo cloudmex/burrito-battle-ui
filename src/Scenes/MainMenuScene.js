@@ -108,7 +108,6 @@ export default class MainMenu extends Phaser.Scene{
         
         this.sound.add("acoustic-motivation", { loop: true, volume: SettingsButton.GetVolume()}).play();
         await this.loadingScreen.OnComplete();
-        console.log(this.ShortName("6a47bcdc8b65d1e20c2dd96984489ab974a3c79efb725d556060a918288f44b0"))
     }
 
     
